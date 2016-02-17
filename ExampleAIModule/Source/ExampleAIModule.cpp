@@ -11,7 +11,6 @@ void ExampleAIModule::onStart() {
 	Broodwar->setCommandOptimizationLevel(2);
 
 
-
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -21,10 +20,23 @@ void ExampleAIModule::onEnd(bool isWinner) {
 void ExampleAIModule::onFrame() {
 	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
-	Broodwar->drawTextScreen(200, 40, "Worker Count: %d", workerCount);
+	Broodwar->drawTextScreen(200, 40, "Unit Count: %d", Broodwar->self()->supplyUsed()/2);
+	Broodwar->drawTextScreen(200, 60, "Worker Count: %d", workerCount);
 	
 	// AI Logic goes here
 
+	// Mining minerals
+	for (auto &u : Broodwar->self()->getUnits()) {
+		if (u->getType().isWorker()) {
+			if (u->isIdle()) {
+				if (u->isCarryingMinerals()) {
+					u->returnCargo();
+				} else {
+					u->gather(u->getClosestUnit(IsMineralField));
+				}
+			}
+		}
+	}
 }
 
 void ExampleAIModule::onSendText(std::string text) {
