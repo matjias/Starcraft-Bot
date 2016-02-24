@@ -39,7 +39,7 @@ void ExampleAIModule::onFrame() {
 		// Worker logic
 		// Currently only mining minerals
 		if (u->getType().isWorker()) {
-			// Gotta mine them bitcoins
+			// Gotta mine dem bitcoins
 			if (u->isIdle()) {
 				if (u->isCarryingMinerals()) {
 					u->returnCargo();
