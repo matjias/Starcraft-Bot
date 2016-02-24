@@ -4,15 +4,22 @@
 using namespace BWAPI;
 using namespace Filter;
 
+const int MAX_SUPPLY = 200;
+
 int availableSupply;
 int workerCount;
+int reservedMinerals;
+int reservedGas;
+
+int nexusCount;
+int pylonCount;
 int gatewayCount;
 
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
 	Broodwar->setCommandOptimizationLevel(2);
-
-
+	
+	nexusCount = 1;
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -26,6 +33,8 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	Broodwar->drawTextScreen(200, 20, "Available Supply: %d", availableSupply);
 	//Broodwar->drawTextScreen(200, 60, "Worker Count: %d", workerCount);
+	Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
+	Broodwar->drawTextScreen(200, 60, "Reserved minerals: %d", reservedMinerals);
 	
 	// AI Logic goes here
 
@@ -63,42 +72,12 @@ void ExampleAIModule::onFrame() {
 			}
 
 			// Supply is getting low.. Might need another Pylon now
-			if (availableSupply <= 1 && Broodwar->self()->minerals() >= 100) {
-				UnitType pylon = u->getType().getRace().getSupplyProvider();
-				static int lastCheck = 0;
-
-				if (lastCheck + 400 < Broodwar->getFrameCount() &&
-					Broodwar->self()->incompleteUnitCount(pylon) == 0) {
-
-					lastCheck = Broodwar->getFrameCount();
-
-					Unit supplyBuilder = u->getClosestUnit(GetType == pylon.whatBuilds().first &&
-						(IsIdle || IsGatheringMinerals) && IsOwned);
-
-					if (supplyBuilder) {
-						TilePosition buildLocation = Broodwar->getBuildLocation(pylon, supplyBuilder->getTilePosition());
-
-						if (buildLocation) {
-
-							// Box to display where we make the pylon
-							Broodwar->registerEvent([buildLocation, pylon](Game*) {
-								Broodwar->drawBoxMap(Position(buildLocation),
-								Position(buildLocation + pylon.tileSize()),
-								Colors::Blue);
-								}, nullptr,
-								pylon.buildTime() + 100);
-
-							// Making the pylon
-							supplyBuilder->build(pylon, buildLocation);
-						}
-					}
-
-					
-				}
+			if (pylonNeeded(u)) {
+				buildPylon(u);
 			}
 
 			// Build Gateways
-			else if (gatewayCount <= 1 && Broodwar->self()->minerals() >= 150) {
+			if (/*gatewayCount <= 3 && */Broodwar->self()->minerals() >= 150 + reservedMinerals) {
 				UnitType gateway = UnitTypes::Protoss_Gateway;
 				static int lastCheck = 0;
 
@@ -125,12 +104,19 @@ void ExampleAIModule::onFrame() {
 
 							// Making the gateway
 							gatewayBuilder->build(gateway, buildLocation);
+
+							gatewayCount++;
+							reservedMinerals += 150;
+
 						}
 					}
 
 
 				}
+
+
 			}
+
 
 		}
 
@@ -160,6 +146,14 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	if (unit->getType().isWorker() && unit->getPlayer() == Broodwar->self()) {
 		workerCount++;
 	}
+
+	if (unit->getType() == UnitTypes::Protoss_Pylon && unit->getPlayer() == Broodwar->self()) {
+		reservedMinerals -= 100;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
+		reservedMinerals -= 150;
+	}
+	
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
@@ -194,4 +188,47 @@ void ExampleAIModule::onSaveGame(std::string gameName) {
 }
 
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
+
+}
+
+bool ExampleAIModule::pylonNeeded(BWAPI::Unit u) {
+	if (availableSupply <= nexusCount + gatewayCount * 2 && Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY && Broodwar->self()->minerals() >= 100 + reservedMinerals) {
+		return true;
+	}
+	return false;
+}
+
+void ExampleAIModule::buildPylon(BWAPI::Unit u) {
+	UnitType pylon = u->getType().getRace().getSupplyProvider();
+	static int lastCheck = 0;
+
+	if (lastCheck + 400 < Broodwar->getFrameCount() &&
+		Broodwar->self()->incompleteUnitCount(pylon) == 0) {
+
+		lastCheck = Broodwar->getFrameCount();
+
+		Unit supplyBuilder = u->getClosestUnit(GetType == pylon.whatBuilds().first &&
+			(IsIdle || IsGatheringMinerals) && IsOwned);
+
+		if (supplyBuilder) {
+			TilePosition buildLocation = Broodwar->getBuildLocation(pylon, supplyBuilder->getTilePosition());
+
+			if (buildLocation) {
+
+				// Box to display where we make the pylon
+				Broodwar->registerEvent([buildLocation, pylon](Game*) {
+					Broodwar->drawBoxMap(Position(buildLocation),
+						Position(buildLocation + pylon.tileSize()),
+						Colors::Blue);
+				}, nullptr,
+					pylon.buildTime() + 100);
+
+				// Making the pylon
+				supplyBuilder->build(pylon, buildLocation);
+
+				pylonCount++;
+				reservedMinerals += 100;
+			}
+		}
+	}
 }
