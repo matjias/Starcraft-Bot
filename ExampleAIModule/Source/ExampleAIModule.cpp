@@ -6,6 +6,7 @@ using namespace Filter;
 
 int availableSupply;
 int workerCount;
+int gatewayCount;
 
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
@@ -95,6 +96,42 @@ void ExampleAIModule::onFrame() {
 					
 				}
 			}
+
+			// Build Gateways
+			else if (gatewayCount <= 1 && Broodwar->self()->minerals() >= 150) {
+				UnitType gateway = UnitTypes::Protoss_Gateway;
+				static int lastCheck = 0;
+
+				if (lastCheck + 400 < Broodwar->getFrameCount() &&
+					Broodwar->self()->incompleteUnitCount(gateway) == 0) {
+
+					lastCheck = Broodwar->getFrameCount();
+
+					Unit gatewayBuilder = u->getClosestUnit(GetType == gateway.whatBuilds().first &&
+						(IsIdle || IsGatheringMinerals) && IsOwned);
+
+					if (gatewayBuilder) {
+						TilePosition buildLocation = Broodwar->getBuildLocation(gateway, gatewayBuilder->getTilePosition());
+
+						if (buildLocation) {
+
+							// Box to display where we make the gateway
+							Broodwar->registerEvent([buildLocation, gateway](Game*) {
+								Broodwar->drawBoxMap(Position(buildLocation),
+									Position(buildLocation + gateway.tileSize()),
+									Colors::Blue);
+							}, nullptr,
+								gateway.buildTime() + 100);
+
+							// Making the gateway
+							gatewayBuilder->build(gateway, buildLocation);
+						}
+					}
+
+
+				}
+			}
+
 		}
 
 
