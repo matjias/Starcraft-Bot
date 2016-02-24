@@ -23,7 +23,7 @@ void ExampleAIModule::onStart() {
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
-  
+	
 }
 
 void ExampleAIModule::onFrame() {
@@ -33,8 +33,8 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	Broodwar->drawTextScreen(200, 20, "Available Supply: %d", availableSupply);
 	//Broodwar->drawTextScreen(200, 60, "Worker Count: %d", workerCount);
-	Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
-	Broodwar->drawTextScreen(200, 60, "Reserved minerals: %d", reservedMinerals);
+	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
+	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	
 	// AI Logic goes here
 
@@ -44,7 +44,6 @@ void ExampleAIModule::onFrame() {
 		if (!u->exists() || !u->isCompleted()) {
 			continue;
 		}
-
 
 		// Worker logic
 		// Currently only mining minerals
@@ -57,16 +56,11 @@ void ExampleAIModule::onFrame() {
 					u->gather(u->getClosestUnit(IsMineralField));
 				}
 			}
-
-
-			
-
-			
 		}
 
 		// Resource Depot (central stuff or something)
 		else if (u->getType().isResourceDepot()) {
-			if (u->isIdle() && Broodwar->self()->minerals() >= 50 && 
+			if (u->isIdle() && Broodwar->self()->minerals() >= 50 + reservedMinerals &&
 				(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
 				u->train(u->getType().getRace().getWorker());
 			}
@@ -77,51 +71,33 @@ void ExampleAIModule::onFrame() {
 			}
 
 			// Build Gateways
-			if (/*gatewayCount <= 3 && */Broodwar->self()->minerals() >= 150 + reservedMinerals) {
-				UnitType gateway = UnitTypes::Protoss_Gateway;
-				static int lastCheck = 0;
+			if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
+				UnitType building = UnitTypes::Protoss_Gateway;
+				Unit builder = u->getClosestUnit(GetType == building.whatBuilds().first &&
+					(IsIdle || IsGatheringMinerals) && IsOwned);
 
-				if (lastCheck + 400 < Broodwar->getFrameCount() &&
-					Broodwar->self()->incompleteUnitCount(gateway) == 0) {
+				if (builder) {
+					TilePosition buildLocation = Broodwar->getBuildLocation(building, builder->getTilePosition());
 
-					lastCheck = Broodwar->getFrameCount();
+					if (buildLocation) {
 
-					Unit gatewayBuilder = u->getClosestUnit(GetType == gateway.whatBuilds().first &&
-						(IsIdle || IsGatheringMinerals) && IsOwned);
+						// Box to display where the building is placed
+						Broodwar->registerEvent([buildLocation, building](Game*) {
+							Broodwar->drawBoxMap(Position(buildLocation),
+								Position(buildLocation + building.tileSize()),
+								Colors::Blue);
+						}, nullptr,
+							building.buildTime() + 100);
 
-					if (gatewayBuilder) {
-						TilePosition buildLocation = Broodwar->getBuildLocation(gateway, gatewayBuilder->getTilePosition());
+						// Build the building
+						builder->build(building, buildLocation);
 
-						if (buildLocation) {
-
-							// Box to display where we make the gateway
-							Broodwar->registerEvent([buildLocation, gateway](Game*) {
-								Broodwar->drawBoxMap(Position(buildLocation),
-									Position(buildLocation + gateway.tileSize()),
-									Colors::Blue);
-							}, nullptr,
-								gateway.buildTime() + 100);
-
-							// Making the gateway
-							gatewayBuilder->build(gateway, buildLocation);
-
-							gatewayCount++;
-							reservedMinerals += 150;
-
-						}
+						gatewayCount++;
+						reservedMinerals += 150;
 					}
-
-
 				}
-
-
 			}
-
-
 		}
-
-
-
 	}
 }
 
@@ -215,7 +191,7 @@ void ExampleAIModule::buildPylon(BWAPI::Unit u) {
 
 			if (buildLocation) {
 
-				// Box to display where we make the pylon
+				// Box to display where the building is placed
 				Broodwar->registerEvent([buildLocation, pylon](Game*) {
 					Broodwar->drawBoxMap(Position(buildLocation),
 						Position(buildLocation + pylon.tileSize()),
@@ -223,7 +199,7 @@ void ExampleAIModule::buildPylon(BWAPI::Unit u) {
 				}, nullptr,
 					pylon.buildTime() + 100);
 
-				// Making the pylon
+				// Making the building
 				supplyBuilder->build(pylon, buildLocation);
 
 				pylonCount++;
