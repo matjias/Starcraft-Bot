@@ -73,27 +73,34 @@ void ExampleAIModule::onFrame() {
 			// Build Gateways
 			if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
 				UnitType building = UnitTypes::Protoss_Gateway;
-				Unit builder = u->getClosestUnit(GetType == building.whatBuilds().first &&
-					(IsIdle || IsGatheringMinerals) && IsOwned);
+				static int lastCheck = 0;
 
-				if (builder) {
-					TilePosition buildLocation = Broodwar->getBuildLocation(building, builder->getTilePosition());
+				if (lastCheck + 400 < Broodwar->getFrameCount()) {
 
-					if (buildLocation) {
+					lastCheck = Broodwar->getFrameCount();
 
-						// Box to display where the building is placed
-						Broodwar->registerEvent([buildLocation, building](Game*) {
-							Broodwar->drawBoxMap(Position(buildLocation),
-								Position(buildLocation + building.tileSize()),
-								Colors::Blue);
-						}, nullptr,
-							building.buildTime() + 100);
+					Unit builder = u->getClosestUnit(GetType == building.whatBuilds().first &&
+						(IsIdle || IsGatheringMinerals) && IsOwned);
 
-						// Build the building
-						builder->build(building, buildLocation);
+					if (builder) {
+						TilePosition buildLocation = Broodwar->getBuildLocation(building, builder->getTilePosition());
 
-						gatewayCount++;
-						reservedMinerals += 150;
+						if (buildLocation) {
+
+							// Box to display where the building is placed
+							Broodwar->registerEvent([buildLocation, building](Game*) {
+								Broodwar->drawBoxMap(Position(buildLocation),
+									Position(buildLocation + building.tileSize()),
+									Colors::Blue);
+							}, nullptr,
+								building.buildTime() + 100);
+
+							// Build the building
+							builder->build(building, buildLocation);
+
+							gatewayCount++;
+							reservedMinerals += 150;
+						}
 					}
 				}
 			}
