@@ -3,8 +3,7 @@
 
 // Remember not to use "Broodwar" in any global class constructor!
 
-class ExampleAIModule : public BWAPI::AIModule
-{
+class ExampleAIModule : public BWAPI::AIModule {
 public:
   // Virtual functions for callbacks, leave these as they are.
   virtual void onStart();
@@ -25,6 +24,8 @@ public:
   virtual void onSaveGame(std::string gameName);
   virtual void onUnitComplete(BWAPI::Unit unit);
   // Everything below this line is safe to modify.
+
+
   bool supplyNeeded(BWAPI::Unit u);
   void buildSupply(BWAPI::Unit u);
   bool workerNeeded(BWAPI::Unit u);

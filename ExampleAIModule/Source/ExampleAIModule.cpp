@@ -179,6 +179,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
 		zealots.push_back(unit);
 		reservedMinerals -= 100;
+	}
 
 	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
 		scoutClass.foundEnemyBase(TilePosition(unit->getPosition()));
