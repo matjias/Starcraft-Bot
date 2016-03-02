@@ -65,10 +65,19 @@ void ExampleAIModule::onFrame() {
 				u->train(u->getType().getRace().getWorker());
 			}
 
-			// Supply is getting low.. Might need another Pylon now
-			if (pylonNeeded(u)) {
-				buildPylon(u);
+			/*if (nexusDestroyd && !baseUnderAttack) {
+				rebuildNexus();
+			}*/
+			
+			if (supplyNeeded(u)) {
+				buildSupply(u);
 			}
+
+			if (workerNeeded(u)) {
+				buildWorker(u);
+			}
+
+
 
 			// Build Gateways
 			if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
@@ -174,14 +183,14 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 
 }
 
-bool ExampleAIModule::pylonNeeded(BWAPI::Unit u) {
+bool ExampleAIModule::supplyNeeded(BWAPI::Unit u) {
 	if (availableSupply <= nexusCount + gatewayCount * 2 && Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY && Broodwar->self()->minerals() >= 100 + reservedMinerals) {
 		return true;
 	}
 	return false;
 }
 
-void ExampleAIModule::buildPylon(BWAPI::Unit u) {
+void ExampleAIModule::buildSupply(BWAPI::Unit u) {
 	UnitType pylon = u->getType().getRace().getSupplyProvider();
 	static int lastCheck = 0;
 

@@ -25,6 +25,8 @@ public:
   virtual void onSaveGame(std::string gameName);
   virtual void onUnitComplete(BWAPI::Unit unit);
   // Everything below this line is safe to modify.
-  bool pylonNeeded(BWAPI::Unit u);
-  void buildPylon(BWAPI::Unit u);
+  bool supplyNeeded(BWAPI::Unit u);
+  void buildSupply(BWAPI::Unit u);
+  bool workerNeeded(BWAPI::Unit u);
+  void buildWorker(BWAPI::Unit u);
 };
