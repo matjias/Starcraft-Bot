@@ -12,10 +12,13 @@ public:
 	void updateScout();
 	bool endScouting();
 	int getDistance();
+	void foundEnemyBase(BWAPI::TilePosition loc);
+	
 
 
 	int getX();
 	int getY();
 
-
+	bool returnFoundEnemyBase();
+	BWAPI::Position returnEnemyBaseLocs();
 };
