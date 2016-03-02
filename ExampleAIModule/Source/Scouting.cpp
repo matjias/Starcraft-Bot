@@ -11,6 +11,8 @@ struct ScoutStruct {
 std::vector<ScoutStruct*> currentScouts;
 TilePosition::list spawnLocations;
 TilePosition ownLocation;
+bool foundEnemy;
+TilePosition enemyBaseLoc;
 
 Scouting::Scouting() { }
 
@@ -62,6 +64,19 @@ bool Scouting::assignScout(Unit scout) {
 	scout->move(locationToScout);
 
 	return true;
+}
+
+void Scouting::foundEnemyBase(TilePosition loc) {
+	foundEnemy = true;
+	enemyBaseLoc = loc;
+}
+
+bool Scouting::returnFoundEnemyBase() {
+	return foundEnemy;
+}
+
+Position Scouting::returnEnemyBaseLocs() {
+	return Position(enemyBaseLoc);
 }
 
 int Scouting::getX() {

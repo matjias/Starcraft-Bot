@@ -46,6 +46,12 @@ void ExampleAIModule::onFrame() {
 	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
 	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
+
+	Broodwar->drawTextScreen(200, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
+	Broodwar->drawTextScreen(350, 60, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
+
+
+
 	
 	// AI Logic goes here
 
@@ -159,6 +165,10 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 	if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
 		reservedMinerals -= 150;
+	}
+
+	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
+		scoutClass.foundEnemyBase(TilePosition(unit->getPosition()));
 	}
 	
 }
