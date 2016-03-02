@@ -1,4 +1,6 @@
+#pragma once
 #include "ExampleAIModule.h"
+#include "Scouting.h"
 #include <iostream>
 
 using namespace BWAPI;
@@ -15,11 +17,17 @@ int nexusCount;
 int pylonCount;
 int gatewayCount;
 
+Scouting scoutClass;
+
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
 	Broodwar->setCommandOptimizationLevel(2);
 	
 	nexusCount = 1;
+
+
+	// Scouting stuff
+	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -35,6 +43,8 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 60, "Worker Count: %d", workerCount);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
+	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
+	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
 	
 	// AI Logic goes here
 
@@ -48,6 +58,12 @@ void ExampleAIModule::onFrame() {
 		// Worker logic
 		// Currently only mining minerals
 		if (u->getType().isWorker()) {
+			if (!scoutClass.isScouting()) {
+				scoutClass.assignScout(u);
+			}
+
+
+
 			// Gotta mine dem bitcoins
 			if (u->isIdle()) {
 				if (u->isCarryingMinerals()) {
@@ -72,10 +88,10 @@ void ExampleAIModule::onFrame() {
 			if (supplyNeeded(u)) {
 				buildSupply(u);
 			}
-
+			/*
 			if (workerNeeded(u)) {
 				buildWorker(u);
-			}
+			}*/
 
 
 
