@@ -28,5 +28,6 @@ public:
   bool supplyNeeded(BWAPI::Unit u);
   void buildSupply(BWAPI::Unit u);
   bool workerNeeded(BWAPI::Unit u);
+  bool canBuildWorker(BWAPI::Unit u);
   void buildWorker(BWAPI::Unit u);
 };
