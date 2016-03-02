@@ -30,4 +30,5 @@ public:
   bool workerNeeded(BWAPI::Unit u);
   bool canBuildWorker(BWAPI::Unit u);
   void buildWorker(BWAPI::Unit u);
+  void buildZealot();
 };

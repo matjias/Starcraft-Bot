@@ -18,6 +18,9 @@ int nexusCount;
 int pylonCount;
 int gatewayCount;
 
+std::vector<Unit>gateways;
+std::vector<Unit>zealots;
+
 Scouting scoutClass;
 
 void ExampleAIModule::onStart() {
@@ -75,6 +78,11 @@ void ExampleAIModule::onFrame() {
 			}
 		}
 
+		else if (Broodwar->self()->minerals()-reservedMinerals >= 100 && availableSupply >= 2 && !gateways.empty()){
+			reservedMinerals += 100;
+			buildZealot();
+		}
+
 		// Resource Depot (central stuff or something)
 		else if (u->getType().isResourceDepot()) {
 			if (u->isIdle() && Broodwar->self()->minerals() >= 50 + reservedMinerals &&
@@ -97,6 +105,7 @@ void ExampleAIModule::onFrame() {
 			// Build Gateways
 			if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
 				UnitType building = UnitTypes::Protoss_Gateway;
+
 				static int lastCheck = 0;
 
 				if (lastCheck + 400 < Broodwar->getFrameCount()) {
@@ -158,7 +167,12 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 		reservedMinerals -= 100;
 	}
 	if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
+		gateways.push_back(unit);
 		reservedMinerals -= 150;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
+		zealots.push_back(unit);
+		reservedMinerals -= 100;
 	}
 	
 }
@@ -260,4 +274,15 @@ bool ExampleAIModule::canBuildWorker(BWAPI::Unit u) {
 
 void ExampleAIModule::buildWorker(BWAPI::Unit u) {
 	u->train(u->getType().getRace().getWorker());
+}
+
+void ExampleAIModule::buildZealot(){
+
+	for(Unit gate : gateways){
+		if (gate->isConstructing()){
+			continue;
+		}
+		gate->build(UnitTypes::Protoss_Zealot);
+	}
+
 }
