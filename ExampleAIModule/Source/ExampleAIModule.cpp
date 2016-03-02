@@ -5,12 +5,13 @@ using namespace BWAPI;
 using namespace Filter;
 
 const int MAX_SUPPLY = 200;
+const int MAX_WORKERS = 100;
 
 int availableSupply;
-int workerCount;
 int reservedMinerals;
 int reservedGas;
 
+int workerCount;
 int nexusCount;
 int pylonCount;
 int gatewayCount;
@@ -73,11 +74,10 @@ void ExampleAIModule::onFrame() {
 				buildSupply(u);
 			}
 
-			if (workerNeeded(u)) {
+			if (canBuildWorker(u)
+			&& workerNeeded(u)) {
 				buildWorker(u);
 			}
-
-
 
 			// Build Gateways
 			if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
@@ -223,4 +223,26 @@ void ExampleAIModule::buildSupply(BWAPI::Unit u) {
 			}
 		}
 	}
+}
+
+bool ExampleAIModule::workerNeeded(BWAPI::Unit u) {
+	if (availableSupply >= 1
+	&& Broodwar->self()->minerals() >= 50 + reservedMinerals
+	&& u->getType().isResourceDepot()
+	&& Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0) {
+		return true;
+	}
+	return false;
+}
+
+bool ExampleAIModule::canBuildWorker(BWAPI::Unit u) {
+	if (workerCount < MAX_WORKERS
+	&& u->isIdle()) {
+		return true;
+	}
+	return false;
+}
+
+void ExampleAIModule::buildWorker(BWAPI::Unit u) {
+	u->train(u->getType().getRace().getWorker());
 }
