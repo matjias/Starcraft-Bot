@@ -3,7 +3,12 @@
 using namespace BWAPI;
 
 
-std::vector<Unit, TilePosition> currentScouts;
+struct ScoutStruct {
+	Unit scout;
+	TilePosition location;
+};
+
+std::vector<ScoutStruct*> currentScouts;
 TilePosition::list spawnLocations;
 TilePosition ownLocation;
 
@@ -31,17 +36,30 @@ bool assignScout(Unit scout) {
 		if (spawnLocations.at(i) != ownLocation) {
 			// See if that location is already being scouted
 			for (int j = 0; j < currentScouts.size(); j++) {
-				if (currentScouts.at(j)) {
-
+				if (currentScouts.at(j)->location != spawnLocations.at(i)) {
+					locationToScout = spawnLocations.at(i);
 				}
 			}
 
 		}
 	}
 
+	ScoutStruct *toPush = new ScoutStruct();
+	toPush->location = locationToScout;
+	toPush->scout = scout;
 
 
-	//currentScouts.insert(scout, locationToScout);
+	currentScouts.push_back(toPush);
+}
 
+void updateScout() {
 
+}
+
+bool endScouting() {
+	if (currentScouts.size() > 0) {
+		return false;
+	}
+
+	// Clear memory here
 }
