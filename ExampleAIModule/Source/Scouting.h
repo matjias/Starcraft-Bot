@@ -16,8 +16,12 @@ public:
 	
 
 
+	// DEBUG METHODS BELOW
+
 	int getX();
 	int getY();
+
+	BWAPI::TilePosition::list getSpawns();
 
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
