@@ -41,19 +41,25 @@ void ExampleAIModule::onEnd(bool isWinner) {
 void ExampleAIModule::onFrame() {
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
+	/*
 	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	Broodwar->drawTextScreen(200, 20, "Available Supply: %d", availableSupply);
 	//Broodwar->drawTextScreen(200, 60, "Worker Count: %d", workerCount);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
-	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
+	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);*/
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
 	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
 
-	Broodwar->drawTextScreen(200, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
-	Broodwar->drawTextScreen(350, 60, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
+	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
+	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
 
-
+	TilePosition::list spawns = scoutClass.getSpawns();
+	for (int i = 0; i < spawns.size(); i++) {
+		Broodwar->drawTextScreen(100, 20 * i + 10, "Spawn %i: x: %d,  y: %d, dist: %d", i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y, 
+			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))));
+	}
+	
 
 	
 	// AI Logic goes here
