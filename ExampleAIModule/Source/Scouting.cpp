@@ -62,7 +62,7 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 }
 
 bool Scouting::isScouting() {
-	if (currentScouts.size() > 0) 
+	if (currentScouts.size() > 0 && !foundEnemy) 
 		return true;
 
 	return false;
@@ -141,16 +141,56 @@ void Scouting::updateScout() {
 	/*if (currentScouts.size() > 0) {
 		currentScouts.at(0)->scout->getDistance(Position(currentScouts.at(0)->location))
 	}*/
+
+// One scout tactic
+	// Edge case - 1v1 map
+	if (currentLocations.size() == 2) {
+		foundEnemyBase(TilePosition(currentLocations.at(0)->location));
+	}
+
+	// Finds the next scout in the list
+	ScoutStruct *validScout;
+	int i = 0; // We want to save this i for later
+	while (i < currentScouts.size() - 1) {
+		if (!currentScouts.at(i)->scouted) {
+			validScout = currentScouts.at(i);
+			break;
+		}
+		i++;
+	}
+
+	if (validScout->scout->getType().sightRange() * validScout->scout->getType().sightRange() <=
+		validScout->location.x * validScout->location.x +
+		validScout->location.y * validScout->location.y &&
+		Broodwar->isVisible(TilePosition(validScout->location))) {
+		validScout->scouted = true;
+
+		if (currentLocations.size() > 2 && currentScouts.at(currentScouts.size() - 2)->scouted) {
+			foundEnemyBase(TilePosition(currentLocations.at(currentLocations.size() - 1)->location));
+		}
+		else {
+			validScout->scout->move(currentLocations.at(i + 1)->location);
+		}
+			
+	}
 }
 
 int Scouting::getDistance() {
 	// Currently assumes only one scout
-	if (currentScouts.size() > 0) {
+	/*if (currentScouts.size() > 0) {
 		return currentScouts.at(0)->scout->getDistance(currentScouts.at(0)->location);
 	}
 	else {
 		return -1;
+	}*/
+
+	for (int i = 0; i < currentScouts.size(); i++) {
+		if (!currentScouts.at(i)->scouted) {
+			return currentScouts.at(i)->scout->getDistance(currentScouts.at(i)->location);
+		}
 	}
+
+	return -1;
 }
 
 bool Scouting::endScouting() {
@@ -172,16 +212,22 @@ Position Scouting::returnEnemyBaseLocs() {
 }
 
 int Scouting::getX() {
-	if (currentScouts.size() > 0) {
-		return currentScouts.at(0)->location.x;
+	for (int i = 0; i < currentScouts.size(); i++) {
+		if (!currentScouts.at(i)->scouted) {
+			return currentScouts.at(i)->location.x;
+		}
 	}
+
 	return -1;
 }
 
 int Scouting::getY() {
-	if (currentScouts.size() > 0) {
-		return currentScouts.at(0)->location.y;
+	for (int i = 0; i < currentScouts.size(); i++) {
+		if (!currentScouts.at(i)->scouted) {
+			return currentScouts.at(i)->location.y;
+		}
 	}
+
 	return -1;
 }
 
