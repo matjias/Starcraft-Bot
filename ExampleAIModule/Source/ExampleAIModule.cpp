@@ -99,7 +99,7 @@ void ExampleAIModule::onFrame() {
 		}
 
 		// Resource Depot (central stuff or something)
-		else if (u->getType().isResourceDepot()) {
+		if (u->getType().isResourceDepot()) {
 			if (u->isIdle() && Broodwar->self()->minerals() >= 50 + reservedMinerals &&
 				(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
 				u->train(u->getType().getRace().getWorker());
@@ -155,7 +155,7 @@ void ExampleAIModule::onFrame() {
 		}
 		//Rush logic
 		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() && scoutClass.returnFoundEnemyBase()){
-			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE){
+			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE + gatewayCount){
 				u->attack(scoutClass.returnEnemyBaseLocs());
 			}
 
