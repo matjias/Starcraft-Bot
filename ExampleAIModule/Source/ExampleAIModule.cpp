@@ -63,6 +63,10 @@ void ExampleAIModule::onFrame() {
 
 	
 	// AI Logic goes here
+	if (scoutClass.isScouting()) {
+		scoutClass.updateScout();
+	}
+	
 
 	// All Units loop
 	for (auto &u : Broodwar->self()->getUnits()) {
@@ -74,7 +78,7 @@ void ExampleAIModule::onFrame() {
 		// Worker logic
 		// Currently only mining minerals
 		if (u->getType().isWorker()) {
-			if (!scoutClass.isScouting()) {
+			if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 			}
 
