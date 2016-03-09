@@ -77,10 +77,11 @@ void ExampleAIModule::onFrame() {
 		if (!u->exists() || !u->isCompleted()) {
 			continue;
 		}
-
+		
 		// Worker logic
 		// Currently only mining minerals
 		if (u->getType().isWorker()) {
+			
 			if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 			}
@@ -96,20 +97,15 @@ void ExampleAIModule::onFrame() {
 				}
 			}
 		}
-
-		else if (Broodwar->self()->minerals()-reservedMinerals >= 100 && availableSupply >= 2 && !gateways.empty()){
-			reservedMinerals += 100;
-			buildZealot();
-		}
-
+		
 		// Resource Depot (central stuff or something)
-		if (u->getType().isResourceDepot()) {
+		else if (u->getType().isResourceDepot()) {
 			if (u->isIdle() && Broodwar->self()->minerals() >= 50 + reservedMinerals &&
 				(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
 				u->train(u->getType().getRace().getWorker());
 			}
-
-			/*if (nexusDestroyd && !baseUnderAttack) {
+			/*
+			if (nexusDestroyd && !baseUnderAttack) {
 				rebuildNexus();
 			}*/
 			
@@ -157,6 +153,13 @@ void ExampleAIModule::onFrame() {
 				}
 			}
 		}
+		
+		
+		else if (u->getType() == UnitTypes::Protoss_Gateway && Broodwar->self()->minerals() - reservedMinerals >= 100 && availableSupply >= 2 && !gateways.empty()){
+			reservedMinerals += 100;
+			buildZealot(u);
+		}
+		
 		//Rush logic
 		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() && scoutClass.returnFoundEnemyBase()){
 			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE + gatewayCount){
@@ -306,12 +309,8 @@ void ExampleAIModule::buildWorker(BWAPI::Unit u) {
 	u->train(u->getType().getRace().getWorker());
 }
 
-void ExampleAIModule::buildZealot(){
-
-	for(Unit gate : gateways){
-		if (gate->isIdle()){
-			gate->build(UnitTypes::Protoss_Zealot);
-		}
+void ExampleAIModule::buildZealot(BWAPI::Unit gate){
+	if (gate->isIdle()){
+		gate->build(UnitTypes::Protoss_Zealot);
 	}
-
 }
