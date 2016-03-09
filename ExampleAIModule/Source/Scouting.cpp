@@ -19,7 +19,7 @@ std::vector<ScoutStruct*> currentScouts;
 
 std::vector<LocationStruct*> currentLocations;
 
-bool foundEnemy;
+bool foundEnemy, knowsEnemy;
 TilePosition enemyBaseLoc;
 
 Scouting::Scouting() { }
@@ -29,7 +29,6 @@ Scouting::~Scouting() { }
 void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 	TilePosition::list unsortedSpawns = locs;
 
-	// TODO: Check logic...  (logic checked and should now be less flawed)
 	// Currently just insertion sorting but should be fine for such a small data set
 	for (int i = 0; i < unsortedSpawns.size() - 1; i++) {
 		if (unsortedSpawns.at(i) != loc) {
@@ -120,10 +119,11 @@ void Scouting::oneScoutAll(Unit u) {
 		if (i == 0) {
 			u->move(currentLocations.at(i)->location);
 		}
-		else {
-			u->move(currentLocations.at(i)->location, true);
-		}
+		//else {
+		//	u->move(currentLocations.at(i)->location, true);
+		//}
 
+		
 		ScoutStruct *toPush = new ScoutStruct();
 		toPush->scout = u;
 		toPush->location = currentLocations.at(i)->location;
@@ -142,7 +142,8 @@ void Scouting::updateScout() {
 		currentScouts.at(0)->scout->getDistance(Position(currentScouts.at(0)->location))
 	}*/
 
-// One scout tactic
+	// One scout tactic
+
 	// Edge case - 1v1 map
 	if (currentLocations.size() == 2) {
 		foundEnemyBase(TilePosition(currentLocations.at(0)->location));
@@ -151,7 +152,7 @@ void Scouting::updateScout() {
 	// Finds the next scout in the list
 	ScoutStruct *validScout;
 	int i = 0; // We want to save this i for later
-	while (i < currentScouts.size() - 1) {
+	while (i < currentScouts.size()) {
 		if (!currentScouts.at(i)->scouted) {
 			validScout = currentScouts.at(i);
 			break;
