@@ -9,8 +9,16 @@ struct ScoutStruct {
 	bool scouted;
 };
 
+struct LocationStruct {
+	Position location;
+	bool scouted;
+};
+
 std::vector<ScoutStruct*> currentScouts;
-TilePosition::list spawnLocations;
+//TilePosition::list spawnLocations;
+
+std::vector<LocationStruct*> currentLocations;
+
 bool foundEnemy;
 TilePosition enemyBaseLoc;
 
@@ -43,7 +51,14 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 		}
 	}
 
-	spawnLocations = unsortedSpawns;
+	for (int i = 0; i < unsortedSpawns.size(); i++) {
+		LocationStruct *locStruct = new LocationStruct();
+		locStruct->location = Position(unsortedSpawns.at(i));
+		locStruct->scouted = false;
+		currentLocations.push_back(locStruct);
+	}
+
+	//spawnLocations = unsortedSpawns;
 }
 
 bool Scouting::isScouting() {
@@ -54,17 +69,23 @@ bool Scouting::isScouting() {
 }
 
 bool Scouting::assignScout(Unit scout) {
-	if (foundEnemy || currentScouts.size() >= spawnLocations.size() - 1) {
+	if (foundEnemy || currentScouts.size() >= currentLocations.size() - 1) {
 		// Currently not going to assign a scout if we have found the enemy
 		// or if we have enough scouts out to check every location at once
 		return false;
 	}
 
+	// Scouts everything in the sorted list
+	oneScoutAll(scout);
+	return true;
+
+
+
 	// Get location to scout
-	Position locationToScout;
+	//Position locationToScout;
 
 	
-	for (int i = 0; i < spawnLocations.size() - 1; i++) {
+	//for (int i = 0; i < currentLocations.size() - 1; i++) {
 		// Check if we already have scouts out
 		// TODO: Fix logic, list should be ordered now for easier scouting
 		/*if (currentScouts.size() > 0) {
@@ -75,21 +96,40 @@ bool Scouting::assignScout(Unit scout) {
 				}
 			}
 		} else {*/
-			locationToScout = Position(spawnLocations.at(i));
-			break;
+	//	locationToScout = Position(currentLocations.at(i)->location);
+	//		break;
 		//}
-	}
+	//}
 
+	//return assignScoutandLoc(scout, locationToScout);
+}
+
+bool Scouting::assignScoutandLoc(Unit scout, Position loc) {
 	ScoutStruct *toPush = new ScoutStruct();
-	toPush->location = locationToScout;
 	toPush->scout = scout;
+	toPush->location = loc;
 
 	currentScouts.push_back(toPush);
-
-	// Begin scouting
-	scout->move(locationToScout);
+	scout->move(loc);
 
 	return true;
+}
+
+void Scouting::oneScoutAll(Unit u) {
+	for (int i = 0; i < currentLocations.size() - 1; i++) {
+		if (i == 0) {
+			u->move(currentLocations.at(i)->location);
+		}
+		else {
+			u->move(currentLocations.at(i)->location, true);
+		}
+
+		ScoutStruct *toPush = new ScoutStruct();
+		toPush->scout = u;
+		toPush->location = currentLocations.at(i)->location;
+
+		currentScouts.push_back(toPush);
+	}
 }
 
 void Scouting::foundEnemyBase(TilePosition loc) {
@@ -146,5 +186,10 @@ int Scouting::getY() {
 }
 
 TilePosition::list Scouting::getSpawns() {
-	return spawnLocations;
+	TilePosition::list returnLocs;
+	for (int i = 0; i < currentLocations.size(); i++) {
+		returnLocs.push_back(TilePosition(currentLocations.at(i)->location));
+	}
+	
+	return returnLocs;
 }
