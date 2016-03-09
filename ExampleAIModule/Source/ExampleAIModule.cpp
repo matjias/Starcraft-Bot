@@ -8,6 +8,7 @@ using namespace Filter;
 
 const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
+const int ZEALOT_RUSH_SIZE = 5;
 
 int availableSupply;
 int reservedMinerals;
@@ -53,6 +54,8 @@ void ExampleAIModule::onFrame() {
 
 	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
 	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
+
+	Broodwar->drawTextScreen(350, 100, "Zeallala: %i", zealots.size());
 
 	TilePosition::list spawns = scoutClass.getSpawns();
 	for (int i = 0; i < spawns.size(); i++) {
@@ -149,6 +152,13 @@ void ExampleAIModule::onFrame() {
 					}
 				}
 			}
+		}
+		//Rush logic
+		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() && scoutClass.returnFoundEnemyBase()){
+			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE){
+				u->attack(scoutClass.returnEnemyBaseLocs());
+			}
+
 		}
 	}
 }
@@ -295,10 +305,9 @@ void ExampleAIModule::buildWorker(BWAPI::Unit u) {
 void ExampleAIModule::buildZealot(){
 
 	for(Unit gate : gateways){
-		if (gate->isConstructing()){
-			continue;
+		if (gate->isIdle()){
+			gate->build(UnitTypes::Protoss_Zealot);
 		}
-		gate->build(UnitTypes::Protoss_Zealot);
 	}
 
 }
