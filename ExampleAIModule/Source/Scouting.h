@@ -21,12 +21,15 @@ public:
 
 	int getX();
 	int getY();
+	BWAPI::Position getScout();
 
 	BWAPI::TilePosition::list getSpawns();
+	BWAPI::TilePosition::list getDynamicSpawns();
 
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
 
 private:
 	void oneScoutAll(BWAPI::Unit u);
+	void updateToScoutList();
 };

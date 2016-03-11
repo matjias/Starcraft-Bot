@@ -17,7 +17,7 @@ struct LocationStruct {
 std::vector<ScoutStruct*> currentScouts;
 //TilePosition::list spawnLocations;
 
-std::vector<LocationStruct*> currentLocations;
+std::vector<LocationStruct*> currentLocations, tempUpdatedLocations;
 
 bool foundEnemy, knowsEnemy;
 TilePosition enemyBaseLoc;
@@ -47,15 +47,33 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 			TilePosition buf = unsortedSpawns.at(unsortedSpawns.size() - 1);
 			unsortedSpawns.at(unsortedSpawns.size() - 1) = unsortedSpawns.at(i);
 			unsortedSpawns.at(i) = buf;
+
+			// Still need to sort what we just changed, because we cannot
+			// ensure that it is unsorted from the switch
+			for (int j = i; j > 0; j--) {
+				if (unsortedSpawns.at(j).getApproxDistance(loc) < unsortedSpawns.at(j - 1).getApproxDistance(loc)) {
+					TilePosition buf = unsortedSpawns.at(j - 1);
+					unsortedSpawns.at(j - 1) = unsortedSpawns.at(j);
+					unsortedSpawns.at(j) = buf;
+				}
+			}
 		}
 	}
 
 	for (int i = 0; i < unsortedSpawns.size(); i++) {
 		LocationStruct *locStruct = new LocationStruct();
 		locStruct->location = Position(unsortedSpawns.at(i));
-		locStruct->scouted = false;
+
+		if (i == unsortedSpawns.size() - 1) {
+			locStruct->scouted = true; // This is our own spawn, so we have already 'scouted' it
+		} else {
+			locStruct->scouted = false;
+		}
+		
 		currentLocations.push_back(locStruct);
 	}
+
+	tempUpdatedLocations = currentLocations;
 
 	//spawnLocations = unsortedSpawns;
 }
@@ -153,7 +171,7 @@ void Scouting::updateScout() {
 	ScoutStruct *validScout;
 	int i = 0; // We want to save this i for later
 	while (i < currentScouts.size()) {
-		if (!currentScouts.at(i)->scouted) {
+		if (currentScouts.at(i)->location == tempUpdatedLocations.at(0)->location) {
 			validScout = currentScouts.at(i);
 			break;
 		}
@@ -166,13 +184,78 @@ void Scouting::updateScout() {
 		Broodwar->isVisible(TilePosition(validScout->location))) {
 		validScout->scouted = true;
 
-		if (currentLocations.size() > 2 && currentScouts.at(currentScouts.size() - 2)->scouted) {
-			foundEnemyBase(TilePosition(currentLocations.at(currentLocations.size() - 1)->location));
+		Broodwar->drawTextScreen(300, 300, "Finished seeing location");
+
+		if (tempUpdatedLocations.size() > 2 && tempUpdatedLocations.at(currentScouts.size() - 2)->scouted) {
+			foundEnemyBase(TilePosition(tempUpdatedLocations.at(tempUpdatedLocations.size() - 1)->location));
 		}
 		else {
-			validScout->scout->move(currentLocations.at(i + 1)->location);
+			validScout->scout->move(tempUpdatedLocations.at(i + 1)->location);
 		}
 			
+	}
+
+	//updateToScoutList();
+}
+
+void Scouting::updateToScoutList() {
+	/* 
+		!!!!! CURRENTLY CRASHES THE GAME !!!!!
+		When the tempUpdatedLocations is swapping places it crashes for some
+		weird reason, have yet to identify what it is (did not have this problem earlier
+		so source of the problem might not even be in this function).
+	*/
+
+
+	// Variable to check if we should move our scout elsewhere
+	bool updatedList = false;
+
+	// No need for all these if we already know where the enemy is
+	if (!foundEnemy) {
+		
+
+		// Go through out location list, except for our own spawn
+		for (int i = 0; i < tempUpdatedLocations.size() - 2; i++) {
+			if (tempUpdatedLocations[i]->scouted) {
+				// Move back in list
+				for (int j = i; j < tempUpdatedLocations.size() - 1; j++) {
+					if (!tempUpdatedLocations.at(j + 1)->scouted) {
+						LocationStruct *tempLoc = new LocationStruct;
+						tempLoc = tempUpdatedLocations.at(j);
+						tempUpdatedLocations.at(j) = tempUpdatedLocations.at(j + 1);
+						tempUpdatedLocations.at(j + 1) = tempLoc;
+
+						updatedList = true;
+					} else {
+						// Finished looping through our list everything, we can break now
+						j = tempUpdatedLocations.size();
+					}
+				}
+			}
+			else if (currentScouts.at(i)->scout->getDistance(tempUpdatedLocations.at(i)->location) >
+				currentScouts.at(i)->scout->getDistance(tempUpdatedLocations.at(i + 1)->location)) {
+				// Move back in list
+				for (int j = i; j < tempUpdatedLocations.size() - 1; j++) {
+					if (currentScouts.at(i)->scout->getDistance(tempUpdatedLocations.at(j)->location) >
+						currentScouts.at(i)->scout->getDistance(tempUpdatedLocations.at(j + 1)->location)) {
+						LocationStruct *tempLoc = new LocationStruct;
+						tempLoc = tempUpdatedLocations.at(j);
+						tempUpdatedLocations.at(j) = tempUpdatedLocations.at(j + 1);
+						tempUpdatedLocations.at(j + 1) = tempLoc;
+
+						updatedList = true;
+					}
+				}
+			}
+		}
+	}
+
+	if (updatedList) {
+		for (int i = 0; i < currentScouts.size(); i++) {
+			if (!currentScouts.at(i)->scouted) {
+				currentScouts.at(i)->scout->move(tempUpdatedLocations.at(0)->location);
+			}
+		}
 	}
 }
 
@@ -232,11 +315,30 @@ int Scouting::getY() {
 	return -1;
 }
 
+Position Scouting::getScout() {
+	for (int i = 0; i < currentScouts.size(); i++) {
+		if (!currentScouts.at(i)->scouted) {
+			return currentScouts.at(i)->scout->getPosition();
+		}
+	}
+
+	return Position(-1, -1);
+}
+
 TilePosition::list Scouting::getSpawns() {
 	TilePosition::list returnLocs;
 	for (int i = 0; i < currentLocations.size(); i++) {
 		returnLocs.push_back(TilePosition(currentLocations.at(i)->location));
 	}
 	
+	return returnLocs;
+}
+
+TilePosition::list Scouting::getDynamicSpawns() {
+	TilePosition::list returnLocs;
+	for (int i = 0; i < currentLocations.size(); i++) {
+		returnLocs.push_back(TilePosition(tempUpdatedLocations.at(i)->location));
+	}
+
 	return returnLocs;
 }

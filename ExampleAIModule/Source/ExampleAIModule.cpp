@@ -57,10 +57,21 @@ void ExampleAIModule::onFrame() {
 
 	Broodwar->drawTextScreen(350, 100, "Zeallala: %i", zealots.size());
 
+	/*
 	TilePosition::list spawns = scoutClass.getSpawns();
 	for (int i = 0; i < spawns.size(); i++) {
-		Broodwar->drawTextScreen(100, 20 * i + 10, "Spawn %i: x: %d,  y: %d, dist: %d", i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y, 
-			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))));
+		Broodwar->drawTextScreen(50, 20 * i + 10, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d", 
+			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y, 
+			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))), 
+			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))));
+	}
+	*/
+	TilePosition::list spawns = scoutClass.getDynamicSpawns();
+	for (int i = 0; i < spawns.size(); i++) {
+		Broodwar->drawTextScreen(50, 20 * i + 10, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d",
+			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y,
+			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))),
+			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))));
 	}
 	
 
