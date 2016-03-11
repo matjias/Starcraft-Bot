@@ -24,10 +24,20 @@ public:
   virtual void onUnitRenegade(BWAPI::Unit unit);
   virtual void onSaveGame(std::string gameName);
   virtual void onUnitComplete(BWAPI::Unit unit);
+
   // Everything below this line is safe to modify.
-  bool supplyNeeded(BWAPI::Unit u);
-  void buildSupply(BWAPI::Unit u);
-  bool workerNeeded(BWAPI::Unit u);
-  bool canBuildWorker(BWAPI::Unit u);
-  void buildWorker(BWAPI::Unit u);
+
+  void mineMinerals(BWAPI::Unit u);
+  void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
+
+  bool pylonNeeded();
+  bool canBuildSupply();
+  bool gatewayNeeded();
+  bool canBuildGateway();
+  bool workerNeeded();
+  bool canbuildProbe();
+  void buildProbe(BWAPI::Unit u);
+  bool zealotNeeded();
+  void buildZealot(BWAPI::Unit u);
+
 };
