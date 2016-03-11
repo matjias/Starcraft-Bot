@@ -1,26 +1,31 @@
-﻿Build started 11/03/2016 23:19:50.
+﻿Build started 12/03/2016 00:03:01.
      1>Project "D:\Users\Dariush\Documents\GitHub\Starcraft-Bot\ExampleAIModule\ExampleAIModule.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /Zi /nologo /W3 /WX- /MP /O2 /Oi /Oy- /GL /D NOMINMAX /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D EXAMPLEAIMODULE_EXPORTS /D _WINDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\Dll.cpp Source\ExampleAIModule.cpp Source\Scouting.cpp
-         Dll.cpp
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /Zi /nologo /W3 /WX- /MP /O2 /Oi /Oy- /GL /D NOMINMAX /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D EXAMPLEAIMODULE_EXPORTS /D _WINDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\ExampleAIModule.cpp Source\Scouting.cpp
          ExampleAIModule.cpp
          Scouting.cpp
      1>Source\Scouting.cpp(33): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(53): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(118): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(155): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(188): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(63): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(136): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(173): warning C4018: '<' : signed/unsigned mismatch
      1>Source\ExampleAIModule.cpp(78): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(216): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(226): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(237): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\Scouting.cpp(245): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(92): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(136): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(148): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(160): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(172): warning C4018: '<' : signed/unsigned mismatch
-     1>Source\ExampleAIModule.cpp(449): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(218): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(221): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(238): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(101): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(254): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(271): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(299): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(147): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(309): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(319): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(330): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(338): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\Scouting.cpp(349): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(159): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(171): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(183): warning C4018: '<' : signed/unsigned mismatch
+     1>Source\ExampleAIModule.cpp(460): warning C4018: '<' : signed/unsigned mismatch
        Link:
          D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\Dariush\Documents\GitHub\Starcraft-Bot\ExampleAIModule\Release\ExampleAIModule.dll" /INCREMENTAL:NO /NOLOGO ../lib/BWAPI.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\Dariush\Documents\GitHub\Starcraft-Bot\ExampleAIModule\Release\ExampleAIModule.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Release\ExampleAIModule.lib" /MACHINE:X86 /SAFESEH /DLL Release\Dll.obj
          Release\ExampleAIModule.obj
@@ -33,4 +38,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.77
+Time Elapsed 00:00:05.72

@@ -334,7 +334,6 @@ TilePosition::list Scouting::getSpawns() {
 	return returnLocs;
 }
 
-<<<<<<< HEAD
 bool Scouting::isScout(Unit u) {
 	for (int i = 0; i < currentScouts.size(); i++) {
 		if (u == currentScouts[i]->scout) {
@@ -344,7 +343,7 @@ bool Scouting::isScout(Unit u) {
 
 	return false;
 }
-=======
+
 TilePosition::list Scouting::getDynamicSpawns() {
 	TilePosition::list returnLocs;
 	for (int i = 0; i < currentLocations.size(); i++) {
@@ -353,4 +352,3 @@ TilePosition::list Scouting::getDynamicSpawns() {
 
 	return returnLocs;
 }
->>>>>>> 3ca99eb77015b46df852b768dcd8173b8b830949
