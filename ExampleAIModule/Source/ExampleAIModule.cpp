@@ -1,4 +1,6 @@
+#pragma once
 #include "ExampleAIModule.h"
+#include "Scouting.h"
 #include <iostream>
 #include <vector>
 
@@ -9,6 +11,7 @@ const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
 const int MINERAL_SURPLUS_LIMIT = 1000;
 const int GAS_SURPLUS_LIMIT = 1000;
+const int ZEALOT_RUSH_SIZE = 18;
 
 Unit builder;
 
@@ -39,6 +42,11 @@ int zealotsQueued;
 std::vector<UnitType>builderOrder;
 std::vector<UnitType>investmentList;
 
+std::vector<Unit>gateways;
+std::vector<Unit>zealots;
+
+Scouting scoutClass;
+
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
 	Broodwar->setCommandOptimizationLevel(2);
@@ -50,6 +58,9 @@ void ExampleAIModule::onStart() {
 	builder = 0;
 
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
+
+	// Scouting stuff
+	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -57,20 +68,30 @@ void ExampleAIModule::onEnd(bool isWinner) {
 }
 
 void ExampleAIModule::onFrame() {
+	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
+
 	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
-
-	if (builder == 0) {
-		Broodwar->drawTextScreen(200, 40, "No builder");
-	}
-	else {
-		Broodwar->drawTextScreen(200, 40, "Yes builder");
-	}
 	
 	for (int i = 0; i < investmentList.size(); i++) {
 		Broodwar->drawTextScreen(200, 60 + i * 20, "%i: %s", i, investmentList.at(i).c_str());
+	}
+
+	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
+	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
+	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
+
+	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
+	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
+
+	Broodwar->drawTextScreen(350, 100, "Zeallala: %i", zealots.size());
+
+	TilePosition::list spawns = scoutClass.getSpawns();
+	for (int i = 0; i < spawns.size(); i++) {
+		Broodwar->drawTextScreen(100, 20 * i + 10, "Spawn %i: x: %d,  y: %d, dist: %d", i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y, 
+			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))));
 	}
 	
 	Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
@@ -84,7 +105,10 @@ void ExampleAIModule::onFrame() {
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
 	// AI Logic goes here
-
+	if (scoutClass.isScouting()) {
+		scoutClass.updateScout();
+	}
+	
 	// Add resource invesments
 	if (pylonNeeded()) {
 		investmentList.push_back(UnitTypes::Protoss_Pylon);
@@ -162,14 +186,24 @@ void ExampleAIModule::onFrame() {
 		if (!u->exists() || !u->isCompleted()) {
 			continue;
 		}
-
+		
 		// Worker logic
 		if (u->getType().isWorker()) {
 
-			if (builder == 0 /*&& u != scout*/) {
-				builder = u;
+			// Assign scout
+			if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
+				scoutClass.assignScout(u);
+				if (u == builder) {
+					builder = 0;
+				}
 			}
 
+			// Assign builder
+			if (builder == 0 && !scoutClass.isScout(u)) {
+				builder = u;
+			}
+			
+			// Assign build command
 			if (u == builder
 				&& !investmentList.empty()
 				&& investmentList[0].isBuilding()
@@ -177,9 +211,36 @@ void ExampleAIModule::onFrame() {
 				&& Broodwar->self()->gas() >= investmentList[0].gasPrice() + reservedGas) {
 				buildBuilding(u, investmentList[0]);
 			}
-			else {
+
+			// Mine minerals
+			else if (!scoutClass.isScout(u)) {
 				mineMinerals(u);
 			}
+			
+			// Gotta mine dem bitcoins
+			/*if (u->isIdle()) {
+				if (u->isCarryingMinerals()) {
+					u->returnCargo();
+				} else {
+					u->gather(u->getClosestUnit(IsMineralField));
+				}
+			}
+		}
+		
+		// Resource Depot (central stuff or something)
+		else if (u->getType().isResourceDepot()) {
+			if (u->isIdle() && Broodwar->self()->minerals() >= 50 + reservedMinerals &&
+				(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
+				u->train(u->getType().getRace().getWorker());
+			}
+			
+			if (supplyNeeded(u)) {
+				buildSupply(u);
+			}
+
+			if (canBuildWorker(u) && workerNeeded(u)) {
+				buildWorker(u);*/
+			
 		}
 
 		// Nexus logic
@@ -194,6 +255,35 @@ void ExampleAIModule::onFrame() {
 			buildProbe(u);
 		}
 
+			// Build Gateways
+			/*if (Broodwar->self()->minerals() >= 150 + reservedMinerals) {
+				UnitType building = UnitTypes::Protoss_Gateway;
+
+				static int lastCheck = 0;
+
+				if (lastCheck + 400 < Broodwar->getFrameCount()) {
+
+					lastCheck = Broodwar->getFrameCount();
+
+					Unit builder = u->getClosestUnit(GetType == building.whatBuilds().first &&
+						(IsIdle || IsGatheringMinerals) && IsOwned);
+
+					if (builder) {
+						TilePosition buildLocation = Broodwar->getBuildLocation(building, builder->getTilePosition());
+
+						if (buildLocation) {
+
+							// Box to display where the building is placed
+							Broodwar->registerEvent([buildLocation, building](Game*) {
+								Broodwar->drawBoxMap(Position(buildLocation),
+									Position(buildLocation + building.tileSize()),
+									Colors::Blue);
+							}, nullptr,
+								building.buildTime() + 100);
+
+							// Build the building
+							builder->build(building, buildLocation);*/
+
 		// Gateway logic
 		else if (u->getType() == UnitTypes::Protoss_Gateway
 			&& u->isIdle()
@@ -205,9 +295,21 @@ void ExampleAIModule::onFrame() {
 			//(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
 			buildZealot(u);
 		}
+		
+		
+		/*else if (u->getType() == UnitTypes::Protoss_Gateway && Broodwar->self()->minerals() - reservedMinerals >= 100 && availableSupply >= 2 && !gateways.empty()){
+			reservedMinerals += 100;
+			buildZealot(u);
+		}*/
+		
+		// Zealot attack logic
+		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() /*&& scoutClass.returnFoundEnemyBase()*/){
+			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE/* + gatewayCount*/){
+				u->attack(scoutClass.returnEnemyBaseLocs());
+			}
+		}
 	}
 }
-
 
 void ExampleAIModule::onSendText(std::string text) {
 	// Send the text to the game if it is not being processed.
@@ -245,9 +347,18 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 		reservedMinerals -= 100;
 	}
 	if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
+		gateways.push_back(unit);
 		reservedMinerals -= 150;
 	}*/
-	
+
+	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
+		zealots.push_back(unit);
+		//reservedMinerals -= 100;
+	}
+
+	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
+		scoutClass.foundEnemyBase(TilePosition(unit->getPosition()));
+	}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
@@ -263,8 +374,11 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) {
 }
 
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
-	if (unit->getType().isWorker() && unit->getPlayer() == Broodwar->self()) {
+	if (unit->getType() == UnitTypes::Protoss_Probe && unit->getPlayer() == Broodwar->self()) {
 		probeCount--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
+		zealotCount--;
 	}
 }
 
@@ -471,3 +585,9 @@ void ExampleAIModule::mineMinerals(BWAPI::Unit u) {
 		}
 	}
 }
+
+/*void ExampleAIModule::buildZealot(BWAPI::Unit gate){
+	if (gate->isIdle()){
+		gate->build(UnitTypes::Protoss_Zealot);
+	}
+}*/

@@ -3,8 +3,7 @@
 
 // Remember not to use "Broodwar" in any global class constructor!
 
-class ExampleAIModule : public BWAPI::AIModule
-{
+class ExampleAIModule : public BWAPI::AIModule {
 public:
   // Virtual functions for callbacks, leave these as they are.
   virtual void onStart();
@@ -26,7 +25,6 @@ public:
   virtual void onUnitComplete(BWAPI::Unit unit);
 
   // Everything below this line is safe to modify.
-
   void mineMinerals(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
 
@@ -39,5 +37,4 @@ public:
   void buildProbe(BWAPI::Unit u);
   bool zealotNeeded();
   void buildZealot(BWAPI::Unit u);
-
 };
