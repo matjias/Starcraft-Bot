@@ -70,23 +70,23 @@ void ExampleAIModule::onEnd(bool isWinner) {
 void ExampleAIModule::onFrame() {
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
-	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
+	//Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
-	Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
+	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
 	for (int i = 0; i < investmentList.size(); i++) {
-		Broodwar->drawTextScreen(200, 60 + i * 20, "%i: %s", i, investmentList.at(i).c_str());
+		//Broodwar->drawTextScreen(200, 60 + i * 20, "%i: %s", i, investmentList.at(i).c_str());
 	}
 
-	Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
+	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
 	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
 
 	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
 	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
-
-	Broodwar->drawTextScreen(350, 100, "Zeallala: %i", zealots.size());
+	
+	//Broodwar->drawTextScreen(350, 100, "Zeallala: %i", zealots.size());
 
 	/*
 	TilePosition::list spawns = scoutClass.getSpawns();
@@ -98,19 +98,24 @@ void ExampleAIModule::onFrame() {
 	}
 	*/
 	TilePosition::list spawns = scoutClass.getDynamicSpawns();
+	std::vector<bool> spawnsBool = scoutClass.getDynamicSpawnBools();
 	for (int i = 0; i < spawns.size(); i++) {
-		Broodwar->drawTextScreen(50, 20 * i + 10, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d",
+		bool toDraw = spawnsBool.at(i) ? 1 : 0;
+
+		Broodwar->drawTextScreen(5, 20 * i + 20, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d, scouted: %d",
 			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y,
 			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))),
-			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))));
+			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))),
+			toDraw);
 	}
 	
-	Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
-	Broodwar->drawTextScreen(20, 20, "Reserved Gas: %d", reservedGas);
-	Broodwar->drawTextScreen(20, 40, "Nexuses: %d, W: %d, Q: %d", nexusCount, nexusesWarping, nexusesQueued);
-	Broodwar->drawTextScreen(20, 60, "Pylons: %d, W: %d, Q: %d", pylonCount, pylonsWarping, pylonsQueued);
-	Broodwar->drawTextScreen(20, 80, "Gateways: %d, W: %d, Q: %d", gatewayCount, gatewaysWarping,  gatewaysQueued);
-	Broodwar->drawTextScreen(20, 100, "Workers: %d, W: %d, Q: %d", probeCount, probesWarping, probesQueued);
+	
+	//Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
+	//Broodwar->drawTextScreen(20, 20, "Reserved Gas: %d", reservedGas);
+	//Broodwar->drawTextScreen(20, 40, "Nexuses: %d, W: %d, Q: %d", nexusCount, nexusesWarping, nexusesQueued);
+	//Broodwar->drawTextScreen(20, 60, "Pylons: %d, W: %d, Q: %d", pylonCount, pylonsWarping, pylonsQueued);
+	//Broodwar->drawTextScreen(20, 80, "Gateways: %d, W: %d, Q: %d", gatewayCount, gatewaysWarping,  gatewaysQueued);
+	//Broodwar->drawTextScreen(20, 100, "Workers: %d, W: %d, Q: %d", probeCount, probesWarping, probesQueued);
 
 	// Calculate supply
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
@@ -202,7 +207,8 @@ void ExampleAIModule::onFrame() {
 		if (u->getType().isWorker()) {
 
 			// Assign scout
-			if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
+			//if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
+			if (!scoutClass.hasAssignedScout()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
 					builder = 0;
