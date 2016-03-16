@@ -42,6 +42,8 @@ int zealotsQueued;
 std::vector<UnitType>builderOrder;
 std::vector<UnitType>investmentList;
 
+bool buildOrderFinished;
+
 std::vector<Unit>gateways;
 
 Scouting scoutClass;
@@ -57,6 +59,8 @@ void ExampleAIModule::onStart() {
 	nexusCount = 1;
 	probeCount = 4;
 	builder = 0;
+
+	buildOrderFinished = true;
 
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
@@ -106,7 +110,7 @@ void ExampleAIModule::onFrame() {
 
 		Broodwar->drawTextScreen(5, 20 * i + 20, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d, scouted: %d",
 			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y,
-			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))),
+			Position(spawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
 			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))),
 			toDraw);
 	}
@@ -127,6 +131,10 @@ void ExampleAIModule::onFrame() {
 		scoutClass.updateScout();
 	}
 	
+	if (!buildOrderFinished) {
+
+	}
+
 	// Add resource invesments
 	if (pylonNeeded()) {
 		investmentList.push_back(UnitTypes::Protoss_Pylon);
@@ -210,7 +218,7 @@ void ExampleAIModule::onFrame() {
 
 			// Assign scout
 			//if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
-			if (!scoutClass.hasAssignedScout()) {
+			if (!scoutClass.hasAssignedScout() && !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
 					builder = 0;
@@ -399,6 +407,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
 		zealotCount--;
+	}
+
+	if (scoutClass.isScout(unit)) {
+		scoutClass.scoutHasDied();
 	}
 }
 
