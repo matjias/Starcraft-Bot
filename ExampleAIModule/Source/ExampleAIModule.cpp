@@ -42,6 +42,8 @@ int zealotsQueued;
 std::vector<UnitType>builderOrder;
 std::vector<UnitType>investmentList;
 
+bool buildOrderFinished;
+
 std::vector<Unit>gateways;
 std::vector<Unit>zealots;
 
@@ -56,6 +58,8 @@ void ExampleAIModule::onStart() {
 	nexusCount = 1;
 	probeCount = 4;
 	builder = 0;
+
+	buildOrderFinished = true;
 
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
@@ -125,6 +129,10 @@ void ExampleAIModule::onFrame() {
 		scoutClass.updateScout();
 	}
 	
+	if (!buildOrderFinished) {
+
+	}
+
 	// Add resource invesments
 	if (pylonNeeded()) {
 		investmentList.push_back(UnitTypes::Protoss_Pylon);
