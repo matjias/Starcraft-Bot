@@ -1,6 +1,7 @@
 #pragma once
 #include "ExampleAIModule.h"
 #include "Scouting.h"
+#include "Army.h"
 #include <iostream>
 #include <vector>
 
@@ -11,7 +12,6 @@ const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
 const int MINERAL_SURPLUS_LIMIT = 1000;
 const int GAS_SURPLUS_LIMIT = 1000;
-const int ZEALOT_RUSH_SIZE = 18;
 
 Unit builder;
 
@@ -43,9 +43,10 @@ std::vector<UnitType>builderOrder;
 std::vector<UnitType>investmentList;
 
 std::vector<Unit>gateways;
-std::vector<Unit>zealots;
 
 Scouting scoutClass;
+
+Army army;
 
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
@@ -61,6 +62,7 @@ void ExampleAIModule::onStart() {
 
 	// Scouting stuff
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
+	army._init();
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -310,7 +312,12 @@ void ExampleAIModule::onFrame() {
 			&& Broodwar->self()->gas() >= investmentList[0].gasPrice() + reservedGas
 			&& availableSupply >= investmentList[0].supplyRequired() / 2) {
 			//(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
-			buildZealot(u);
+			if (army.buildZealot(u)){
+				availableSupply -= investmentList[0].supplyRequired() / 2;
+				zealotsQueued--;
+				zealotsWarping++;
+				investmentList.erase(investmentList.begin());
+			}
 		}
 		
 		
@@ -320,11 +327,7 @@ void ExampleAIModule::onFrame() {
 		}*/
 		
 		// Zealot attack logic
-		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() /*&& scoutClass.returnFoundEnemyBase()*/){
-			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE/* + gatewayCount*/){
-				u->attack(scoutClass.returnEnemyBaseLocs());
-			}
-		}
+		army.run();
 	}
 }
 
@@ -369,7 +372,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}*/
 
 	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
-		zealots.push_back(unit);
+		army.addZealot(unit);
 		//reservedMinerals -= 100;
 	}
 
@@ -542,14 +545,6 @@ bool ExampleAIModule::canBuildGateway() {
 
 bool ExampleAIModule::zealotNeeded() {
 	return !zealotsQueued;
-}
-
-void ExampleAIModule::buildZealot(BWAPI::Unit u) {
-	u->train(UnitTypes::Protoss_Zealot);
-	availableSupply -= investmentList[0].supplyRequired() / 2;
-	zealotsQueued--;
-	zealotsWarping++;
-	investmentList.erase(investmentList.begin());
 }
 
 /*void ExampleAIModule::buildGateway(BWAPI::Unit u) {
