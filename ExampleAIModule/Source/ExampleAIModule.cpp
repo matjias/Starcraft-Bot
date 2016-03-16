@@ -208,7 +208,7 @@ void ExampleAIModule::onFrame() {
 
 			// Assign scout
 			//if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
-			if (!scoutClass.hasAssignedScout()) {
+			if (!scoutClass.hasAssignedScout() && !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
 					builder = 0;
@@ -396,6 +396,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
 		zealotCount--;
+	}
+
+	if (scoutClass.isScout(unit)) {
+		scoutClass.scoutHasDied();
 	}
 }
 

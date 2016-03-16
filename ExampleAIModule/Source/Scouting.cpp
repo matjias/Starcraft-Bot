@@ -96,30 +96,37 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 }
 
 void Scouting::updateScout() {
-	// One scout tactic
+	if (!foundEnemy) {
+		if (hasAssignedScout()) {
+			// One scout tactic
 
-	// Edge case - 1v1 map
-	if (dynamicLocations.size() == 2) {
-		foundEnemyBase(TilePosition(dynamicLocations.at(0)->location));
-	}
+			// Edge case - 1v1 map
+			if (dynamicLocations.size() == 2) {
+				foundEnemyBase(TilePosition(dynamicLocations.at(0)->location));
+			}
 
-	if (currentScout->getType().sightRange() * currentScout->getType().sightRange() <=
-		dynamicLocations.at(0)->location.x * dynamicLocations.at(0)->location.x +
-		dynamicLocations.at(0)->location.y * dynamicLocations.at(0)->location.y &&
-		Broodwar->isVisible(TilePosition(dynamicLocations.at(0)->location))) {
-		dynamicLocations.at(0)->scouted = true;
+			if (currentScout->getType().sightRange() * currentScout->getType().sightRange() <=
+				dynamicLocations.at(0)->location.x * dynamicLocations.at(0)->location.x +
+				dynamicLocations.at(0)->location.y * dynamicLocations.at(0)->location.y &&
+				Broodwar->isVisible(TilePosition(dynamicLocations.at(0)->location))) {
 
-		if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
-			foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
-			currentScout->move(dynamicLocations.at(1)->location);
+				dynamicLocations.at(0)->scouted = true;
+
+				if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
+					foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
+					currentScout->move(dynamicLocations.at(1)->location);
+				}
+				else {
+					currentScout->move(dynamicLocations.at(1)->location);
+				}
+
+			}
+
+			updateToScoutList();
 		}
-		else {
-			currentScout->move(dynamicLocations.at(1)->location);
-		}
-
+	} else {
+		distractEnemyBase();
 	}
-
-	updateToScoutList();
 }
 
 void Scouting::updateToScoutList() {
@@ -159,6 +166,17 @@ void Scouting::updateToScoutList() {
 	}
 }
 
+void Scouting::distractEnemyBase() {
+	if (foundEnemy && hasScout) {
+		// Implement scout moving around in base logic, ensuring
+		// we scout what they want to do and maybe even harass
+		// their workers/supply line (attack them to get them to attack
+		// the scout and therefor stop them from mining and then running
+
+
+	}
+}
+
 int Scouting::getDistance() {
 	if (hasAssignedScout()) {
 		return currentScout->getDistance(dynamicLocations.at(0)->location);
@@ -168,10 +186,19 @@ int Scouting::getDistance() {
 }
 
 bool Scouting::endScouting() {
-	return false;
+	if (!foundEnemy) {
+		return false;
+	}
 
-	// Clear memory here
+	hasScout = false;
+	return true;
 }
+
+void Scouting::scoutHasDied() {
+	hasScout = false;
+}
+
+
 
 
 // DEBUG METHODS
@@ -185,14 +212,10 @@ Position Scouting::returnEnemyBaseLocs() {
 
 int Scouting::getX() {
 	return dynamicLocations.at(0)->location.x;
-
-	return -1;
 }
 
 int Scouting::getY() {
 	return dynamicLocations.at(0)->location.y;
-
-	return -1;
 }
 
 Position Scouting::getScout() {
