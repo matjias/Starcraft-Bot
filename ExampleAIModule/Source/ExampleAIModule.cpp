@@ -1,6 +1,7 @@
 #pragma once
 #include "ExampleAIModule.h"
 #include "Scouting.h"
+#include "BuildOrders.h"
 #include <iostream>
 #include <vector>
 
@@ -11,7 +12,7 @@ const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
 const int MINERAL_SURPLUS_LIMIT = 1000;
 const int GAS_SURPLUS_LIMIT = 1000;
-const int ZEALOT_RUSH_SIZE = 18;
+const int ZEALOT_RUSH_SIZE = 1;
 
 Unit builder;
 
@@ -39,14 +40,18 @@ int zealotCount;
 int zealotsWarping;
 int zealotsQueued;
 
-std::vector<UnitType>builderOrder;
+std::vector<UnitType>buildOrder;
 std::vector<UnitType>investmentList;
 
-bool buildOrderFinished;
+bool firstBuildOrderStarted;
+bool firstBuildOrderFinished;
+bool secondBuildOrderStarted;
+bool secondBuildOrderFinished;
 
 std::vector<Unit>gateways;
 std::vector<Unit>zealots;
 
+BuildOrders buildOrderClass;
 Scouting scoutClass;
 
 void ExampleAIModule::onStart() {
@@ -59,7 +64,10 @@ void ExampleAIModule::onStart() {
 	probeCount = 4;
 	builder = 0;
 
-	buildOrderFinished = true;
+	firstBuildOrderStarted = false;
+	firstBuildOrderFinished = false;
+	secondBuildOrderStarted = false;
+	secondBuildOrderFinished = false;
 
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
@@ -71,6 +79,8 @@ void ExampleAIModule::onEnd(bool isWinner) {
 	
 }
 
+
+
 void ExampleAIModule::onFrame() {
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
@@ -80,7 +90,7 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
 	for (int i = 0; i < investmentList.size(); i++) {
-		//Broodwar->drawTextScreen(200, 60 + i * 20, "%i: %s", i, investmentList.at(i).c_str());
+		Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, investmentList.at(i).c_str());
 	}
 
 	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
@@ -113,7 +123,6 @@ void ExampleAIModule::onFrame() {
 			toDraw);
 	}
 	
-	
 	//Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
 	//Broodwar->drawTextScreen(20, 20, "Reserved Gas: %d", reservedGas);
 	//Broodwar->drawTextScreen(20, 40, "Nexuses: %d, W: %d, Q: %d", nexusCount, nexusesWarping, nexusesQueued);
@@ -129,79 +138,105 @@ void ExampleAIModule::onFrame() {
 		scoutClass.updateScout();
 	}
 	
-	if (!buildOrderFinished) {
+	// Use initial build order
+	if (!firstBuildOrderFinished) {
+		if (investmentList.empty()) {
+			if (firstBuildOrderStarted) {
+				firstBuildOrderFinished = true;
+			}
+			else {
+				firstBuildOrderStarted = true;
+				investmentList = buildOrderClass.buildOrderInitial;
+				updateQueueValues();
+				
+			}
+		}
+	}
 
+	// Use appropriate second build order
+	else if (!secondBuildOrderFinished) {
+		if (investmentList.empty()) {
+			if (secondBuildOrderStarted) {
+				secondBuildOrderFinished = true;
+			}
+			else {
+				secondBuildOrderStarted = true;
+				investmentList = buildOrderClass.buildOrder2Gate;
+				updateQueueValues();
+			}
+		}
 	}
 
 	// Add resource invesments
-	if (pylonNeeded()) {
-		investmentList.push_back(UnitTypes::Protoss_Pylon);
-		supplyBuffer += UnitTypes::Protoss_Pylon.supplyProvided() / 2;
-		pylonsQueued++;
-	}
-	if (gatewayNeeded()) {
-		investmentList.push_back(UnitTypes::Protoss_Gateway);
-		gatewaysQueued++;
-	}
+	else {
+		if (pylonNeeded()) {
+			investmentList.push_back(UnitTypes::Protoss_Pylon);
+			supplyBuffer += UnitTypes::Protoss_Pylon.supplyProvided() / 2;
+			pylonsQueued++;
+		}
+		if (gatewayNeeded()) {
+			investmentList.push_back(UnitTypes::Protoss_Gateway);
+			gatewaysQueued++;
+		}
 
-	if (workerNeeded()) {
-		investmentList.push_back(UnitTypes::Protoss_Probe);
-		probesQueued++;
-	}
-	if (zealotNeeded()) {
-		investmentList.push_back(UnitTypes::Protoss_Zealot);
-		zealotsQueued++;
-	}
+		if (workerNeeded()) {
+			investmentList.push_back(UnitTypes::Protoss_Probe);
+			probesQueued++;
+		}
+		if (zealotNeeded()) {
+			investmentList.push_back(UnitTypes::Protoss_Zealot);
+			zealotsQueued++;
+		}
 
-	// Reorder investment priorities
-	if (gatewaysQueued
-		&& gatewayCount <= zealotsWarping
-		&& investmentList[0] == UnitTypes::Protoss_Zealot) {
-		for (int i = 0; i < investmentList.size(); i++) {
-			if (investmentList[i] == UnitTypes::Protoss_Gateway) {
-				investmentList.erase(investmentList.begin() + i);
-				investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Gateway);
-				break;
+		// Reorder investment priorities
+		if (gatewaysQueued
+			&& gatewayCount <= zealotsWarping
+			&& investmentList[0] == UnitTypes::Protoss_Zealot) {
+			for (int i = 0; i < investmentList.size(); i++) {
+				if (investmentList[i] == UnitTypes::Protoss_Gateway) {
+					investmentList.erase(investmentList.begin() + i);
+					investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Gateway);
+					break;
+				}
+			}
+		}
+		if (zealotsQueued
+			&& zealotsWarping < gatewayCount
+			&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
+			&& investmentList[0] != UnitTypes::Protoss_Zealot) {
+			for (int i = 0; i < investmentList.size(); i++) {
+				if (investmentList[i] == UnitTypes::Protoss_Zealot) {
+					investmentList.erase(investmentList.begin() + i);
+					investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Zealot);
+					break;
+				}
+			}
+		}
+		if (probesQueued
+			&& probesWarping < nexusCount
+			&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
+			&& investmentList[0] != UnitTypes::Protoss_Probe) {
+			for (int i = 0; i < investmentList.size(); i++) {
+				if (investmentList[i] == UnitTypes::Protoss_Probe) {
+					investmentList.erase(investmentList.begin() + i);
+					investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Probe);
+					break;
+				}
+			}
+		}
+		if (pylonsQueued
+			&& availableSupply <= nexusCount + gatewayCount * 2
+			&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
+			&& investmentList[0] != UnitTypes::Protoss_Pylon) {
+			for (int i = 0; i < investmentList.size(); i++) {
+				if (investmentList[i] == UnitTypes::Protoss_Pylon) {
+					investmentList.erase(investmentList.begin() + i);
+					investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Pylon);
+					break;
+				}
 			}
 		}
 	}
-	if (zealotsQueued
-		&& zealotsWarping < gatewayCount
-		&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
-		&& investmentList[0] != UnitTypes::Protoss_Zealot) {
-		for (int i = 0; i < investmentList.size(); i++) {
-			if (investmentList[i] == UnitTypes::Protoss_Zealot) {
-				investmentList.erase(investmentList.begin() + i);
-				investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Zealot);
-				break;
-			}
-		}
-	}
-	if (probesQueued
-		&& probesWarping < nexusCount
-		&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
-		&& investmentList[0] != UnitTypes::Protoss_Probe) {
-		for (int i = 0; i < investmentList.size(); i++) {
-			if (investmentList[i] == UnitTypes::Protoss_Probe) {
-				investmentList.erase(investmentList.begin() + i);
-				investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Probe);
-				break;
-			}
-		}
-	}
-	if (pylonsQueued
-		&& availableSupply <= nexusCount + gatewayCount * 2
-		&& Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
-		&& investmentList[0] != UnitTypes::Protoss_Pylon) {
-		for (int i = 0; i < investmentList.size(); i++) {
-			if (investmentList[i] == UnitTypes::Protoss_Pylon) {
-				investmentList.erase(investmentList.begin() + i);
-				investmentList.insert(investmentList.begin(), UnitTypes::Protoss_Pylon);
-				break;
-			}
-		}
-	}
-
 	
 	// All Units loop
 	for (auto &u : Broodwar->self()->getUnits()) {
@@ -616,3 +651,26 @@ void ExampleAIModule::mineMinerals(BWAPI::Unit u) {
 		gate->build(UnitTypes::Protoss_Zealot);
 	}
 }*/
+
+void ExampleAIModule::updateQueueValues() {
+	for (int i = 0; i < investmentList.size(); i++) {
+
+		if (investmentList[i] == UnitTypes::Protoss_Nexus) {
+			nexusesQueued++;
+			supplyBuffer += UnitTypes::Protoss_Nexus.supplyProvided() / 2;
+		}
+		else if (investmentList[i] == UnitTypes::Protoss_Pylon) {
+			pylonsQueued++;
+			supplyBuffer += UnitTypes::Protoss_Pylon.supplyProvided() / 2;
+		}
+		else if (investmentList[i] == UnitTypes::Protoss_Gateway) {
+			gatewaysQueued++;
+		}
+		else if (investmentList[i] == UnitTypes::Protoss_Probe) {
+			probesQueued++;
+		}
+		else if (investmentList[i] == UnitTypes::Protoss_Zealot) {
+			zealotsQueued++;
+		}
+	}
+}

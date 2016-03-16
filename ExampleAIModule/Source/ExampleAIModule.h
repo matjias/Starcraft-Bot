@@ -37,4 +37,6 @@ public:
   void buildProbe(BWAPI::Unit u);
   bool zealotNeeded();
   void buildZealot(BWAPI::Unit u);
+
+  void updateQueueValues();
 };
