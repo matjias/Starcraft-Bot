@@ -66,7 +66,6 @@ void ExampleAIModule::onStart() {
 
 	// Scouting stuff
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
-	army._init();
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -335,7 +334,7 @@ void ExampleAIModule::onFrame() {
 		}*/
 		
 		// Zealot attack logic
-		army.run();
+		army.run(scoutClass);
 	}
 }
 

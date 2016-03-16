@@ -19,13 +19,7 @@ void Army::_init(){
 
 }
 
-void run(Scouting scoutClass){
-	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
-
-	attack();
-}
-
-void attack(){
+void Army::attack(){
 	for (Unit u : zealots){
 		if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE/* + gatewayCount*/){
 			u->attack(enemyBaseLocs);
@@ -33,10 +27,16 @@ void attack(){
 	}
 }
 
-bool buildZealot(BWAPI::Unit u){
+void Army::run(Scouting scoutClass){
+	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
+
+	attack();
+}
+
+bool Army::buildZealot(BWAPI::Unit u){
 	return u->train(UnitTypes::Protoss_Zealot);
 }
 
-void addZealot(BWAPI::Unit u){
+void Army::addZealot(BWAPI::Unit u){
 	zealots.push_back(u);
 }
