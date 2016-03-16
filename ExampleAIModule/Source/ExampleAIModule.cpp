@@ -108,7 +108,7 @@ void ExampleAIModule::onFrame() {
 
 		Broodwar->drawTextScreen(5, 20 * i + 20, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d, scouted: %d",
 			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y,
-			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))),
+			Position(spawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
 			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))),
 			toDraw);
 	}
