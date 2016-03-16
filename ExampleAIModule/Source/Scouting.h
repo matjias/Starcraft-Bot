@@ -15,7 +15,7 @@ public:
 	bool endScouting();
 	int getDistance();
 	void foundEnemyBase(BWAPI::TilePosition loc);
-	
+	void scoutHasDied();
 
 
 	// DEBUG METHODS BELOW
@@ -38,4 +38,5 @@ public:
 private:
 	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
+	void distractEnemyBase();
 };

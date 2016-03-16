@@ -1,7 +1,11 @@
 #pragma once
 #include "ExampleAIModule.h"
 #include "Scouting.h"
+<<<<<<< HEAD
 #include "BuildOrders.h"
+=======
+#include "Army.h"
+>>>>>>> 6eb9dceb1997d7be13c889c021314d35f14a0d55
 #include <iostream>
 #include <vector>
 
@@ -12,7 +16,10 @@ const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
 const int MINERAL_SURPLUS_LIMIT = 1000;
 const int GAS_SURPLUS_LIMIT = 1000;
+<<<<<<< HEAD
 const int ZEALOT_RUSH_SIZE = 1;
+=======
+>>>>>>> 6eb9dceb1997d7be13c889c021314d35f14a0d55
 
 Unit builder;
 
@@ -49,10 +56,11 @@ bool secondBuildOrderStarted;
 bool secondBuildOrderFinished;
 
 std::vector<Unit>gateways;
-std::vector<Unit>zealots;
 
 BuildOrders buildOrderClass;
 Scouting scoutClass;
+
+Army army;
 
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
@@ -251,7 +259,7 @@ void ExampleAIModule::onFrame() {
 
 			// Assign scout
 			//if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
-			if (!scoutClass.hasAssignedScout()) {
+			if (!scoutClass.hasAssignedScout() && !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
 					builder = 0;
@@ -353,7 +361,12 @@ void ExampleAIModule::onFrame() {
 			&& Broodwar->self()->gas() >= investmentList[0].gasPrice() + reservedGas
 			&& availableSupply >= investmentList[0].supplyRequired() / 2) {
 			//(availableSupply > 1 || Broodwar->self()->incompleteUnitCount(u->getType().getRace().getSupplyProvider()) > 0)) {
-			buildZealot(u);
+			if (army.buildZealot(u)){
+				availableSupply -= investmentList[0].supplyRequired() / 2;
+				zealotsQueued--;
+				zealotsWarping++;
+				investmentList.erase(investmentList.begin());
+			}
 		}
 		
 		
@@ -363,11 +376,7 @@ void ExampleAIModule::onFrame() {
 		}*/
 		
 		// Zealot attack logic
-		else if (u->getType() == UnitTypes::Protoss_Zealot && u->isCompleted() /*&& scoutClass.returnFoundEnemyBase()*/){
-			if (u->isIdle() && zealots.size() >= ZEALOT_RUSH_SIZE/* + gatewayCount*/){
-				u->attack(scoutClass.returnEnemyBaseLocs());
-			}
-		}
+		army.run(scoutClass);
 	}
 }
 
@@ -412,7 +421,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}*/
 
 	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
-		zealots.push_back(unit);
+		army.addZealot(unit);
 		//reservedMinerals -= 100;
 	}
 
@@ -439,6 +448,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
 		zealotCount--;
+	}
+
+	if (scoutClass.isScout(unit)) {
+		scoutClass.scoutHasDied();
 	}
 }
 
@@ -585,14 +598,6 @@ bool ExampleAIModule::canBuildGateway() {
 
 bool ExampleAIModule::zealotNeeded() {
 	return !zealotsQueued;
-}
-
-void ExampleAIModule::buildZealot(BWAPI::Unit u) {
-	u->train(UnitTypes::Protoss_Zealot);
-	availableSupply -= investmentList[0].supplyRequired() / 2;
-	zealotsQueued--;
-	zealotsWarping++;
-	investmentList.erase(investmentList.begin());
 }
 
 /*void ExampleAIModule::buildGateway(BWAPI::Unit u) {
