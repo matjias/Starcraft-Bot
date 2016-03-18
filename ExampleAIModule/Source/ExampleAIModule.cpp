@@ -135,10 +135,10 @@ void ExampleAIModule::onFrame() {
 	// Calculate supply
 	availableSupply = (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2;
 
-	// AI Logic goes here
-	if (scoutClass.isScouting()) {
-		scoutClass.updateScout();
-	}
+	// Scout Class handles everything itself, anything
+	// it finds will pop up in onUnitDiscover, we just
+	// have to check if it is the enemy's
+	scoutClass.updateScout();
 	
 	// Use initial build order
 	if (!firstBuildOrderFinished) {

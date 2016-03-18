@@ -36,10 +36,7 @@ public:
   bool canbuildProbe();
   void buildProbe(BWAPI::Unit u);
   bool zealotNeeded();
-<<<<<<< HEAD
   void buildZealot(BWAPI::Unit u);
 
   void updateQueueValues();
-=======
->>>>>>> 6eb9dceb1997d7be13c889c021314d35f14a0d55
 };

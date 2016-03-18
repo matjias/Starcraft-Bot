@@ -26,18 +26,24 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 		if (unsortedSpawns.at(i) == loc) {
 			// We are looking at our spawn position, so we want to move that to
 			// the very back of the list
+			/*
 			TilePosition buf = unsortedSpawns.at(unsortedSpawns.size() - 1);
 			unsortedSpawns.at(unsortedSpawns.size() - 1) = unsortedSpawns.at(i);
 			unsortedSpawns.at(i) = buf;
+			*/
+
+			std::swap(unsortedSpawns.at(i), unsortedSpawns.at(unsortedSpawns.size() - 1));
 		}
 
 		for (int j = i; j > 0; j--) {
 			// If current spawnLocation is closer than the previous spawn location
 			// we move it further to 0, to indicate closest spawn.
 			if (unsortedSpawns.at(j).getApproxDistance(loc) < unsortedSpawns.at(j - 1).getApproxDistance(loc)) {
-				TilePosition buf = unsortedSpawns.at(j - 1);
+				/*TilePosition buf = unsortedSpawns.at(j - 1);
 				unsortedSpawns.at(j - 1) = unsortedSpawns.at(j);
-				unsortedSpawns.at(j) = buf;
+				unsortedSpawns.at(j) = buf;*/
+
+				std::swap(unsortedSpawns.at(j), unsortedSpawns.at(j - 1));
 			}
 		}
 	}
@@ -96,36 +102,39 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 }
 
 void Scouting::updateScout() {
-	if (!foundEnemy) {
-		if (hasAssignedScout()) {
-			// One scout tactic
+	if (isScouting()) {
+		if (!foundEnemy) {
+			if (hasAssignedScout()) {
+				// One scout tactic
 
-			// Edge case - 1v1 map
-			if (dynamicLocations.size() == 2) {
-				foundEnemyBase(TilePosition(dynamicLocations.at(0)->location));
-			}
-
-			if (currentScout->getType().sightRange() * currentScout->getType().sightRange() <=
-				dynamicLocations.at(0)->location.x * dynamicLocations.at(0)->location.x +
-				dynamicLocations.at(0)->location.y * dynamicLocations.at(0)->location.y &&
-				Broodwar->isVisible(TilePosition(dynamicLocations.at(0)->location))) {
-
-				dynamicLocations.at(0)->scouted = true;
-
-				if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
-					foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
-					currentScout->move(dynamicLocations.at(1)->location);
-				}
-				else {
-					currentScout->move(dynamicLocations.at(1)->location);
+				// Edge case - 1v1 map
+				if (dynamicLocations.size() == 2) {
+					foundEnemyBase(TilePosition(dynamicLocations.at(0)->location));
 				}
 
-			}
+				if (currentScout->getType().sightRange() * currentScout->getType().sightRange() <=
+					dynamicLocations.at(0)->location.x * dynamicLocations.at(0)->location.x +
+					dynamicLocations.at(0)->location.y * dynamicLocations.at(0)->location.y &&
+					Broodwar->isVisible(TilePosition(dynamicLocations.at(0)->location))) {
 
-			updateToScoutList();
+					dynamicLocations.at(0)->scouted = true;
+
+					if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
+						foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
+						currentScout->move(dynamicLocations.at(1)->location);
+					}
+					else {
+						currentScout->move(dynamicLocations.at(1)->location);
+					}
+
+				}
+
+				updateToScoutList();
+			}
 		}
-	} else {
-		distractEnemyBase();
+		else {
+			distractEnemyBase();
+		}
 	}
 }
 
@@ -140,10 +149,12 @@ void Scouting::updateToScoutList() {
 		for (int i = 0; i < dynamicLocations.size() - 2; i++) {
 			if (dynamicLocations.at(i)->scouted && !dynamicLocations.at(i + 1)->scouted) {
 				// Move back in list
-						LocationStruct *tempLoc = new LocationStruct();
+						/*LocationStruct *tempLoc = new LocationStruct();
 						tempLoc = dynamicLocations.at(i);
 						dynamicLocations.at(i) = dynamicLocations.at(i + 1);
-						dynamicLocations.at(i + 1) = tempLoc;
+						dynamicLocations.at(i + 1) = tempLoc;*/
+
+						std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
 						updatedList = true;
 			}
@@ -151,10 +162,12 @@ void Scouting::updateToScoutList() {
 				currentScout->getDistance(dynamicLocations.at(i + 1)->location) &&
 				!dynamicLocations.at(i + 1)->scouted) {
 				// Move back in list
-				LocationStruct *tempLoc = new LocationStruct();
+				/*LocationStruct *tempLoc = new LocationStruct();
 				tempLoc = dynamicLocations.at(i);
 				dynamicLocations.at(i) = dynamicLocations.at(i + 1);
-				dynamicLocations.at(i + 1) = tempLoc;
+				dynamicLocations.at(i + 1) = tempLoc;*/
+
+				std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
 				updatedList = true;
 			}
