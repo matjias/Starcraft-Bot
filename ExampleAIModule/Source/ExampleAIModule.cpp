@@ -1,11 +1,8 @@
 #pragma once
 #include "ExampleAIModule.h"
 #include "Scouting.h"
-<<<<<<< HEAD
 #include "BuildOrders.h"
-=======
 #include "Army.h"
->>>>>>> 6eb9dceb1997d7be13c889c021314d35f14a0d55
 #include <iostream>
 #include <vector>
 
@@ -16,10 +13,7 @@ const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
 const int MINERAL_SURPLUS_LIMIT = 1000;
 const int GAS_SURPLUS_LIMIT = 1000;
-<<<<<<< HEAD
 const int ZEALOT_RUSH_SIZE = 1;
-=======
->>>>>>> 6eb9dceb1997d7be13c889c021314d35f14a0d55
 
 Unit builder;
 
