@@ -7,9 +7,27 @@ struct LocationStruct {
 	bool scouted;
 };
 
+/*
+	TODO: Major expanding of enemy units/structure surveillance
+		  and keeping track of enemy movements (if we see it)
+
+	Save units and their positions and maybe when we saw them in
+	game ticks since game start and if it is worth saving longer, 
+	for example buildings dont move so we permanently (until destroyed)
+	save their location but units might be more important to just
+	go after the fact that they have it until we kill it.
+*/
+
+struct UnitStruct {
+	Unit unit;
+	Position location;
+	int scoutedTime; // Represented in game ticks since start
+};
+
 Unit currentScout;
 bool hasScout;
 std::vector<LocationStruct*> dynamicLocations;
+std::vector<UnitStruct*> enemyUnits; // TODO: Reconsider data structure
 
 bool foundEnemy, knowsEnemy;
 TilePosition enemyBaseLoc;
@@ -26,12 +44,6 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 		if (unsortedSpawns.at(i) == loc) {
 			// We are looking at our spawn position, so we want to move that to
 			// the very back of the list
-			/*
-			TilePosition buf = unsortedSpawns.at(unsortedSpawns.size() - 1);
-			unsortedSpawns.at(unsortedSpawns.size() - 1) = unsortedSpawns.at(i);
-			unsortedSpawns.at(i) = buf;
-			*/
-
 			std::swap(unsortedSpawns.at(i), unsortedSpawns.at(unsortedSpawns.size() - 1));
 		}
 
@@ -39,10 +51,6 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 			// If current spawnLocation is closer than the previous spawn location
 			// we move it further to 0, to indicate closest spawn.
 			if (unsortedSpawns.at(j).getApproxDistance(loc) < unsortedSpawns.at(j - 1).getApproxDistance(loc)) {
-				/*TilePosition buf = unsortedSpawns.at(j - 1);
-				unsortedSpawns.at(j - 1) = unsortedSpawns.at(j);
-				unsortedSpawns.at(j) = buf;*/
-
 				std::swap(unsortedSpawns.at(j), unsortedSpawns.at(j - 1));
 			}
 		}
@@ -99,6 +107,8 @@ void Scouting::oneScoutAll(Unit u) {
 void Scouting::foundEnemyBase(TilePosition loc) {
 	foundEnemy = true;
 	enemyBaseLoc = loc;
+
+	// TODO: Clear dynamicLocations list from memory, no longer needed
 }
 
 void Scouting::updateScout() {
@@ -149,24 +159,14 @@ void Scouting::updateToScoutList() {
 		for (int i = 0; i < dynamicLocations.size() - 2; i++) {
 			if (dynamicLocations.at(i)->scouted && !dynamicLocations.at(i + 1)->scouted) {
 				// Move back in list
-						/*LocationStruct *tempLoc = new LocationStruct();
-						tempLoc = dynamicLocations.at(i);
-						dynamicLocations.at(i) = dynamicLocations.at(i + 1);
-						dynamicLocations.at(i + 1) = tempLoc;*/
+				std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
-						std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
-
-						updatedList = true;
+				updatedList = true;
 			}
 			else if (currentScout->getDistance(dynamicLocations.at(i)->location) >
 				currentScout->getDistance(dynamicLocations.at(i + 1)->location) &&
 				!dynamicLocations.at(i + 1)->scouted) {
 				// Move back in list
-				/*LocationStruct *tempLoc = new LocationStruct();
-				tempLoc = dynamicLocations.at(i);
-				dynamicLocations.at(i) = dynamicLocations.at(i + 1);
-				dynamicLocations.at(i + 1) = tempLoc;*/
-
 				std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
 				updatedList = true;
@@ -186,8 +186,24 @@ void Scouting::distractEnemyBase() {
 		// their workers/supply line (attack them to get them to attack
 		// the scout and therefor stop them from mining and then running
 
+		currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
 
 	}
+}
+
+void Scouting::recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick) {
+	UnitStruct *enemyUnit = new UnitStruct();
+	enemyUnit->unit = u; 
+	enemyUnit->location = loc; 
+	enemyUnit->scoutedTime = timeTick;
+
+	
+
+
+
+
+
+
 }
 
 int Scouting::getDistance() {
@@ -211,10 +227,14 @@ void Scouting::scoutHasDied() {
 	hasScout = false;
 }
 
+bool Scouting::isScout(Unit u) {
+	if (currentScout == u) {
+		return true;
+	}
 
+	return false;
+}
 
-
-// DEBUG METHODS
 bool Scouting::returnFoundEnemyBase() {
 	return foundEnemy;
 }
@@ -222,6 +242,13 @@ bool Scouting::returnFoundEnemyBase() {
 Position Scouting::returnEnemyBaseLocs() {
 	return Position(enemyBaseLoc);
 }
+
+/*
+	------!!!!!! DEBUG METHODS BELOW !!!!!!------
+
+	Used for displaying information about scouting to
+	the screen, so we can ensure correct behaviour
+*/
 
 int Scouting::getX() {
 	return dynamicLocations.at(0)->location.x;
@@ -239,27 +266,15 @@ Position Scouting::getScout() {
 	return Position(-1, -1);
 }
 
-TilePosition::list Scouting::getSpawns() {
-	TilePosition::list returnLocs;
-	for (int i = 0; i < dynamicLocations.size(); i++) {
-		returnLocs.push_back(TilePosition(dynamicLocations.at(i)->location));
-	}
-	
-	return returnLocs;
-}
-
-bool Scouting::isScout(Unit u) {
-	if (currentScout == u) {
-		return true;
-	}
-
-	return false;
-}
-
 TilePosition::list Scouting::getDynamicSpawns() {
 	TilePosition::list returnLocs;
-	for (int i = 0; i < dynamicLocations.size(); i++) {
+	/*for (int i = 0; i < dynamicLocations.size(); i++) {
 		returnLocs.push_back(TilePosition(dynamicLocations.at(i)->location));
+	}*/
+
+	// Testing foreach loops in C++
+	for (auto &u : dynamicLocations) {
+		returnLocs.push_back(TilePosition(u->location));
 	}
 
 	return returnLocs;
@@ -267,8 +282,12 @@ TilePosition::list Scouting::getDynamicSpawns() {
 
 std::vector<bool> Scouting::getDynamicSpawnBools() {
 	std::vector<bool> returnBools;
-	for (int i = 0; i < dynamicLocations.size(); i++) {
+	/*for (int i = 0; i < dynamicLocations.size(); i++) {
 		returnBools.push_back(dynamicLocations.at(i)->scouted);
+	}*/
+
+	for (auto &u : dynamicLocations) {
+		returnBools.push_back(u);
 	}
 
 	return returnBools;

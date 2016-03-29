@@ -242,7 +242,6 @@ void ExampleAIModule::onFrame() {
 	
 	// All Units loop
 	for (auto &u : Broodwar->self()->getUnits()) {
-
 		// If unit does not exist or is still being made, we ignore it
 		if (!u->exists() || !u->isCompleted()) {
 			continue;

@@ -16,6 +16,7 @@ public:
 	int getDistance();
 	void foundEnemyBase(BWAPI::TilePosition loc);
 	void scoutHasDied();
+	void recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick);
 
 
 	// DEBUG METHODS BELOW
