@@ -28,6 +28,7 @@ Unit currentScout;
 bool hasScout;
 std::vector<LocationStruct*> dynamicLocations;
 std::vector<UnitStruct*> enemyUnits; // TODO: Reconsider data structure
+std::vector<UnitStruct*> enemyStructures;
 
 bool foundEnemy, knowsEnemy;
 TilePosition enemyBaseLoc;
@@ -192,16 +193,15 @@ void Scouting::distractEnemyBase() {
 }
 
 void Scouting::recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick) {
-	UnitStruct *enemyUnit = new UnitStruct();
+	/*UnitStruct *enemyUnit = new UnitStruct();
 	enemyUnit->unit = u; 
 	enemyUnit->location = loc; 
-	enemyUnit->scoutedTime = timeTick;
+	enemyUnit->scoutedTime = timeTick;*/
+}
 
-	
-
-
-
-
+void Scouting::enemyBaseDestroyed() {
+	// TODO: Logic for scouting the entire map and 
+	//		 recorded units/structures for the win
 
 
 }
