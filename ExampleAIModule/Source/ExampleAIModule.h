@@ -28,15 +28,10 @@ public:
   void mineMinerals(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
 
-  bool pylonNeeded();
   bool canBuildSupply();
-  bool gatewayNeeded();
   bool canBuildGateway();
-  bool workerNeeded();
   bool canbuildProbe();
   void buildProbe(BWAPI::Unit u);
-  bool zealotNeeded();
   void buildZealot(BWAPI::Unit u);
 
-  void updateQueueValues();
 };

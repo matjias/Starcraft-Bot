@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Army.h" />
     <ClInclude Include="Source\BuildOrders.h" />
+    <ClInclude Include="Source\Constants.h" />
     <ClInclude Include="Source\ExampleAIModule.h" />
     <ClInclude Include="Source\Scouting.h" />
   </ItemGroup>
