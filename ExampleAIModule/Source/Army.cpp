@@ -37,7 +37,7 @@ void Army::update(Scouting scoutClass){
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
 	for (int i = 0; i < zealots.size(); i++){
-		zealots.at(i)->move();
+		//zealots.at(i)->move();
 	}
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
