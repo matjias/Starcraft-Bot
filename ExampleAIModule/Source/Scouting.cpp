@@ -268,11 +268,6 @@ Position Scouting::getScout() {
 
 TilePosition::list Scouting::getDynamicSpawns() {
 	TilePosition::list returnLocs;
-	/*for (int i = 0; i < dynamicLocations.size(); i++) {
-		returnLocs.push_back(TilePosition(dynamicLocations.at(i)->location));
-	}*/
-
-	// Testing foreach loops in C++
 	for (auto &u : dynamicLocations) {
 		returnLocs.push_back(TilePosition(u->location));
 	}
@@ -282,12 +277,8 @@ TilePosition::list Scouting::getDynamicSpawns() {
 
 std::vector<bool> Scouting::getDynamicSpawnBools() {
 	std::vector<bool> returnBools;
-	/*for (int i = 0; i < dynamicLocations.size(); i++) {
-		returnBools.push_back(dynamicLocations.at(i)->scouted);
-	}*/
-
 	for (auto &u : dynamicLocations) {
-		returnBools.push_back(u);
+		returnBools.push_back(u->scouted);
 	}
 
 	return returnBools;
