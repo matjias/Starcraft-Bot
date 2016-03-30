@@ -11,13 +11,14 @@ public:
 
 	void _init();
 
+	void update(Scouting scoutClass);
 	bool buildZealot(BWAPI::Unit u);
 	void addZealot(BWAPI::Unit u);
-	void run(Scouting scoutClass);
-	void attack();
+	void attack(Scouting scoutClass);
+	void zealotRush();
 
 private:
-
+	void attack();
 
 };
 
