@@ -369,7 +369,7 @@ void ExampleAIModule::onFrame() {
 		}*/
 		
 		// Zealot attack logic
-		army.run(scoutClass);
+		army.update(scoutClass);
 	}
 }
 
