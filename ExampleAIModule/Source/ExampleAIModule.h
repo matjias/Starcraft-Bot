@@ -1,5 +1,9 @@
 #pragma once
 #include <BWAPI.h>
+#include <BWTA.h>
+#include <windows.h>
+
+DWORD WINAPI AnalyzeThread();
 
 // Remember not to use "Broodwar" in any global class constructor!
 
@@ -25,6 +29,11 @@ public:
   virtual void onUnitComplete(BWAPI::Unit unit);
 
   // Everything below this line is safe to modify.
+
+  // BWTA2 function
+  void drawTerrainData();
+
+  // Our functions
   void mineMinerals(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
 

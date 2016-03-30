@@ -28,6 +28,7 @@ Unit currentScout;
 bool hasScout;
 std::vector<LocationStruct*> dynamicLocations;
 std::vector<UnitStruct*> enemyUnits; // TODO: Reconsider data structure
+std::vector<UnitStruct*> enemyStructures;
 
 bool foundEnemy, knowsEnemy;
 TilePosition enemyBaseLoc;
@@ -192,16 +193,15 @@ void Scouting::distractEnemyBase() {
 }
 
 void Scouting::recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick) {
-	UnitStruct *enemyUnit = new UnitStruct();
+	/*UnitStruct *enemyUnit = new UnitStruct();
 	enemyUnit->unit = u; 
 	enemyUnit->location = loc; 
-	enemyUnit->scoutedTime = timeTick;
+	enemyUnit->scoutedTime = timeTick;*/
+}
 
-	
-
-
-
-
+void Scouting::enemyBaseDestroyed() {
+	// TODO: Logic for scouting the entire map and 
+	//		 recorded units/structures for the win
 
 
 }
@@ -268,11 +268,6 @@ Position Scouting::getScout() {
 
 TilePosition::list Scouting::getDynamicSpawns() {
 	TilePosition::list returnLocs;
-	/*for (int i = 0; i < dynamicLocations.size(); i++) {
-		returnLocs.push_back(TilePosition(dynamicLocations.at(i)->location));
-	}*/
-
-	// Testing foreach loops in C++
 	for (auto &u : dynamicLocations) {
 		returnLocs.push_back(TilePosition(u->location));
 	}
@@ -282,12 +277,8 @@ TilePosition::list Scouting::getDynamicSpawns() {
 
 std::vector<bool> Scouting::getDynamicSpawnBools() {
 	std::vector<bool> returnBools;
-	/*for (int i = 0; i < dynamicLocations.size(); i++) {
-		returnBools.push_back(dynamicLocations.at(i)->scouted);
-	}*/
-
 	for (auto &u : dynamicLocations) {
-		returnBools.push_back(u);
+		returnBools.push_back(u->scouted);
 	}
 
 	return returnBools;
