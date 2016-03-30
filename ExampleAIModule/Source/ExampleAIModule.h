@@ -37,6 +37,7 @@ public:
   void mineMinerals(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
 
+  bool isAnalyzed();
   bool canBuildSupply();
   bool canBuildGateway();
   bool canbuildProbe();
