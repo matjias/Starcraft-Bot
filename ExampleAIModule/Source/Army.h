@@ -1,6 +1,8 @@
 #pragma once
+#include <BWTA.h>
 #include <BWAPI.h>
 #include "Scouting.h"
+#include "ExampleAIModule.h"
 
 
 class Army
@@ -16,6 +18,7 @@ public:
 	void addZealot(BWAPI::Unit u);
 	void attack(Scouting scoutClass);
 	void zealotRush();
+	void setAnalyzed(bool analyzed);
 
 private:
 	void attack();

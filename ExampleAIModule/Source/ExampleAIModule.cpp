@@ -64,7 +64,7 @@ Army army;
 void ExampleAIModule::onStart() {
 	Broodwar->enableFlag(Flag::UserInput);
 	Broodwar->setCommandOptimizationLevel(2);
-	
+
 	stepsWaited = 0;
 
 	nexusCount = 1;
@@ -88,6 +88,8 @@ void ExampleAIModule::onStart() {
 
 	Broodwar << "Analyzing map... this may take a minute" << std::endl;;
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
+
+	army._init();
 }
 
 void ExampleAIModule::onEnd(bool isWinner) {
@@ -525,6 +527,7 @@ DWORD WINAPI AnalyzeThread() {
 
 	analyzed = true;
 	analysis_just_finished = true;
+	army.setAnalyzed(true);
 	return 0;
 }
 
@@ -769,4 +772,8 @@ void ExampleAIModule::updateQueueValues() {
 			zealotsQueued++;
 		}
 	}
+}
+
+bool isAnalyzed(){
+	return analyzed;
 }

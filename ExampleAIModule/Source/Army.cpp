@@ -9,7 +9,8 @@ BWAPI::Position enemyBaseLocs;
 
 const int ZEALOT_RUSH_SIZE = 8;
 const int MAP_RADIUS = 1500;
-Position startLoc;
+Position idleLoc;
+bool mapAnalyzed;
 
 Army::Army(){}
 
@@ -17,27 +18,17 @@ Army::~Army(){}
 
 
 void Army::_init(){
-	startLoc = Position(Broodwar->self()->getStartLocation());
-	Broodwar->drawTextScreen(350, 100, "Zealot go to pos: %i, %i", startLoc.x, startLoc.y);
-	if (startLoc.x > MAP_RADIUS && startLoc.y < MAP_RADIUS){
-
-	} 
-	else if (startLoc.x > MAP_RADIUS && startLoc.y > MAP_RADIUS){
-
-	}
-	else if (startLoc.x < MAP_RADIUS && startLoc.y < MAP_RADIUS){
-
-	}
-	else if (startLoc.x < MAP_RADIUS && startLoc.y > MAP_RADIUS){
-
-	}
+	mapAnalyzed = false;
 }
 
 void Army::update(Scouting scoutClass){
+	if (mapAnalyzed){
+		idleLoc = BWTA::getNearestChokepoint(Position(Broodwar->self()->getStartLocation()))->getCenter();
+	}
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
 	for (int i = 0; i < zealots.size(); i++){
-		zealots.at(i)->move();
+		zealots.at(i)->move(idleLoc);
 	}
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
@@ -68,4 +59,8 @@ bool Army::buildZealot(BWAPI::Unit u){
 
 void Army::addZealot(BWAPI::Unit u){
 	zealots.push_back(u);
+}
+
+void Army::setAnalyzed(bool analyzed){
+	mapAnalyzed = analyzed;
 }
