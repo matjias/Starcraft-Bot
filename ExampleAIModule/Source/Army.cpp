@@ -4,7 +4,7 @@
 
 using namespace BWAPI;
 
-std::vector<Unit>zealots;
+std::vector<Unit>zealots; // Dead Zealots should be removed from the vector!
 
 BWAPI::Position enemyBaseLocs;
 
@@ -25,11 +25,16 @@ void Army::update(Scouting scoutClass){
 	}
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
-	for (int i = 0; i < zealots.size(); i++){
-		zealots.at(i)->move(idleLoc);
-	}
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
+	}
+	else {
+		for (int i = 0; i < zealots.size(); i++){
+			//zealots.at(i)->move(idleLoc);
+			if (zealots.at(i)->isIdle()){
+				zealots.at(i)->attack(idleLoc);
+			}
+		}
 	}
 }
 
