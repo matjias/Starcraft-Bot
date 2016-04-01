@@ -82,7 +82,7 @@ void ExampleAIModule::onFrame() {
 			Position(spawns.at(i)).getApproxDistance(Position(spawns.at(spawns.size() - 1))), 
 			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))));
 	}
-	*/
+	*//*
 	TilePosition::list spawns = scoutClass.getDynamicSpawns();
 	std::vector<bool> spawnsBool = scoutClass.getDynamicSpawnBools();
 	for (int i = 0; i < spawns.size(); i++) {
@@ -93,7 +93,7 @@ void ExampleAIModule::onFrame() {
 			Position(spawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
 			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))),
 			toDraw);
-	}
+	}*/
 	
 	//Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
 	//Broodwar->drawTextScreen(20, 20, "Reserved Gas: %d", reservedGas);
@@ -284,16 +284,8 @@ void ExampleAIModule::onFrame() {
 }
 
 void ExampleAIModule::onSendText(std::string text) {
-	if (text == "/analyze") {
-		if (analyzed == false) {
-			Broodwar << "Analyzing map... this may take a minute" << std::endl;;
-			CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
-		}
-	}
-	else {
-		// Send the text to the game if it is not being processed.
-		Broodwar->sendText("%s", text.c_str());
-	}
+	// Send the text to the game if it is not being processed.
+	Broodwar->sendText("%s", text.c_str());
 }
 
 void ExampleAIModule::onReceiveText(BWAPI::Player player, std::string text) {
