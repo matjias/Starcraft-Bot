@@ -110,6 +110,7 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 	enemyBaseLoc = loc;
 
 	// TODO: Clear dynamicLocations list from memory, no longer needed
+	//std::vector<LocationStruct*>().swap(dynamicLocations); // Mabbeh wait with memory.. Currently crashes at places.
 }
 
 void Scouting::updateScout() {
@@ -153,25 +154,22 @@ void Scouting::updateToScoutList() {
 	// Variable to check if we should move our scout elsewhere
 	bool updatedList = false;
 
-	// No need for all these if we already know where the enemy is
-	if (!foundEnemy) {
 
-		// Go through out location list, except for our own spawn
-		for (int i = 0; i < dynamicLocations.size() - 2; i++) {
-			if (dynamicLocations.at(i)->scouted && !dynamicLocations.at(i + 1)->scouted) {
-				// Move back in list
-				std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
+	// Go through out location list, except for our own spawn
+	for (int i = 0; i < dynamicLocations.size() - 2; i++) {
+		if (dynamicLocations.at(i)->scouted && !dynamicLocations.at(i + 1)->scouted) {
+			// Move back in list
+			std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
-				updatedList = true;
-			}
-			else if (currentScout->getDistance(dynamicLocations.at(i)->location) >
-				currentScout->getDistance(dynamicLocations.at(i + 1)->location) &&
-				!dynamicLocations.at(i + 1)->scouted) {
-				// Move back in list
-				std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
+			updatedList = true;
+		}
+		else if (currentScout->getDistance(dynamicLocations.at(i)->location) >
+			currentScout->getDistance(dynamicLocations.at(i + 1)->location) &&
+			!dynamicLocations.at(i + 1)->scouted) {
+			// Move back in list
+			std::swap(dynamicLocations.at(i), dynamicLocations.at(i + 1));
 
-				updatedList = true;
-			}
+			updatedList = true;
 		}
 	}
 

@@ -286,8 +286,7 @@ void ExampleAIModule::onFrame() {
 		if (u->getType().isWorker()) {
 
 			// Assign scout
-			//if (!scoutClass.isScouting() || !scoutClass.returnFoundEnemyBase()) {
-			if (!scoutClass.hasAssignedScout() && !scoutClass.returnFoundEnemyBase()) {
+			if (!scoutClass.isScouting() && !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
 					builder = 0;
