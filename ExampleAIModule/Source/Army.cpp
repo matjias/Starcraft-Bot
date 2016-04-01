@@ -1,21 +1,19 @@
 #include "Army.h"
+#include "Constants.h"
 #include "Scouting.h"
 
 using namespace BWAPI;
 
-std::vector<Unit>zealots;
+std::vector<Unit>zealots; // Dead Zealots should be removed from the vector!
 
 BWAPI::Position enemyBaseLocs;
 
-const int ZEALOT_RUSH_SIZE = 8;
-const int MAP_RADIUS = 1500;
 Position idleLoc;
 bool mapAnalyzed;
 
 Army::Army(){}
 
 Army::~Army(){}
-
 
 void Army::_init(){
 	mapAnalyzed = false;
@@ -27,11 +25,16 @@ void Army::update(Scouting scoutClass){
 	}
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
-	for (int i = 0; i < zealots.size(); i++){
-		zealots.at(i)->move(idleLoc);
-	}
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
+	}
+	else {
+		for (int i = 0; i < zealots.size(); i++){
+			//zealots.at(i)->move(idleLoc);
+			if (zealots.at(i)->isIdle()){
+				zealots.at(i)->attack(idleLoc);
+			}
+		}
 	}
 }
 
@@ -51,7 +54,6 @@ void Army::zealotRush(){
 		}
 	}
 }
-
 
 bool Army::buildZealot(BWAPI::Unit u){
 	return u->train(UnitTypes::Protoss_Zealot);
