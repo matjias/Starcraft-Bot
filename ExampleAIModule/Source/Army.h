@@ -23,9 +23,9 @@ public:
 	bool Army::zealotAtPos(BWAPI::Unit zealot, BWAPI::TilePosition pos);
 	std::vector<BWAPI::Unit> getZealots();
 	BWAPI::Position enemyChoke;
+	void enemyBaseDestroyed();
 private:
 	void attack();
-	
 };
 
 

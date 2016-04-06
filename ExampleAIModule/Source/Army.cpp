@@ -8,8 +8,8 @@ std::vector<Unit> zealots; // Dead Zealots should be removed from the vector!
 
 BWAPI::Position enemyBaseLocs;
 
-Position idleLoc, enemyChoke;
-bool mapAnalyzed;
+Position idleLoc, enemyChoke, attackLoc;
+bool mapAnalyzed, enemyBaseDest = false;
 int moved = 0;
 int countAtEnemyChoke = 0;
 
@@ -28,13 +28,26 @@ void Army::update(Scouting scoutClass){
 	}
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
+	if (!enemyBaseDest){
+		attackLoc = enemyBaseLocs;
+	}
+	else{
+		for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = scoutClass.getEnemyStructures().begin();
+			iterator != scoutClass.getEnemyStructures().end(); iterator++) {
+			attackLoc = Position(iterator->first);
+			break;
+		}
+	}
+
+
+
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
 	}
 	else {
-		for (int i = 0; i < zealots.size(); i++){
-			if (zealots.at(i)->canAttackMove() && zealots.at(i)->isIdle() && !zealotAtPos(zealots.at(i), TilePosition(idleLoc))){
-				zealots.at(i)->move(idleLoc);
+		for (Unit u : zealots){
+			if (u->canAttackMove() && u->isIdle() && !zealotAtPos(u, TilePosition(idleLoc))){
+				u->move(idleLoc);
 				moved++;
 			}
 
@@ -53,11 +66,11 @@ void Army::attack(Scouting scoutClass){
 
 void Army::zealotRush(){
 	for (Unit u : zealots){
-		if (zealotAtPos(u, TilePosition(enemyChoke))){
+		if (u->canAttackMove() && u->isIdle() &&  zealotAtPos(u, TilePosition(enemyChoke))){
 			countAtEnemyChoke++;
 		}
 		if (zealotAtPos(u, TilePosition(enemyChoke)) && countAtEnemyChoke > ZEALOT_RUSH_SIZE){
-			u->attack(enemyBaseLocs);
+			u->attack(attackLoc);
 		}
 		else if (u->canAttackMove() && u->isIdle() && !zealotAtPos(u, TilePosition(enemyChoke))){
 			u->move(enemyChoke);
@@ -87,4 +100,9 @@ bool Army::zealotAtPos(Unit zealot, TilePosition pos){
 		&& zealot->getTilePosition().x < pos.x + 6
 		&& zealot->getTilePosition().y > pos.y - 6
 		&& zealot->getTilePosition().y < pos.y + 6;
+}
+
+
+void Army::enemyBaseDestroyed(){
+	enemyBaseDest = true;
 }

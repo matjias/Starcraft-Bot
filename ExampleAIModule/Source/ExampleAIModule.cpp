@@ -383,6 +383,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	if (scoutClass.isScout(unit)) {
 		scoutClass.scoutHasDied();
 	}
+	if (unit->getType() == UnitTypes::Protoss_Nexus && unit->getPlayer() != Broodwar->self()) {
+		army.enemyBaseDestroyed();
+		scoutClass.enemyBaseDestroyed();
+	}
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
