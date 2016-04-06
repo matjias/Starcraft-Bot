@@ -1,4 +1,5 @@
 #pragma once
+#include <BWTA.h>
 #include <BWAPI.h>
 #include <vector>
 #include <map>

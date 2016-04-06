@@ -377,6 +377,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	if (scoutClass.isScout(unit)) {
 		scoutClass.scoutHasDied();
 	}
+
+	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
+		scoutClass.recordUnitDestroy(unit->getType(), TilePosition(unit->getPosition()));
+	}
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {

@@ -51,10 +51,9 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 }
 
 bool Scouting::isScouting() {
-	if (hasAssignedScout() && (!foundEnemy && !dynamicLocations.at(0)->scouted))
-		return true;
-
-	return false;
+	// We are scouting as long as we have a scout and as long as we haven't
+	// found the enemy's base yet (implicitly have not looped through all spawns)
+	return hasAssignedScout() && (!foundEnemy && !dynamicLocations.at(0)->scouted);
 }
 
 bool Scouting::hasAssignedScout() {
@@ -166,6 +165,9 @@ void Scouting::distractEnemyBase() {
 
 		//currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
 
+		if (BWTA_isAnalyzed) {
+			BWTA::Polygon poly = BWTA::getRegion(enemyBaseLoc)->getPolygon();
+		}
 	}
 }
 
@@ -227,11 +229,7 @@ void Scouting::scoutHasDied() {
 }
 
 bool Scouting::isScout(Unit u) {
-	if (currentScout == u) {
-		return true;
-	}
-
-	return false;
+	return currentScout == u;
 }
 
 bool Scouting::returnFoundEnemyBase() {
