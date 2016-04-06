@@ -65,6 +65,12 @@ void ExampleAIModule::onFrame() {
 		Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
 	}
 
+	Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
+	Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
+	Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
+	
+	
+
 	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
 	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());

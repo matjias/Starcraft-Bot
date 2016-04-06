@@ -19,10 +19,13 @@ public:
 	void attack(Scouting scoutClass);
 	void zealotRush();
 	void setAnalyzed(bool analyzed);
-
+	int moved, countAtEnemyChoke;
+	bool Army::zealotAtPos(BWAPI::Unit zealot, BWAPI::TilePosition pos);
+	std::vector<BWAPI::Unit> getZealots();
+	BWAPI::Position enemyChoke;
 private:
 	void attack();
-
+	
 };
 
 
