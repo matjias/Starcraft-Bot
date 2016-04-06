@@ -1,6 +1,7 @@
 #pragma once
 #include <BWAPI.h>
 #include <vector>
+#include <map>
 
 class Scouting {
 public:
@@ -18,8 +19,24 @@ public:
 	void scoutHasDied();
 
 
-	void recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick);
+	// Structs
+	struct BuildingStruct {
+		BWAPI::UnitType unit;
+		BWAPI::TilePosition location;
+		int scoutedTime; // Represented in game ticks since start
+	};
+
+	struct LocationStruct {
+		BWAPI::Position location;
+		bool scouted;
+	};
+
+	void recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick);
+	void recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc);
+	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*> getEnemyStructures();
 	void enemyBaseDestroyed();
+
+	
 
 
 	// DEBUG METHODS BELOW

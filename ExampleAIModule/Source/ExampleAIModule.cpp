@@ -5,7 +5,6 @@
 #include "BuildOrders.h"
 #include "Army.h"
 #include <iostream>
-#include <vector>
 
 using namespace BWAPI;
 using namespace Filter;
@@ -62,8 +61,24 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
 	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-		Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+		//Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
 	}
+
+	std::map<TilePosition, Scouting::BuildingStruct*> enemyStructs = scoutClass.getEnemyStructures();
+	int debugCount = 0;
+	for (std::map<TilePosition, Scouting::BuildingStruct*>::iterator iterator = enemyStructs.begin();
+		iterator != enemyStructs.end(); iterator++) {
+		Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
+			iterator->second->unit.c_str(),
+			Position(iterator->second->location).x, Position(iterator->second->location).y,
+			iterator->second->scoutedTime);
+		debugCount++;
+	}
+	
+	//for (int i = 0; i < enemyStructs.size(); i++) {
+	//	Broodwar->drawTextScreen(5, 60 + i * 20, "%s, (%i,%i), %i", enemyStructs.at(i))
+	//}
+
 
 	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
@@ -330,6 +345,10 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 
 	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
 		scoutClass.foundEnemyBase(TilePosition(unit->getPosition()));
+	}
+
+	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
+		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
 	}
 }
 
