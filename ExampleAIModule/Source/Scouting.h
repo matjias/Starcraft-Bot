@@ -1,6 +1,8 @@
 #pragma once
+#include <BWTA.h>
 #include <BWAPI.h>
 #include <vector>
+#include <map>
 
 class Scouting {
 public:
@@ -16,31 +18,60 @@ public:
 	int getDistance();
 	void foundEnemyBase(BWAPI::TilePosition loc);
 	void scoutHasDied();
+	bool returnFoundEnemyBase();
+	BWAPI::Position returnEnemyBaseLocs();
+
+	// BWTA finished analyzing fuction
+	void set_BWTA_Analyzed();
 
 
-	void recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick);
+	/*----- Start of Structs -----*/
+	struct BuildingStruct {
+		BWAPI::UnitType unit;
+		BWAPI::TilePosition location;
+		int scoutedTime; // Represented in game ticks since start
+	};
+
+	struct CustomMapCompare {
+		bool operator()(const BWAPI::TilePosition& pos1, const BWAPI::TilePosition& pos2) const {
+			return sqrt(pow(pos1.x, 2) + pow(pos1.y, 2)) < sqrt(pow(pos2.x, 2) + pow(pos2.y, 2));
+		}
+	};
+
+	struct LocationStruct {
+		BWAPI::Position location;
+		bool scouted;
+	};
+	/*----- End of Structs -----*/
+
+	void recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick);
+	void recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc);
+	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, CustomMapCompare> getEnemyStructures();
 	void enemyBaseDestroyed();
 
+	
 
 	// DEBUG METHODS BELOW
-
-	int getX();
-	int getY();
+	BWAPI::Position getPos();	// Returns the Position for the
+								// current location to be scouted.
 
 	bool isScout(BWAPI::Unit u);
 
 	BWAPI::Position getScout();
-
-
-	BWAPI::TilePosition::list getSpawns();
 	BWAPI::TilePosition::list getDynamicSpawns();
 	std::vector<bool> getDynamicSpawnBools();
 
-	bool returnFoundEnemyBase();
-	BWAPI::Position returnEnemyBaseLocs();
-
 private:
+	// Private functions that Scouting uses
 	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
 	void distractEnemyBase();
+
+
+	// Global variables needed for Scouting
+	BWAPI::Unit currentScout;
+	bool hasScout, foundEnemy, BWTA_isAnalyzed;
+	std::vector<Scouting::LocationStruct*> dynamicLocations;
+	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructures;
+	BWAPI::TilePosition enemyBaseLoc;
 };

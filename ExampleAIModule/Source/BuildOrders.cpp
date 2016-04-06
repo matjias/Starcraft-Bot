@@ -245,7 +245,8 @@ bool BuildOrders::pylonNeeded() {
 }
 
 bool BuildOrders::gatewayNeeded() {
-	return !gatewaysQueued && gatewayCount <= zealotsWarping + dragoonsWarping; //(gatewayCount + gatewaysQueued < nexusCount * 4 || BWAPI::Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT);
+	return !gatewaysQueued && gatewayCount <= zealotsWarping + dragoonsWarping
+		&& BWAPI::Broodwar->self()->minerals() - reservedMinerals > gatewayCount * BWAPI::UnitTypes::Protoss_Zealot.mineralPrice();
 }
 
 bool BuildOrders::workerNeeded() {
@@ -253,7 +254,7 @@ bool BuildOrders::workerNeeded() {
 }
 
 bool BuildOrders::zealotNeeded() {
-	return !zealotsQueued;
+	return !zealotsQueued && (!cyberneticsCoreCount || (BWAPI::Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT && !BWAPI::Broodwar->self()->gas() - reservedGas > GAS_SURPLUS_LIMIT));
 }
 
 bool BuildOrders::dragoonNeeded() {
