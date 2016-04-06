@@ -64,9 +64,9 @@ void ExampleAIModule::onFrame() {
 		//Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
 	}
 
-	std::map<TilePosition, Scouting::BuildingStruct*> enemyStructs = scoutClass.getEnemyStructures();
+	std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
 	int debugCount = 0;
-	for (std::map<TilePosition, Scouting::BuildingStruct*>::iterator iterator = enemyStructs.begin();
+	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
 		iterator != enemyStructs.end(); iterator++) {
 		Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
 			iterator->second->unit.c_str(),
@@ -82,7 +82,9 @@ void ExampleAIModule::onFrame() {
 
 	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
-	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
+
+	Position scoutClassPos = scoutClass.getPos();
+	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClassPos.x, scoutClassPos.y);
 
 	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
 	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
@@ -413,7 +415,11 @@ DWORD WINAPI AnalyzeThread() {
 
 	analyzed = true;
 	analysis_just_finished = true;
+
+	// Tell our classes that BWTA finished analyzing
+	// so they can know when they can use the functions
 	army.setAnalyzed(true);
+	scoutClass.set_BWTA_Analyzed();
 	return 0;
 }
 

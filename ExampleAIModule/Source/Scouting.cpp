@@ -1,9 +1,6 @@
 #include "Scouting.h"
 
 using namespace BWAPI;
-
-
-
 /*
 	TODO: Major expanding of enemy units/structure surveillance
 		  and keeping track of enemy movements (if we see it)
@@ -14,16 +11,6 @@ using namespace BWAPI;
 	save their location but units might be more important to just
 	go after the fact that they have it until we kill it.
 */
-
-Unit currentScout;
-bool hasScout;
-std::vector<Scouting::LocationStruct*> dynamicLocations;
-//std::vector<Scouting::BuildingStruct*> enemyUnits; // TODO: Reconsider data structure
-// Consider balancing according to timeTick (when it was seen)
-std::map<BWAPI::TilePosition, Scouting::BuildingStruct*> enemyStructures;
-
-bool foundEnemy, knowsEnemy;
-TilePosition enemyBaseLoc;
 
 Scouting::Scouting() { }
 
@@ -177,7 +164,7 @@ void Scouting::distractEnemyBase() {
 		// their workers/supply line (attack them to get them to attack
 		// the scout and therefor stop them from mining and then running
 
-		currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
+		//currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
 
 	}
 }
@@ -194,7 +181,6 @@ void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, in
 		if (enemyStructures.count(loc) == 0) {
 			enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
 		}
-
 	}
 
 }
@@ -206,7 +192,7 @@ void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
 }
 
 
-std::map<BWAPI::TilePosition, Scouting::BuildingStruct*> Scouting::getEnemyStructures() {
+std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> Scouting::getEnemyStructures() {
 	return enemyStructures;
 }
 
@@ -256,19 +242,18 @@ Position Scouting::returnEnemyBaseLocs() {
 	return Position(enemyBaseLoc);
 }
 
+void Scouting::set_BWTA_Analyzed() {
+	BWTA_isAnalyzed = true;
+}
+
 /*
 	------!!!!!! DEBUG METHODS BELOW !!!!!!------
 
 	Used for displaying information about scouting to
 	the screen, so we can ensure correct behaviour
 */
-
-int Scouting::getX() {
-	return dynamicLocations.at(0)->location.x;
-}
-
-int Scouting::getY() {
-	return dynamicLocations.at(0)->location.y;
+BWAPI::Position Scouting::getPos() {
+	return dynamicLocations.at(0)->location;
 }
 
 Position Scouting::getScout() {
