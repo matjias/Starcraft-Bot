@@ -4,7 +4,8 @@
 
 using namespace BWAPI;
 
-std::vector<Unit>zealots; // Dead Zealots should be removed from the vector!
+std::vector<Unit> zealots; // Dead Zealots should be removed from the vector!
+std::vector<Unit> dragoons;
 
 BWAPI::Position enemyBaseLocs;
 
@@ -59,8 +60,16 @@ bool Army::buildZealot(BWAPI::Unit u){
 	return u->train(UnitTypes::Protoss_Zealot);
 }
 
+bool Army::buildDragoon(BWAPI::Unit u){
+	return u->train(UnitTypes::Protoss_Dragoon);
+}
+
 void Army::addZealot(BWAPI::Unit u){
 	zealots.push_back(u);
+}
+
+void Army::addDragoon(BWAPI::Unit u){
+	dragoons.push_back(u);
 }
 
 void Army::setAnalyzed(bool analyzed){

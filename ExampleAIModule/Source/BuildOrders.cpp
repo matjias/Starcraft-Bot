@@ -14,7 +14,7 @@ BuildOrders::BuildOrders() {
 	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Pylon);
 	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
 
-	// 2 gate
+	// 2 Gate - "9/9 Gateways"
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Probe);
@@ -23,6 +23,19 @@ BuildOrders::BuildOrders() {
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Pylon);
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
 	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+
+	// Dragoon Rush - "One Zealot before Cybernetics Core"
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Gateway);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Assimilator);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Pylon);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Cybernetics_Core);
 }
 
 BuildOrders::~BuildOrders() {
@@ -42,11 +55,20 @@ void BuildOrders::updateQueueValues() {
 		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Gateway) {
 			gatewaysQueued++;
 		}
+		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Assimilator) {
+			assimilatorsQueued++;
+		}
+		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Cybernetics_Core) {
+			cyberneticsCoresQueued++;
+		}
 		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Probe) {
 			probesQueued++;
 		}
 		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Zealot) {
 			zealotsQueued++;
+		}
+		else if (investmentList[i] == BWAPI::UnitTypes::Protoss_Dragoon) {
+			dragoonsQueued++;
 		}
 	}
 }
@@ -71,7 +93,8 @@ void BuildOrders::useSecondBuildOrder() {
 		}
 		else {
 			secondBuildOrderStarted = true;
-			investmentList = buildOrder2Gate;
+			//investmentList = buildOrder2Gate;
+			investmentList = buildOrderDragoonRush;
 			updateQueueValues();
 		}
 	}
@@ -96,11 +119,15 @@ void BuildOrders::addInvestments() {
 		investmentList.push_back(BWAPI::UnitTypes::Protoss_Zealot);
 		zealotsQueued++;
 	}
+	if (dragoonNeeded()) {
+		investmentList.push_back(BWAPI::UnitTypes::Protoss_Dragoon);
+		dragoonsQueued++;
+	}
 }
 
 void BuildOrders::reorderInvestments() {
 	if (gatewaysQueued
-		&& gatewayCount <= zealotsWarping
+		&& gatewayCount <= zealotsWarping + dragoonsWarping
 		&& investmentList[0] == BWAPI::UnitTypes::Protoss_Zealot) {
 		for (int i = 0; i < investmentList.size(); i++) {
 			if (investmentList[i] == BWAPI::UnitTypes::Protoss_Gateway) {
@@ -111,13 +138,25 @@ void BuildOrders::reorderInvestments() {
 		}
 	}
 	if (zealotsQueued
-		&& zealotsWarping < gatewayCount
+		&& zealotsWarping + dragoonsWarping < gatewayCount
 		&& BWAPI::Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
 		&& investmentList[0] != BWAPI::UnitTypes::Protoss_Zealot) {
 		for (int i = 0; i < investmentList.size(); i++) {
 			if (investmentList[i] == BWAPI::UnitTypes::Protoss_Zealot) {
 				investmentList.erase(investmentList.begin() + i);
 				investmentList.insert(investmentList.begin(), BWAPI::UnitTypes::Protoss_Zealot);
+				break;
+			}
+		}
+	}
+	if (dragoonsQueued
+		&& zealotsWarping + dragoonsWarping < gatewayCount
+		&& BWAPI::Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY
+		&& investmentList[0] != BWAPI::UnitTypes::Protoss_Dragoon) {
+		for (int i = 0; i < investmentList.size(); i++) {
+			if (investmentList[i] == BWAPI::UnitTypes::Protoss_Dragoon) {
+				investmentList.erase(investmentList.begin() + i);
+				investmentList.insert(investmentList.begin(), BWAPI::UnitTypes::Protoss_Dragoon);
 				break;
 			}
 		}
@@ -206,7 +245,7 @@ bool BuildOrders::pylonNeeded() {
 }
 
 bool BuildOrders::gatewayNeeded() {
-	return !gatewaysQueued && (gatewayCount + gatewaysQueued < nexusCount * 4 || BWAPI::Broodwar->self()->minerals() < MINERAL_SURPLUS_LIMIT + reservedMinerals);
+	return !gatewaysQueued && gatewayCount <= zealotsWarping + dragoonsWarping; //(gatewayCount + gatewaysQueued < nexusCount * 4 || BWAPI::Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT);
 }
 
 bool BuildOrders::workerNeeded() {
@@ -215,4 +254,8 @@ bool BuildOrders::workerNeeded() {
 
 bool BuildOrders::zealotNeeded() {
 	return !zealotsQueued;
+}
+
+bool BuildOrders::dragoonNeeded() {
+	return !dragoonsQueued;
 }

@@ -17,6 +17,7 @@ public:
 
 	std::vector<BWAPI::UnitType> buildOrderInitial;
 	std::vector<BWAPI::UnitType> buildOrder2Gate;
+	std::vector<BWAPI::UnitType> buildOrderDragoonRush;
 
 	std::vector<BWAPI::UnitType> getInvestmentList();
 	void dequeueInvestmentList();
@@ -41,6 +42,12 @@ public:
 	int gatewayCount;
 	int gatewaysWarping;
 	int gatewaysQueued;
+	int assimilatorCount;
+	int assimilatorsWarping;
+	int assimilatorsQueued;
+	int cyberneticsCoreCount;
+	int cyberneticsCoresWarping;
+	int cyberneticsCoresQueued;
 
 	// Units
 	int probeCount;
@@ -49,6 +56,9 @@ public:
 	int zealotCount;
 	int zealotsWarping;
 	int zealotsQueued;
+	int dragoonCount;
+	int dragoonsWarping;
+	int dragoonsQueued;
 
 private:
 	void updateQueueValues();
@@ -57,6 +67,7 @@ private:
 	bool gatewayNeeded();
 	bool workerNeeded();
 	bool zealotNeeded();
+	bool dragoonNeeded();
 
 	bool firstBuildOrderStarted;
 	bool firstBuildOrderFinished;

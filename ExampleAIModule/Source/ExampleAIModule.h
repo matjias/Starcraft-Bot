@@ -35,12 +35,15 @@ public:
 
   // Our functions
   void mineMinerals(BWAPI::Unit u);
+  void mineGas(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);
 
   bool isAnalyzed();
   bool canBuildSupply();
   bool canBuildGateway();
   bool canbuildProbe();
+  bool gasGathererNeeded();
+  bool isGatheringGas(BWAPI::Unit u);
   void buildProbe(BWAPI::Unit u);
   void buildZealot(BWAPI::Unit u);
 
