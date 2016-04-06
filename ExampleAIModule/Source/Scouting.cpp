@@ -1,12 +1,6 @@
 #include "Scouting.h"
 
 using namespace BWAPI;
-
-struct LocationStruct {
-	Position location;
-	bool scouted;
-};
-
 /*
 	TODO: Major expanding of enemy units/structure surveillance
 		  and keeping track of enemy movements (if we see it)
@@ -17,21 +11,6 @@ struct LocationStruct {
 	save their location but units might be more important to just
 	go after the fact that they have it until we kill it.
 */
-
-struct UnitStruct {
-	Unit unit;
-	Position location;
-	int scoutedTime; // Represented in game ticks since start
-};
-
-Unit currentScout;
-bool hasScout;
-std::vector<LocationStruct*> dynamicLocations;
-std::vector<UnitStruct*> enemyUnits; // TODO: Reconsider data structure
-std::vector<UnitStruct*> enemyStructures;
-
-bool foundEnemy, knowsEnemy;
-TilePosition enemyBaseLoc;
 
 Scouting::Scouting() { }
 
@@ -185,17 +164,39 @@ void Scouting::distractEnemyBase() {
 		// their workers/supply line (attack them to get them to attack
 		// the scout and therefor stop them from mining and then running
 
-		currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
+		//currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
 
 	}
 }
 
-void Scouting::recordUnit(BWAPI::Unit u, BWAPI::Position loc, int timeTick) {
-	/*UnitStruct *enemyUnit = new UnitStruct();
-	enemyUnit->unit = u; 
-	enemyUnit->location = loc; 
-	enemyUnit->scoutedTime = timeTick;*/
+void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick) {
+	BuildingStruct *buildStruct = new BuildingStruct();
+	buildStruct->unit = u;
+	buildStruct->location = loc;
+	buildStruct->scoutedTime = timeTick;
+	
+	if (u.isBuilding()) {
+		// If we do not already know a building
+		// at this location we save it for later
+		if (enemyStructures.count(loc) == 0) {
+			enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
+		}
+	}
+
 }
+
+void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
+	if (u.isBuilding()) {
+		enemyStructures.erase(loc); // Erase should have a check for if the key exists in the map
+	}
+}
+
+
+std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> Scouting::getEnemyStructures() {
+	return enemyStructures;
+}
+
+
 
 void Scouting::enemyBaseDestroyed() {
 	// TODO: Logic for scouting the entire map and 
@@ -241,19 +242,18 @@ Position Scouting::returnEnemyBaseLocs() {
 	return Position(enemyBaseLoc);
 }
 
+void Scouting::set_BWTA_Analyzed() {
+	BWTA_isAnalyzed = true;
+}
+
 /*
 	------!!!!!! DEBUG METHODS BELOW !!!!!!------
 
 	Used for displaying information about scouting to
 	the screen, so we can ensure correct behaviour
 */
-
-int Scouting::getX() {
-	return dynamicLocations.at(0)->location.x;
-}
-
-int Scouting::getY() {
-	return dynamicLocations.at(0)->location.y;
+BWAPI::Position Scouting::getPos() {
+	return dynamicLocations.at(0)->location;
 }
 
 Position Scouting::getScout() {

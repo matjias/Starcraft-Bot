@@ -5,7 +5,6 @@
 #include "BuildOrders.h"
 #include "Army.h"
 #include <iostream>
-#include <vector>
 
 using namespace BWAPI;
 using namespace Filter;
@@ -62,7 +61,18 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
 	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-		Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+		//Broodwar->drawTextScreen(5, 60 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	}
+
+	std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
+	int debugCount = 0;
+	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
+		iterator != enemyStructs.end(); iterator++) {
+		Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
+			iterator->second->unit.c_str(),
+			Position(iterator->second->location).x, Position(iterator->second->location).y,
+			iterator->second->scoutedTime);
+		debugCount++;
 	}
 
 	Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
@@ -71,9 +81,16 @@ void ExampleAIModule::onFrame() {
 	
 	
 
+	//for (int i = 0; i < enemyStructs.size(); i++) {
+	//	Broodwar->drawTextScreen(5, 60 + i * 20, "%s, (%i,%i), %i", enemyStructs.at(i))
+	//}
+
+
 	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
-	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClass.getX(), scoutClass.getY());
+
+	Position scoutClassPos = scoutClass.getPos();
+	Broodwar->drawTextScreen(350, 40, "Location: %i, %i", scoutClassPos.x, scoutClassPos.y);
 
 	Broodwar->drawTextScreen(350, 60, "Found Enemy: %d", scoutClass.returnFoundEnemyBase());
 	Broodwar->drawTextScreen(350, 80, "Location: %i, %i", scoutClass.returnEnemyBaseLocs().x, scoutClass.returnEnemyBaseLocs().y);
@@ -337,6 +354,10 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
 		scoutClass.foundEnemyBase(TilePosition(unit->getPosition()));
 	}
+
+	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
+		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
+}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
@@ -400,7 +421,11 @@ DWORD WINAPI AnalyzeThread() {
 
 	analyzed = true;
 	analysis_just_finished = true;
+
+	// Tell our classes that BWTA finished analyzing
+	// so they can know when they can use the functions
 	army.setAnalyzed(true);
+	scoutClass.set_BWTA_Analyzed();
 	return 0;
 }
 
