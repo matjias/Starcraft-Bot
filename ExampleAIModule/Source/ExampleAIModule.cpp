@@ -74,7 +74,13 @@ void ExampleAIModule::onFrame() {
 			iterator->second->scoutedTime);
 		debugCount++;
 	}
+
+	Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
+	Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
+	Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
 	
+	
+
 	//for (int i = 0; i < enemyStructs.size(); i++) {
 	//	Broodwar->drawTextScreen(5, 60 + i * 20, "%s, (%i,%i), %i", enemyStructs.at(i))
 	//}
@@ -351,7 +357,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 
 	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
 		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
-	}
+}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {

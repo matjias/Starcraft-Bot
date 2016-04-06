@@ -4,12 +4,14 @@
 
 using namespace BWAPI;
 
-std::vector<Unit>zealots; // Dead Zealots should be removed from the vector!
+std::vector<Unit> zealots; // Dead Zealots should be removed from the vector!
 
 BWAPI::Position enemyBaseLocs;
 
-Position idleLoc;
+Position idleLoc, enemyChoke;
 bool mapAnalyzed;
+int moved = 0;
+int countAtEnemyChoke = 0;
 
 Army::Army(){}
 
@@ -22,6 +24,7 @@ void Army::_init(){
 void Army::update(Scouting scoutClass){
 	if (mapAnalyzed){
 		idleLoc = BWTA::getNearestChokepoint(Position(Broodwar->self()->getStartLocation()))->getCenter();
+		enemyChoke = BWTA::getNearestChokepoint(scoutClass.returnEnemyBaseLocs())->getCenter();
 	}
 	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
 	
@@ -30,10 +33,11 @@ void Army::update(Scouting scoutClass){
 	}
 	else {
 		for (int i = 0; i < zealots.size(); i++){
-			//zealots.at(i)->move(idleLoc);
-			if (zealots.at(i)->isIdle()){
-				zealots.at(i)->attack(idleLoc);
+			if (zealots.at(i)->canAttackMove() && zealots.at(i)->isIdle() && !zealotAtPos(zealots.at(i), TilePosition(idleLoc))){
+				zealots.at(i)->move(idleLoc);
+				moved++;
 			}
+
 		}
 	}
 }
@@ -49,8 +53,15 @@ void Army::attack(Scouting scoutClass){
 
 void Army::zealotRush(){
 	for (Unit u : zealots){
-		if (u->isIdle()){
+		if (zealotAtPos(u, TilePosition(enemyChoke))){
+			countAtEnemyChoke++;
+		}
+		if (zealotAtPos(u, TilePosition(enemyChoke)) && countAtEnemyChoke > ZEALOT_RUSH_SIZE){
 			u->attack(enemyBaseLocs);
+		}
+		else if (u->canAttackMove() && u->isIdle() && !zealotAtPos(u, TilePosition(enemyChoke))){
+			u->move(enemyChoke);
+			moved++;
 		}
 	}
 }
@@ -65,4 +76,15 @@ void Army::addZealot(BWAPI::Unit u){
 
 void Army::setAnalyzed(bool analyzed){
 	mapAnalyzed = analyzed;
+}
+
+std::vector<BWAPI::Unit> Army::getZealots(){
+	return zealots;
+}
+
+bool Army::zealotAtPos(Unit zealot, TilePosition pos){
+	return zealot->getTilePosition().x > pos.x - 6
+		&& zealot->getTilePosition().x < pos.x + 6
+		&& zealot->getTilePosition().y > pos.y - 6
+		&& zealot->getTilePosition().y < pos.y + 6;
 }
