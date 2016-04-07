@@ -16,7 +16,7 @@ Scouting::Scouting() { }
 
 Scouting::~Scouting() { }
 
-void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
+void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, ExampleAIModule* mainProg) {
 	TilePosition::list unsortedSpawns = locs;
 
 	// Currently just insertion sorting but should be fine for such a small data set
@@ -48,6 +48,8 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc) {
 		
 		dynamicLocations.push_back(locStruct);
 	}
+
+	mainProgram = mainProg;
 }
 
 bool Scouting::isScouting() {
@@ -156,6 +158,15 @@ void Scouting::updateToScoutList() {
 	}
 }
 
+void Scouting::requestScout() {
+	if (foundEnemy && enemyStructures.count(enemyBaseLoc) == 0) {
+		// Enemy base has been destroyed, we want an observer
+		// not to scout the possible expansion slots for 
+		// the remaining foes/structures
+		mainProgram->scoutClassRequestedScout(BWAPI::UnitTypes::Protoss_Observer);
+	}
+}
+
 void Scouting::distractEnemyBase() {
 	if (foundEnemy && hasScout) {
 		// Implement scout moving around in base logic, ensuring
@@ -163,11 +174,38 @@ void Scouting::distractEnemyBase() {
 		// their workers/supply line (attack them to get them to attack
 		// the scout and therefor stop them from mining and then running
 
-		//currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
+		// Steal some strats from (credit, where credit is due)
+		// http://pages.cs.wisc.edu/~starr/bots/UAlbertaBot_src/UAlbertaBot_src/Projects/UAlbertaBot/Source/ScoutManager.cpp
+
+		/*
+		currentScout->isUnderAttack
+
+		BWAPI::Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
+		if (enemies.size() > 0) {
+			int i = 0;
+			for (BWAPI::Unitset::iterator it = enemies.begin(); it != enemies.end(); it++) {
+				it.
+			}
+
+
+			for (int i = 0; i < enemies.size(); i++) {
+				//Broodwar->drawTextScreen(5, 60 + i * 20, "Unit: %s (%i, %i)", );
+			}
+
+			for (auto &enemyUnit : enemies) {
+				// Check if any enemy unit is attacking us
+				// @TODO: How the fuck do you check that...
+				
+			}
+		}
+
+		if (currentScout->isIdle()) {
+
+		}
 
 		if (BWTA_isAnalyzed) {
 			BWTA::Polygon poly = BWTA::getRegion(enemyBaseLoc)->getPolygon();
-		}
+		}*/
 	}
 }
 
@@ -203,8 +241,8 @@ std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapComp
 void Scouting::enemyBaseDestroyed() {
 	// TODO: Logic for scouting the entire map and 
 	//		 recorded units/structures for the win
-
-
+	requestScout(); // A function whose entire purpose is calling one other function...
+					// This programming is so brilliant
 }
 
 int Scouting::getDistance() {

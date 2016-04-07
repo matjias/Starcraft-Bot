@@ -47,4 +47,6 @@ public:
   void buildProbe(BWAPI::Unit u);
   void buildZealot(BWAPI::Unit u);
 
+  void scoutClassRequestedScout(BWAPI::UnitType u);
+
 };

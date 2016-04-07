@@ -3,12 +3,13 @@
 #include <BWAPI.h>
 #include <vector>
 #include <map>
+#include "ExampleAIModule.h"
 
 class Scouting {
 public:
 	Scouting();
 	~Scouting();
-	void _init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc);
+	void _init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, ExampleAIModule* mainProg);
 	bool isScouting();
 	bool assignScout(BWAPI::Unit scout);
 	bool hasAssignedScout();
@@ -20,6 +21,7 @@ public:
 	void scoutHasDied();
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
+	void requestScout();
 
 	// BWTA finished analyzing fuction
 	void set_BWTA_Analyzed();
@@ -34,6 +36,9 @@ public:
 
 	struct CustomMapCompare {
 		bool operator()(const BWAPI::TilePosition& pos1, const BWAPI::TilePosition& pos2) const {
+			// Compares the 2 positions and returns the true if the pos1
+			// is the shortest distance to (0,0)
+			// The position can be changed at a later time for efficiency?
 			return sqrt(pow(pos1.x, 2) + pow(pos1.y, 2)) < sqrt(pow(pos2.x, 2) + pow(pos2.y, 2));
 		}
 	};
@@ -74,4 +79,7 @@ private:
 	std::vector<Scouting::LocationStruct*> dynamicLocations;
 	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructures;
 	BWAPI::TilePosition enemyBaseLoc;
+
+	// The main program class
+	ExampleAIModule* mainProgram;
 };

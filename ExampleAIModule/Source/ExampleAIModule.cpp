@@ -37,7 +37,7 @@ void ExampleAIModule::onStart() {
 	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 
 	// Scouting stuff
-	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
+	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
 
 	// BWTA2 stuffs
 	BWTA::readMap();
@@ -62,9 +62,9 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
-	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-		Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
-	}
+	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
+	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	//}
 
 	/*if (assimilators.size() == 0) {
 		Broodwar->drawTextScreen(200, 5, "%i: %s", 0, "No Assimilators");
@@ -84,20 +84,20 @@ void ExampleAIModule::onFrame() {
 		}
 	}*/
 
-	std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
-	int debugCount = 0;
-	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
-		iterator != enemyStructs.end(); iterator++) {
-		Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
-			iterator->second->unit.c_str(),
-			Position(iterator->second->location).x, Position(iterator->second->location).y,
-			iterator->second->scoutedTime);
-		debugCount++;
-	}
+	//std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
+	//int debugCount = 0;
+	//for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
+	//	iterator != enemyStructs.end(); iterator++) {
+	//	Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
+	//		iterator->second->unit.c_str(),
+	//		Position(iterator->second->location).x, Position(iterator->second->location).y,
+	//		iterator->second->scoutedTime);
+	//	debugCount++;
+	//}
 
-	Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
-	Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
-	Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
+	//Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
+	//Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
+	//Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
 	
 	
 
@@ -598,4 +598,12 @@ bool ExampleAIModule::isGatheringGas(BWAPI::Unit u) {
 
 bool isAnalyzed(){
 	return analyzed;
+}
+
+void ExampleAIModule::scoutClassRequestedScout(BWAPI::UnitType u) {
+	// Send a request to buildOrder that we would like to
+	// make this unit ASAP, also maybe some logic for keeping
+	// track of when it is finished so we can call
+	// scoutClass.assigScout(Observer) on it.
+
 }
