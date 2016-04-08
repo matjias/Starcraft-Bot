@@ -26,8 +26,8 @@ public:
 	std::vector<BWAPI::Unit> getZealots();
 	BWAPI::Position enemyChoke;
 	void enemyBaseDestroyed();
-	void Army::addSquadMember(int squadNumber, Unit u);
-	void Army::buildSquad(std::vector<UnitType, int> list);
+	void Army::addSquadMember(int squadNumber, BWAPI::Unit u);
+	void Army::buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list);
 private:
 	void attack();
 };

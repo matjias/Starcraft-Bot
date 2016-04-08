@@ -76,13 +76,13 @@ void Army::attack(){
 		}
 	}
 
-	if (!zealotRush){
+	//if (!zealotRush()){
 		
-	}
-	else
-	{
-		zealotRush();
-	}
+	//}
+	//else
+	//{
+	//	zealotRush();
+	//}
 
 }
 
@@ -155,6 +155,6 @@ void Army::addSquadMember(int i, Unit u){
 	}
 }
 
-void Army::buildSquad(std::vector<UnitType,int> list){
+void Army::buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list){
 	
 }
