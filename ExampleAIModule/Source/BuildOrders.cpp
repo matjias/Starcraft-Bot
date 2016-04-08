@@ -93,8 +93,8 @@ void BuildOrders::useSecondBuildOrder() {
 		}
 		else {
 			secondBuildOrderStarted = true;
-			//investmentList = buildOrder2Gate;
-			investmentList = buildOrderDragoonRush;
+			investmentList = buildOrder2Gate;
+			//investmentList = buildOrderDragoonRush;
 			updateQueueValues();
 		}
 	}

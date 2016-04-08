@@ -7,10 +7,17 @@ using namespace BWAPI;
 std::vector<Unit> zealots; // Dead Zealots should be removed from the vector!
 std::vector<Unit> dragoons;
 
+/*
+Mby only work in unitsets instead of having all unit of a specfic type in a vector.
+If unit doesn't belong to a specific squad, have it stored in a "overflow" squad.
+*/
+
+std::vector<Unitset> squads;
+
 BWAPI::Position enemyBaseLocs;
 
 Position idleLoc, enemyChoke, attackLoc;
-bool mapAnalyzed, enemyBaseDest = false;
+bool mapAnalyzed, enemyBaseDest = false, zealotRush = false;
 int moved = 0;
 int countAtEnemyChoke = 0;
 
@@ -20,6 +27,7 @@ Army::~Army(){}
 
 void Army::_init(){
 	mapAnalyzed = false;
+	squads.push_back(Unitset());
 }
 
 void Army::update(Scouting scoutClass){
@@ -40,8 +48,6 @@ void Army::update(Scouting scoutClass){
 		}
 	}
 
-
-
 	if (zealots.size() > ZEALOT_RUSH_SIZE) {
 		attack();
 	}
@@ -54,22 +60,35 @@ void Army::update(Scouting scoutClass){
 
 		}
 	}
+
+
+}
+void Army::attack(Scouting scoutClass){
+	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
+	attack();
 }
 
 void Army::attack(){
-	zealotRush();
+	countAtEnemyChoke = 0;
+	for (Unit u : zealots){
+		if (u->canAttackMove() && u->isIdle() && zealotAtPos(u, TilePosition(enemyChoke))){
+			countAtEnemyChoke++;
+		}
+	}
+
+	if (!zealotRush){
+		
+	}
+	else
+	{
+		zealotRush();
+	}
+
 }
 
-void Army::attack(Scouting scoutClass){
-	enemyBaseLocs = scoutClass.returnEnemyBaseLocs();
-	zealotRush();
-}
 
 void Army::zealotRush(){
 	for (Unit u : zealots){
-		if (u->canAttackMove() && u->isIdle() &&  zealotAtPos(u, TilePosition(enemyChoke))){
-			countAtEnemyChoke++;
-		}
 		if (zealotAtPos(u, TilePosition(enemyChoke)) && countAtEnemyChoke > ZEALOT_RUSH_SIZE){
 			u->attack(attackLoc);
 		}
@@ -90,10 +109,22 @@ bool Army::buildDragoon(BWAPI::Unit u){
 
 void Army::addZealot(BWAPI::Unit u){
 	zealots.push_back(u);
+	// Find a more intelligent solution for inserting right amount of
+	for (Unitset squad : squads){
+		if (squad.size() <= 7){
+			squad.insert(u);
+		}
+	}
 }
 
 void Army::addDragoon(BWAPI::Unit u){
 	dragoons.push_back(u);
+	// Find a more intelligent solution for inserting right amount of unit in squad
+	for (Unitset squad : squads){
+		if (squad.size() <= 7){
+			squad.insert(u);
+		}
+	}
 }
 
 void Army::setAnalyzed(bool analyzed){
@@ -114,4 +145,16 @@ bool Army::zealotAtPos(Unit zealot, TilePosition pos){
 
 void Army::enemyBaseDestroyed(){
 	enemyBaseDest = true;
+}
+
+void Army::addSquadMember(int i, Unit u){
+	if (!squads.empty()){
+		if (!squads.at(i).empty()){
+			squads.at(i).insert(u);
+		}
+	}
+}
+
+void Army::buildSquad(std::vector<UnitType,int> list){
+	
 }
