@@ -62,6 +62,8 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
+	Broodwar->drawTextScreen(5, 20, "%s", Broodwar->enemy()->getRace().c_str());
+
 	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
 	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
 	//}
@@ -332,7 +334,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 
 	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
 		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
-}
+	}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {

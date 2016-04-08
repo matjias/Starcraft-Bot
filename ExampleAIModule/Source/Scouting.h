@@ -71,6 +71,8 @@ private:
 	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
 	void distractEnemyBase();
+	void validMove(BWAPI::Unit unitToMove, BWAPI::Position targetLoc);
+	void validAttack(BWAPI::Unit unitToAttack, BWAPI::Unit targetUnit);
 
 
 	// Global variables needed for Scouting
