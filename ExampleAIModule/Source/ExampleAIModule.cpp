@@ -96,9 +96,12 @@ void ExampleAIModule::onFrame() {
 	//}
 
 	//Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
-	//Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
-	//Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
-	
+	Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
+	Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
+
+	if (army.getZealots().size() > 0){
+		Broodwar->drawTextScreen(350, 180, "John: %i, %i", TilePosition(army.getZealots().at(0)->getPosition()).x, TilePosition(army.getZealots().at(0)->getPosition()).y);
+	}
 	
 
 	//for (int i = 0; i < enemyStructs.size(); i++) {
