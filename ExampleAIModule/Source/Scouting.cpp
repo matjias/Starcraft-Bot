@@ -55,7 +55,7 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, Ex
 bool Scouting::isScouting() {
 	// We are scouting as long as we have a scout and as long as we haven't
 	// found the enemy's base yet (implicitly have not looped through all spawns)
-	return hasAssignedScout() && (!foundEnemy && !dynamicLocations.at(0)->scouted);
+	return hasAssignedScout();
 }
 
 bool Scouting::hasAssignedScout() {
@@ -173,6 +173,35 @@ void Scouting::requestScout() {
 }
 
 void Scouting::distractEnemyBase() {
+	/* Everything here is testing*/
+	Unitset allEnemies = Broodwar->enemy()->getUnits();
+	int debugCount = 0;
+	for (auto &enemyStuff : allEnemies) {
+		if (!enemyStuff->getType().isBuilding()) {
+			allEnemies.erase(enemyStuff);
+		}
+		else {
+			Broodwar->drawTextScreen(20, 40 + debugCount * 20, "%s", enemyStuff->getType().c_str());
+			
+			// Draw enemy we see
+			Broodwar->drawEllipseMap(enemyStuff->getPosition(),
+				enemyStuff->getType().tileWidth() * TILE_SIZE / 2,
+				enemyStuff->getType().tileHeight() * TILE_SIZE / 2,
+				Colors::Orange);
+
+			// If they have a weapon we draw the range (cannons etc)
+			WeaponType buildWeapon = enemyStuff->getType().groundWeapon();
+			if (buildWeapon != NULL) {
+				Broodwar->drawCircleMap(enemyStuff->getPosition(),
+					buildWeapon.maxRange(),
+					Colors::Red);
+			}
+			
+			debugCount++;
+		}
+	}
+	/* End of testing */
+
 	// Make sure we are in the enemy's region,
 	// and if we are not, we need to move there
 	BWTA::Region *enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
@@ -181,12 +210,32 @@ void Scouting::distractEnemyBase() {
 		// Make sure we are moving to the enemy region
 		validMove(currentScout, returnEnemyBaseLocs());
 
+		Broodwar->drawTextScreen(20, 40, "Currently moving to enemy spawn");
 		// Todo: Ensure we avoid enemy threats that can kill
 		//		 us before we get to our target location
+
 	}
 	// Otherwise, we must be in their region,
 	// and we can start harassing in one form or another
 	else {
+		// Draw our vision for our scout, and record all enemy units in this range
+		Broodwar->drawCircleMap(currentScout->getPosition(), currentScout->getType().sightRange(),
+			Colors::Red);
+
+		Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), 
+														Filter::IsEnemy);
+		// Draw all, within range, of the enemies maximum attack range
+		// Todo: This is what we want to avoid running into if they are attacking
+		for (auto &enemyUnit : enemies) {
+			Color colorToDraw = enemyUnit->getType().isWorker() ? Colors::Green : Colors::Blue;
+			Broodwar->drawCircleMap(enemyUnit->getPosition(), 
+				enemyUnit->getType().groundWeapon().maxRange(),
+				colorToDraw);
+		}
+
+
+
+
 
 	}
 
