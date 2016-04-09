@@ -173,34 +173,79 @@ void Scouting::requestScout() {
 }
 
 void Scouting::distractEnemyBase() {
-	/* Everything here is testing*/
-	Unitset allEnemies = Broodwar->enemy()->getUnits();
-	int debugCount = 0;
-	for (auto &enemyStuff : allEnemies) {
-		if (!enemyStuff->getType().isBuilding()) {
-			allEnemies.erase(enemyStuff);
+	// Debug, highlight the closest enemy expansion in teal
+	// If it works correctly, then this is where we want to scout
+	// for early enemy expansion
+	BWTA::Region *enemyReg = BWTA::getRegion(returnEnemyBaseLocs());
+	if (enemyReg != NULL) {
+		std::set<BWTA::BaseLocation*> baseLocs = enemyReg->getBaseLocations();
+
+		if (baseLocs.size() == 1) {
+			// No expansion slots in the enemy's region,
+			// need to look in the nearby region(s) and draw them up
+			
+			// Todo: All the crap below
+			// Will Probably need to iterate through chokepoints rather than
+			// getReachableRegions (if no islands, it returns all regions on the map)
+			// BFS might be the way to go? Needs testing as we cannot ensure
+			// that this finds the closest region with a base location,
+			// just that is finds the smallest amount of regions to a base location
+
+			//std::vector<std::pair<BWTA::Region*, bool>> vertices;
+			//vertices.push_back(std::make_pair(enemyReg, true));
+
+			// Todo: Implement BFS correctly, not caching what regions it has
+			// already iterated through, use std::unordered_map<BWTA::Region*, bool> for this
+			std::set<BWTA::BaseLocation*> foundBaseLocations;
+			bool foundBaseLocCandidate = false;
+
+			std::deque<BWTA::Region*> vertices;
+			vertices.push_back(enemyReg);
+
+			while (vertices.size() > 0 && !foundBaseLocCandidate) {
+				//BFS - Regions are vertices, and chokepoints are edges
+				std::set<BWTA::Chokepoint*> chokePoints = vertices.at(0)->getChokepoints();
+
+				// Add the next regions to our queue
+				for (auto &chokePoint : chokePoints) {
+					std::pair<BWTA::Region*, BWTA::Region*> regionCandidates = chokePoint->getRegions();
+					BWTA::Region *nextRegion;
+					if (regionCandidates.first != vertices.at(0)) {
+						vertices.push_back(regionCandidates.first);
+						nextRegion = regionCandidates.first;
+					}
+					else {
+						vertices.push_back(regionCandidates.second);
+						nextRegion = regionCandidates.second;
+					}
+
+					// Check if the new region has a baseLocation in it
+					if (nextRegion->getBaseLocations().size() > 0) {
+						foundBaseLocCandidate = true;
+						foundBaseLocations = nextRegion->getBaseLocations();
+					}
+				}
+
+				vertices.pop_front();
+			}
+
+			// Finally, fucking draw the possible expansions
+			for (auto &foundBaseLocation : foundBaseLocations) {
+				Broodwar->drawCircleMap(foundBaseLocation->getPosition(), TILE_SIZE * 3, Colors::Teal);
+			}
 		}
 		else {
-			Broodwar->drawTextScreen(20, 40 + debugCount * 20, "%s", enemyStuff->getType().c_str());
-			
-			// Draw enemy we see
-			Broodwar->drawEllipseMap(enemyStuff->getPosition(),
-				enemyStuff->getType().tileWidth() * TILE_SIZE / 2,
-				enemyStuff->getType().tileHeight() * TILE_SIZE / 2,
-				Colors::Orange);
-
-			// If they have a weapon we draw the range (cannons etc)
-			WeaponType buildWeapon = enemyStuff->getType().groundWeapon();
-			if (buildWeapon != NULL) {
-				Broodwar->drawCircleMap(enemyStuff->getPosition(),
-					buildWeapon.maxRange(),
-					Colors::Red);
+			for (auto &baseLoc : baseLocs) {
+				if (baseLoc != BWTA::getNearestBaseLocation(returnEnemyBaseLocs())) {
+					// Found the one different from their spawn point, now draw it
+					Broodwar->drawCircleMap(baseLoc->getPosition(), TILE_SIZE * 3, Colors::Teal);
+				}
 			}
-			
-			debugCount++;
 		}
 	}
-	/* End of testing */
+	
+
+	/* Actual logic starts below here */
 
 	// Make sure we are in the enemy's region,
 	// and if we are not, we need to move there
@@ -218,28 +263,38 @@ void Scouting::distractEnemyBase() {
 	// Otherwise, we must be in their region,
 	// and we can start harassing in one form or another
 	else {
+		// Tell our scout to stand on the enemy chokepoint
+		// so it doesn't just go and die immediately (need to implement kiting logic)
+		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
+		if (enemyChoke != NULL) {
+			validMove(currentScout, enemyChoke->getCenter());
+		}
+		else {
+			validMove(currentScout, returnEnemyBaseLocs());
+		}
+
 		// Draw our vision for our scout, and record all enemy units in this range
 		Broodwar->drawCircleMap(currentScout->getPosition(), currentScout->getType().sightRange(),
-			Colors::Red);
+			Colors::Cyan);
+		// Draw our attack range
+		Broodwar->drawCircleMap(currentScout->getPosition(), 
+			currentScout->getType().groundWeapon().maxRange(),
+			Colors::Cyan);
+
 
 		Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), 
 														Filter::IsEnemy);
 		// Draw all, within range, of the enemies maximum attack range
 		// Todo: This is what we want to avoid running into if they are attacking
 		for (auto &enemyUnit : enemies) {
-			Color colorToDraw = enemyUnit->getType().isWorker() ? Colors::Green : Colors::Blue;
+			Color colorToDraw = enemyUnit->getType().isWorker() ? Colors::Green : Colors::Red;
 			Broodwar->drawCircleMap(enemyUnit->getPosition(), 
 				enemyUnit->getType().groundWeapon().maxRange(),
 				colorToDraw);
 		}
 
-
-
-
-
+		
 	}
-
-
 }
 
 void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick) {
