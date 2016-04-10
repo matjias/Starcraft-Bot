@@ -57,6 +57,23 @@ void ExampleAIModule::onEnd(bool isWinner) {
 
 
 void ExampleAIModule::onFrame() {
+	// Highlight possible enemy expansions (work in progress)
+	std::vector<BWTA::BaseLocation*> expansions = scoutClass.closestEnemyExpansions();
+	for (auto &exp : expansions) {
+		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
+	}
+
+	if (expansions.size() > 1) {
+		Broodwar->drawTextScreen(20, 40, "Highlighted multiple expansions");
+	}
+	else if (expansions.size() == 1) {
+		Broodwar->drawTextScreen(20, 40, "Highlighted one expansions");
+	}
+	else {
+		Broodwar->drawTextScreen(20, 40, "Highlighted zero expansions");
+	}
+	
+	
 	//Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);

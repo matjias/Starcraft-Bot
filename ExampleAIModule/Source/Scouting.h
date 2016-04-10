@@ -3,6 +3,7 @@
 #include <BWAPI.h>
 #include <vector>
 #include <map>
+#include <limits>
 #include "ExampleAIModule.h"
 
 class Scouting {
@@ -22,6 +23,11 @@ public:
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
 	void requestScout();
+
+	// Enemy expansion functions
+	void findEnemyExpansions();
+	BWTA::BaseLocation* closestEnemyExpansion();
+	std::vector<BWTA::BaseLocation*> closestEnemyExpansions();
 
 	// BWTA finished analyzing fuction
 	void set_BWTA_Analyzed();
@@ -81,6 +87,11 @@ private:
 	std::vector<Scouting::LocationStruct*> dynamicLocations;
 	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructures;
 	BWAPI::TilePosition enemyBaseLoc;
+
+	BWTA::Region *enemyRegion;
+	BWTA::BaseLocation *enemyBaseLocation;
+	BWTA::BaseLocation *enemyExpansion;
+	std::vector<BWTA::BaseLocation*> enemyExpansions;
 
 	// The main program class
 	ExampleAIModule* mainProgram;

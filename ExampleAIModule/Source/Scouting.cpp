@@ -91,7 +91,85 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 	enemyBaseLoc = loc;
 
 	// TODO: Clear dynamicLocations list from memory, no longer needed
-	//std::vector<LocationStruct*>().swap(dynamicLocations); // Mabbeh wait with memory.. Currently crashes at places.
+	//std::vector<LocationStruct*>().swap(dynamicLocations); 
+	// Mabbeh wait with memory.. Currently crashes at places.
+
+	// We found their base, now calculate their expansion places
+	findEnemyExpansions();
+}
+
+void Scouting::findEnemyExpansions() {
+	enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
+	if (enemyRegion != NULL) {
+		enemyBaseLocation = BWTA::getNearestBaseLocation(returnEnemyBaseLocs());
+		if (enemyBaseLocation != NULL) {
+			const double FACTOR = 2;
+
+			std::set<BWTA::BaseLocation*> allBaseLocations = BWTA::getBaseLocations();
+
+			BWTA::BaseLocation* currentClosestExpansion;
+			std::vector<BWTA::BaseLocation*> currentValidExpansions;
+
+			double shortestDist = std::numeric_limits<double>::max();
+
+			for (auto &baseLocation : allBaseLocations) {
+				// Continue if we do not care about this expansion place
+				if (baseLocation == enemyBaseLocation || baseLocation->isIsland() ||
+					baseLocation == BWTA::getStartLocation(Broodwar->self())) {
+
+					continue;
+				}
+
+				// Is this the first time we're looping through?
+				if (currentClosestExpansion == NULL) {
+					currentClosestExpansion = baseLocation;
+					currentValidExpansions.push_back(baseLocation);
+					shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+				}
+
+				// Else we check if the baseLocation is even worth considering
+				else if (enemyBaseLocation->getGroundDistance(baseLocation) <= shortestDist * FACTOR) {
+					// Did we find a new shortest expansion?
+					if (enemyBaseLocation->getGroundDistance(baseLocation) < shortestDist) {
+						currentClosestExpansion = baseLocation;
+						shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+
+						// Update our validEnemyExpansions vector
+						std::vector<BWTA::BaseLocation*> temp;
+						temp.push_back(baseLocation);
+						for (int i = 0; i < currentValidExpansions.size(); i++) {
+							if (enemyBaseLocation->getGroundDistance(currentValidExpansions.at(i)) <= shortestDist * FACTOR) {
+								temp.push_back(currentValidExpansions.at(i));
+							}
+						}
+
+						currentValidExpansions = temp;
+					}
+					// If we didn't we just add it to our vector of valid expansions
+					else {
+						currentValidExpansions.push_back(baseLocation);
+					}
+				}
+			}
+			currentValidExpansions.shrink_to_fit();
+
+			enemyExpansion = currentClosestExpansion;
+			enemyExpansions = currentValidExpansions;
+		}
+	}
+}
+
+BWTA::BaseLocation* Scouting::closestEnemyExpansion() {
+	return enemyExpansion;
+}
+
+std::vector<BWTA::BaseLocation*> Scouting::closestEnemyExpansions() {
+	if (enemyExpansions.size() > 0) {
+		return enemyExpansions;
+	}
+	else {
+		return std::vector<BWTA::BaseLocation*>(); // Returns an empty vector instead of null
+	}
 }
 
 void Scouting::updateScout() {
@@ -130,6 +208,12 @@ void Scouting::updateScout() {
 			}
 		}
 		else {
+			// Check if we havent yet recorded enemyRegion and ensure we do so
+			if (enemyRegion == NULL || enemyBaseLocation == NULL) {
+				findEnemyExpansions();
+			}
+
+			// Start harassing enemy base
 			distractEnemyBase();
 		}
 	}
@@ -173,76 +257,6 @@ void Scouting::requestScout() {
 }
 
 void Scouting::distractEnemyBase() {
-	// Debug, highlight the closest enemy expansion in teal
-	// If it works correctly, then this is where we want to scout
-	// for early enemy expansion
-	BWTA::Region *enemyReg = BWTA::getRegion(returnEnemyBaseLocs());
-	if (enemyReg != NULL) {
-		std::set<BWTA::BaseLocation*> baseLocs = enemyReg->getBaseLocations();
-
-		if (baseLocs.size() == 1) {
-			// No expansion slots in the enemy's region,
-			// need to look in the nearby region(s) and draw them up
-			
-			// Todo: All the crap below
-			// Will Probably need to iterate through chokepoints rather than
-			// getReachableRegions (if no islands, it returns all regions on the map)
-			// BFS might be the way to go? Needs testing as we cannot ensure
-			// that this finds the closest region with a base location,
-			// just that is finds the smallest amount of regions to a base location
-
-			//std::vector<std::pair<BWTA::Region*, bool>> vertices;
-			//vertices.push_back(std::make_pair(enemyReg, true));
-
-			// Todo: Implement BFS correctly, not caching what regions it has
-			// already iterated through, use std::unordered_map<BWTA::Region*, bool> for this
-			std::set<BWTA::BaseLocation*> foundBaseLocations;
-			bool foundBaseLocCandidate = false;
-
-			std::deque<BWTA::Region*> vertices;
-			vertices.push_back(enemyReg);
-
-			while (vertices.size() > 0 && !foundBaseLocCandidate) {
-				//BFS - Regions are vertices, and chokepoints are edges
-				std::set<BWTA::Chokepoint*> chokePoints = vertices.at(0)->getChokepoints();
-
-				// Add the next regions to our queue
-				for (auto &chokePoint : chokePoints) {
-					std::pair<BWTA::Region*, BWTA::Region*> regionCandidates = chokePoint->getRegions();
-					BWTA::Region *nextRegion;
-					if (regionCandidates.first != vertices.at(0)) {
-						vertices.push_back(regionCandidates.first);
-						nextRegion = regionCandidates.first;
-					}
-					else {
-						vertices.push_back(regionCandidates.second);
-						nextRegion = regionCandidates.second;
-					}
-
-					// Check if the new region has a baseLocation in it
-					if (nextRegion->getBaseLocations().size() > 0) {
-						foundBaseLocCandidate = true;
-						foundBaseLocations = nextRegion->getBaseLocations();
-					}
-				}
-
-				vertices.pop_front();
-			}
-
-			// Finally, fucking draw the possible expansions
-			for (auto &foundBaseLocation : foundBaseLocations) {
-				Broodwar->drawCircleMap(foundBaseLocation->getPosition(), TILE_SIZE * 3, Colors::Teal);
-			}
-		}
-		else {
-			for (auto &baseLoc : baseLocs) {
-				if (baseLoc != BWTA::getNearestBaseLocation(returnEnemyBaseLocs())) {
-					// Found the one different from their spawn point, now draw it
-					Broodwar->drawCircleMap(baseLoc->getPosition(), TILE_SIZE * 3, Colors::Teal);
-				}
-			}
-		}
-	}
 	
 
 	/* Actual logic starts below here */
@@ -255,7 +269,6 @@ void Scouting::distractEnemyBase() {
 		// Make sure we are moving to the enemy region
 		validMove(currentScout, returnEnemyBaseLocs());
 
-		Broodwar->drawTextScreen(20, 40, "Currently moving to enemy spawn");
 		// Todo: Ensure we avoid enemy threats that can kill
 		//		 us before we get to our target location
 
@@ -267,7 +280,7 @@ void Scouting::distractEnemyBase() {
 		// so it doesn't just go and die immediately (need to implement kiting logic)
 		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
 		if (enemyChoke != NULL) {
-			validMove(currentScout, enemyChoke->getCenter());
+			validMove(currentScout, enemyChoke->getCenter() + returnEnemyBaseLocs() / 128);
 		}
 		else {
 			validMove(currentScout, returnEnemyBaseLocs());
