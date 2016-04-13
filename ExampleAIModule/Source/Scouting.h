@@ -5,6 +5,7 @@
 #include <map>
 #include <limits>
 #include "ExampleAIModule.h"
+#include "CustomVector.h"
 
 class Scouting {
 public:

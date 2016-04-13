@@ -92,6 +92,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Army.cpp" />
     <ClCompile Include="Source\BuildOrders.cpp" />
+    <ClCompile Include="Source\CustomVector.cpp" />
     <ClCompile Include="Source\Dll.cpp" />
     <ClCompile Include="Source\ExampleAIModule.cpp" />
     <ClCompile Include="Source\Scouting.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="Source\Army.h" />
     <ClInclude Include="Source\BuildOrders.h" />
     <ClInclude Include="Source\Constants.h" />
+    <ClInclude Include="Source\CustomVector.h" />
     <ClInclude Include="Source\ExampleAIModule.h" />
     <ClInclude Include="Source\Scouting.h" />
   </ItemGroup>
