@@ -18,8 +18,8 @@ CustomVector::CustomVector(const BWAPI::Unit& u1, BWAPI::Unit& u2) {
 	int len = sqrt(normalX * normalX + normalY * normalY);
 	int radius = u1->getType().groundWeapon().maxRange();
 	
-	int newX = u1->getPosition().x + radius * ((double)normalX / len);
-	int newY = u1->getPosition().y + radius * ((double)normalY / len);
+	int newX = u1->getPosition().x + radius * ((double) normalX / len);
+	int newY = u1->getPosition().y + radius * ((double) normalY / len);
 	BWAPI::Position periferiPosition(newX, newY);
 	setStartPosition(periferiPosition);
 
@@ -58,4 +58,8 @@ void CustomVector::setStartPosition(BWAPI::Position pos) {
 
 BWAPI::Position CustomVector::getStartPosition() {
 	return startPos;
+}
+
+BWAPI::Position CustomVector::getEndPosition() {
+	return BWAPI::Position(startPos.x + x, startPos.y + y);
 }

@@ -307,7 +307,7 @@ void Scouting::distractEnemyBase() {
 
 		for (CustomVector vec : vectors) {
 			Position startPos = vec.getStartPosition();
-			Position endPos = Position(startPos.x + vec.getX(), startPos.y + vec.getY());
+			Position endPos = vec.getEndPosition();
 			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
 		}
 

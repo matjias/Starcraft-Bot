@@ -20,6 +20,7 @@ public:
 	// Custom method for BWAPI
 	void setStartPosition(BWAPI::Position pos);
 	BWAPI::Position getStartPosition();
+	BWAPI::Position getEndPosition();
 	
 
 private:
