@@ -56,16 +56,21 @@ void Army::update(Scouting scoutClass){
 	}
 
 	//Move to own region choke point
-	for (int i; i < zealotSquads.size(); i++){
-		if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
-			zealotSquads.at(i).move(idleLoc);
+	if (zealotSquads.size() > 0 && zealotGens.size() > 0){
+		for (int i = 0; i < zealotSquads.size(); i++){
+			if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
+				zealotSquads.at(i).move(idleLoc);
+			}
 		}
 	}
-	for (int i; i < dragoonSquads.size(); i++){
-		if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
-			zealotSquads.at(i).move(idleLoc);
+	if (dragoonSquads.size() > 0 && zealotGens.size() > 0){
+		for (int i = 0; i < dragoonSquads.size(); i++){
+			if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
+				zealotSquads.at(i).move(idleLoc);
+			}
 		}
 	}
+	
 
 	//Attack
 	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
@@ -86,7 +91,7 @@ void Army::attack(Scouting scoutClass){
 }
 
 void Army::attack(){
-	for (int i; i < attackNumber; i++){
+	for (int i = 0; i < attackNumber; i++){
 		if (squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
 			zealotSquads.at(i).attack(attackLoc);
 		}
@@ -130,7 +135,7 @@ bool Army::buildDragoon(BWAPI::Unit u){
 void Army::addZealot(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of
 	if (zealotSquads.size() > 0){
-		for (int i; i < zealotSquads.size(); i++){
+		for (int i = 0; i < zealotSquads.size(); i++){
 			if (zealotSquads.at(i).size() < 4){
 				zealotSquads.at(i).insert(u);
 				break;
@@ -147,7 +152,7 @@ void Army::addZealot(BWAPI::Unit u){
 void Army::addDragoon(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of unit in squad
 	if (dragoonSquads.size() > 0){
-		for (int i; i < dragoonSquads.size(); i++){
+		for (int i = 0; i < dragoonSquads.size(); i++){
 			if (dragoonSquads.at(i).size() < 4){
 				dragoonSquads.at(i).insert(u);
 				break;
@@ -166,10 +171,10 @@ void Army::setAnalyzed(bool analyzed){
 }
 
 bool Army::squadAtPos(Unitset uSet, TilePosition pos){
-	return TilePosition(uSet.getPosition).x > pos.x - 6
-		&& TilePosition(uSet.getPosition).x < pos.x + 6
-		&& TilePosition(uSet.getPosition).y > pos.y - 6
-		&& TilePosition(uSet.getPosition).y < pos.y + 6;
+	return TilePosition(uSet.getPosition()).x > pos.x - 6
+		&& TilePosition(uSet.getPosition()).x < pos.x + 6
+		&& TilePosition(uSet.getPosition()).y > pos.y - 6
+		&& TilePosition(uSet.getPosition()).y < pos.y + 6;
 }
 
 bool Army::unitAtPos(Unit u, TilePosition pos){

@@ -22,14 +22,14 @@ public:
 	void zealotRush();
 	void setAnalyzed(bool analyzed);
 	int moved, countAtEnemyChoke;
-	bool Army::unitAtPos(BWAPI::Unit zealot, BWAPI::TilePosition pos);
-	bool Army::squadAtPos(Unitset uSet, TilePosition pos);
+	bool unitAtPos(BWAPI::Unit zealot, BWAPI::TilePosition pos);
+	bool squadAtPos(BWAPI::Unitset uSet, BWAPI::TilePosition pos);
 	std::vector<BWAPI::Unit> getZealots();
 	BWAPI::Position enemyChoke;
 	void enemyBaseDestroyed();
-	void Army::addSquadMember(BWAPI::Unit u);
-	void Army::buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list);
-	void Army::combat();
+	void addSquadMember(BWAPI::Unit u);
+	void buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list);
+	void combat();
 private:
 	void attack();
 };
