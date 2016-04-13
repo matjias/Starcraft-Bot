@@ -257,10 +257,6 @@ void Scouting::requestScout() {
 }
 
 void Scouting::distractEnemyBase() {
-	
-
-	/* Actual logic starts below here */
-
 	// Make sure we are in the enemy's region,
 	// and if we are not, we need to move there
 	BWTA::Region *enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
@@ -294,9 +290,9 @@ void Scouting::distractEnemyBase() {
 			currentScout->getType().groundWeapon().maxRange(),
 			Colors::Cyan);
 
-
 		Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), 
-														Filter::IsEnemy);
+														Filter::IsEnemy && Filter::CanAttack);
+		std::vector<CustomVector> vectors;
 		// Draw all, within range, of the enemies maximum attack range
 		// Todo: This is what we want to avoid running into if they are attacking
 		for (auto &enemyUnit : enemies) {
@@ -304,26 +300,35 @@ void Scouting::distractEnemyBase() {
 			Broodwar->drawCircleMap(enemyUnit->getPosition(), 
 				enemyUnit->getType().groundWeapon().maxRange(),
 				colorToDraw);
+
+			CustomVector vectorToAdd(enemyUnit, currentScout);
+			vectors.push_back(vectorToAdd);
 		}
 
-		
+		for (CustomVector vec : vectors) {
+			Position startPos = vec.getStartPosition();
+			Position endPos = Position(startPos.x + vec.getX(), startPos.y + vec.getY());
+			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
+		}
+
+
 	}
 }
 
 void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick) {
-	BuildingStruct *buildStruct = new BuildingStruct();
-	buildStruct->unit = u;
-	buildStruct->location = loc;
-	buildStruct->scoutedTime = timeTick;
-	
-	if (u.isBuilding()) {
-		// If we do not already know a building
-		// at this location we save it for later
-		if (enemyStructures.count(loc) == 0) {
-			enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
-		}
+	if (!u.isBuilding()) {
+		return;
 	}
 
+	// If we do not already know a building
+	// at this location we save it for later
+	if (enemyStructures.count(loc) == 0) {
+		BuildingStruct *buildStruct = new BuildingStruct();
+		buildStruct->unit = u;
+		buildStruct->location = loc;
+		buildStruct->scoutedTime = timeTick;
+		enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
+	}
 }
 
 void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
