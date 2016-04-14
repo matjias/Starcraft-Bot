@@ -55,7 +55,7 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, Ex
 bool Scouting::isScouting() {
 	// We are scouting as long as we have a scout and as long as we haven't
 	// found the enemy's base yet (implicitly have not looped through all spawns)
-	return hasAssignedScout() && (!foundEnemy && !dynamicLocations.at(0)->scouted);
+	return hasAssignedScout();
 }
 
 bool Scouting::hasAssignedScout() {
@@ -74,7 +74,8 @@ bool Scouting::assignScout(Unit scout) {
 }
 
 bool Scouting::assignScoutandLoc(Unit scout, Position loc) {
-	scout->move(loc);
+	// ????
+	validMove(scout, loc);
 
 	return true;
 }
@@ -82,7 +83,7 @@ bool Scouting::assignScoutandLoc(Unit scout, Position loc) {
 void Scouting::oneScoutAll(Unit u) {
 	currentScout = u;
 
-	currentScout->move(dynamicLocations.at(0)->location);
+	validMove(currentScout, dynamicLocations.at(0)->location);
 }
 
 void Scouting::foundEnemyBase(TilePosition loc) {
@@ -90,10 +91,92 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 	enemyBaseLoc = loc;
 
 	// TODO: Clear dynamicLocations list from memory, no longer needed
-	//std::vector<LocationStruct*>().swap(dynamicLocations); // Mabbeh wait with memory.. Currently crashes at places.
+	//std::vector<LocationStruct*>().swap(dynamicLocations); 
+	// Mabbeh wait with memory.. Currently crashes at places.
+
+	// We found their base, now calculate their expansion places
+	findEnemyExpansions();
+}
+
+void Scouting::findEnemyExpansions() {
+	enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
+	if (enemyRegion != NULL) {
+		enemyBaseLocation = BWTA::getNearestBaseLocation(returnEnemyBaseLocs());
+		if (enemyBaseLocation != NULL) {
+			const double FACTOR = 2;
+
+			std::set<BWTA::BaseLocation*> allBaseLocations = BWTA::getBaseLocations();
+
+			BWTA::BaseLocation* currentClosestExpansion;
+			std::vector<BWTA::BaseLocation*> currentValidExpansions;
+
+			double shortestDist = std::numeric_limits<double>::max();
+
+			for (auto &baseLocation : allBaseLocations) {
+				// Continue if we do not care about this expansion place
+				if (baseLocation == enemyBaseLocation || baseLocation->isIsland() ||
+					baseLocation == BWTA::getStartLocation(Broodwar->self())) {
+
+					continue;
+				}
+
+				// Is this the first time we're looping through?
+				if (currentClosestExpansion == NULL) {
+					currentClosestExpansion = baseLocation;
+					currentValidExpansions.push_back(baseLocation);
+					shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+				}
+
+				// Else we check if the baseLocation is even worth considering
+				else if (enemyBaseLocation->getGroundDistance(baseLocation) <= shortestDist * FACTOR) {
+					// Did we find a new shortest expansion?
+					if (enemyBaseLocation->getGroundDistance(baseLocation) < shortestDist) {
+						currentClosestExpansion = baseLocation;
+						shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+
+						// Update our validEnemyExpansions vector
+						std::vector<BWTA::BaseLocation*> temp;
+						temp.push_back(baseLocation);
+						for (int i = 0; i < currentValidExpansions.size(); i++) {
+							if (enemyBaseLocation->getGroundDistance(currentValidExpansions.at(i)) <= shortestDist * FACTOR) {
+								temp.push_back(currentValidExpansions.at(i));
+							}
+						}
+
+						currentValidExpansions = temp;
+					}
+					// If we didn't we just add it to our vector of valid expansions
+					else {
+						currentValidExpansions.push_back(baseLocation);
+					}
+				}
+			}
+			currentValidExpansions.shrink_to_fit();
+
+			enemyExpansion = currentClosestExpansion;
+			enemyExpansions = currentValidExpansions;
+		}
+	}
+}
+
+BWTA::BaseLocation* Scouting::closestEnemyExpansion() {
+	return enemyExpansion;
+}
+
+std::vector<BWTA::BaseLocation*> Scouting::closestEnemyExpansions() {
+	if (enemyExpansions.size() > 0) {
+		return enemyExpansions;
+	}
+	else {
+		return std::vector<BWTA::BaseLocation*>(); // Returns an empty vector instead of null
+	}
 }
 
 void Scouting::updateScout() {
+	if (!hasAssignedScout() || !currentScout->exists() || !currentScout->getPosition().isValid()) {
+		return;
+	}
+
 	if (isScouting()) {
 		if (!foundEnemy) {
 			if (hasAssignedScout()) {
@@ -113,10 +196,10 @@ void Scouting::updateScout() {
 
 					if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
 						foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
-						currentScout->move(dynamicLocations.at(1)->location);
+						validMove(currentScout, dynamicLocations.at(1)->location);
 					}
 					else {
-						currentScout->move(dynamicLocations.at(1)->location);
+						validMove(currentScout, dynamicLocations.at(1)->location);
 					}
 
 				}
@@ -125,6 +208,12 @@ void Scouting::updateScout() {
 			}
 		}
 		else {
+			// Check if we havent yet recorded enemyRegion and ensure we do so
+			if (enemyRegion == NULL || enemyBaseLocation == NULL) {
+				findEnemyExpansions();
+			}
+
+			// Start harassing enemy base
 			distractEnemyBase();
 		}
 	}
@@ -154,7 +243,7 @@ void Scouting::updateToScoutList() {
 	}
 
 	if (updatedList) {
-		currentScout->move(dynamicLocations.at(0)->location);
+		validMove(currentScout, dynamicLocations.at(0)->location);
 	}
 }
 
@@ -168,61 +257,78 @@ void Scouting::requestScout() {
 }
 
 void Scouting::distractEnemyBase() {
-	if (foundEnemy && hasScout) {
-		// Implement scout moving around in base logic, ensuring
-		// we scout what they want to do and maybe even harass
-		// their workers/supply line (attack them to get them to attack
-		// the scout and therefor stop them from mining and then running
+	// Make sure we are in the enemy's region,
+	// and if we are not, we need to move there
+	BWTA::Region *enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
+	BWTA::Region *scoutRegion = BWTA::getRegion(currentScout->getPosition());
+	if (scoutRegion != enemyRegion) {
+		// Make sure we are moving to the enemy region
+		validMove(currentScout, returnEnemyBaseLocs());
 
-		// Steal some strats from (credit, where credit is due)
-		// http://pages.cs.wisc.edu/~starr/bots/UAlbertaBot_src/UAlbertaBot_src/Projects/UAlbertaBot/Source/ScoutManager.cpp
+		// Todo: Ensure we avoid enemy threats that can kill
+		//		 us before we get to our target location
 
-		/*
-		currentScout->isUnderAttack
-
-		BWAPI::Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), Filter::IsEnemy);
-		if (enemies.size() > 0) {
-			int i = 0;
-			for (BWAPI::Unitset::iterator it = enemies.begin(); it != enemies.end(); it++) {
-				it.
-			}
-
-
-			for (int i = 0; i < enemies.size(); i++) {
-				//Broodwar->drawTextScreen(5, 60 + i * 20, "Unit: %s (%i, %i)", );
-			}
-
-			for (auto &enemyUnit : enemies) {
-				// Check if any enemy unit is attacking us
-				// @TODO: How the fuck do you check that...
-				
-			}
+	}
+	// Otherwise, we must be in their region,
+	// and we can start harassing in one form or another
+	else {
+		// Tell our scout to stand on the enemy chokepoint
+		// so it doesn't just go and die immediately (need to implement kiting logic)
+		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
+		if (enemyChoke != NULL) {
+			validMove(currentScout, enemyChoke->getCenter() + returnEnemyBaseLocs() / 128);
+		}
+		else {
+			validMove(currentScout, returnEnemyBaseLocs());
 		}
 
-		if (currentScout->isIdle()) {
+		// Draw our vision for our scout, and record all enemy units in this range
+		Broodwar->drawCircleMap(currentScout->getPosition(), currentScout->getType().sightRange(),
+			Colors::Cyan);
+		// Draw our attack range
+		Broodwar->drawCircleMap(currentScout->getPosition(), 
+			currentScout->getType().groundWeapon().maxRange(),
+			Colors::Cyan);
 
+		Unitset enemies = currentScout->getUnitsInRadius(currentScout->getType().sightRange(), 
+														Filter::IsEnemy && Filter::CanAttack);
+		std::vector<CustomVector> vectors;
+		// Draw all, within range, of the enemies maximum attack range
+		// Todo: This is what we want to avoid running into if they are attacking
+		for (auto &enemyUnit : enemies) {
+			Color colorToDraw = enemyUnit->getType().isWorker() ? Colors::Green : Colors::Red;
+			Broodwar->drawCircleMap(enemyUnit->getPosition(), 
+				enemyUnit->getType().groundWeapon().maxRange(),
+				colorToDraw);
+
+			CustomVector vectorToAdd(enemyUnit, currentScout);
+			vectors.push_back(vectorToAdd);
 		}
 
-		if (BWTA_isAnalyzed) {
-			BWTA::Polygon poly = BWTA::getRegion(enemyBaseLoc)->getPolygon();
-		}*/
+		for (CustomVector vec : vectors) {
+			Position startPos = vec.getStartPosition();
+			Position endPos = vec.getEndPosition();
+			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
+		}
+
+
 	}
 }
 
 void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick) {
-	BuildingStruct *buildStruct = new BuildingStruct();
-	buildStruct->unit = u;
-	buildStruct->location = loc;
-	buildStruct->scoutedTime = timeTick;
-	
-	if (u.isBuilding()) {
-		// If we do not already know a building
-		// at this location we save it for later
-		if (enemyStructures.count(loc) == 0) {
-			enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
-		}
+	if (!u.isBuilding()) {
+		return;
 	}
 
+	// If we do not already know a building
+	// at this location we save it for later
+	if (enemyStructures.count(loc) == 0) {
+		BuildingStruct *buildStruct = new BuildingStruct();
+		buildStruct->unit = u;
+		buildStruct->location = loc;
+		buildStruct->scoutedTime = timeTick;
+		enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
+	}
 }
 
 void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
@@ -233,10 +339,29 @@ void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
 
 
 std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> Scouting::getEnemyStructures() {
+	// Used for our micro and macro to either
+	// move to kill the structure, or use for knowledge
+	// as to what buildOrder should we continue with
 	return enemyStructures;
 }
 
+void Scouting::validMove(Unit unitToMove, Position targetLoc) {
+	UnitCommand lastCommand(unitToMove->getLastCommand());
+	if (lastCommand.getType() != UnitCommandTypes::Move ||
+		lastCommand.getTargetPosition() != targetLoc) {
 
+		unitToMove->move(targetLoc);
+	}
+}
+
+void Scouting::validAttack(Unit unitToAttack, Unit targetUnit) {
+	UnitCommand lastCommand(unitToAttack->getLastCommand());
+	if (lastCommand.getType() != UnitCommandTypes::Attack_Unit ||
+		lastCommand.getTarget() != targetUnit) {
+
+		unitToAttack->attack(targetUnit);
+	}
+}
 
 void Scouting::enemyBaseDestroyed() {
 	// TODO: Logic for scouting the entire map and 

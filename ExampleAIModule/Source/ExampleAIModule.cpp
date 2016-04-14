@@ -57,14 +57,33 @@ void ExampleAIModule::onEnd(bool isWinner) {
 
 
 void ExampleAIModule::onFrame() {
+	// Highlight possible enemy expansions (work in progress)
+	std::vector<BWTA::BaseLocation*> expansions = scoutClass.closestEnemyExpansions();
+	for (auto &exp : expansions) {
+		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
+	}
+
+	if (expansions.size() > 1) {
+		Broodwar->drawTextScreen(20, 40, "Highlighted multiple expansions");
+	}
+	else if (expansions.size() == 1) {
+		Broodwar->drawTextScreen(20, 40, "Highlighted one expansions");
+	}
+	else {
+		Broodwar->drawTextScreen(20, 40, "Highlighted zero expansions");
+	}
+	
+	
 	//Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
-	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-		Broodwar->drawTextScreen(5, 5 + i * 15, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
-	}
+	Broodwar->drawTextScreen(5, 20, "%s", Broodwar->enemy()->getRace().c_str());
+
+	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
+	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	//}
 
 	/*if (assimilators.size() == 0) {
 		Broodwar->drawTextScreen(200, 5, "%i: %s", 0, "No Assimilators");
@@ -95,9 +114,6 @@ void ExampleAIModule::onFrame() {
 	//	debugCount++;
 	//}
 
-	//Broodwar->drawTextScreen(350, 120, "Moved: %i", army.moved);
-	//Broodwar->drawTextScreen(350, 140, "EnemyChoke: %i", army.countAtEnemyChoke);
-	//Broodwar->drawTextScreen(350, 160, "EnemyCh: %i, %i", TilePosition(army.enemyChoke).x, TilePosition(army.enemyChoke).y);
 	
 	
 
@@ -159,11 +175,11 @@ void ExampleAIModule::onFrame() {
 		return;
 
 	//BWTA draw
-	if (analyzed)
+	if (analyzed) {
 		drawTerrainData();
+	}
 
-	if (analysis_just_finished)
-	{
+	if (analysis_just_finished) {
 		Broodwar << "Finished analyzing map." << std::endl;;
 		analysis_just_finished = false;
 	}
@@ -171,7 +187,7 @@ void ExampleAIModule::onFrame() {
 	// Prevent spamming by only running our onFrame once every number of latency frames.
 	// Latency frames are the number of frames before commands are processed.
 	if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0)
-		return;
+		//return;
 	// End of BWTA2 draw calls
 
 
@@ -383,7 +399,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 
 	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
 		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
-}
+	}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {

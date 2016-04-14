@@ -3,7 +3,9 @@
 #include <BWAPI.h>
 #include <vector>
 #include <map>
+#include <limits>
 #include "ExampleAIModule.h"
+#include "CustomVector.h"
 
 class Scouting {
 public:
@@ -22,6 +24,11 @@ public:
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
 	void requestScout();
+
+	// Enemy expansion functions
+	void findEnemyExpansions();
+	BWTA::BaseLocation* closestEnemyExpansion();
+	std::vector<BWTA::BaseLocation*> closestEnemyExpansions();
 
 	// BWTA finished analyzing fuction
 	void set_BWTA_Analyzed();
@@ -71,6 +78,8 @@ private:
 	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
 	void distractEnemyBase();
+	void validMove(BWAPI::Unit unitToMove, BWAPI::Position targetLoc);
+	void validAttack(BWAPI::Unit unitToAttack, BWAPI::Unit targetUnit);
 
 
 	// Global variables needed for Scouting
@@ -79,6 +88,11 @@ private:
 	std::vector<Scouting::LocationStruct*> dynamicLocations;
 	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructures;
 	BWAPI::TilePosition enemyBaseLoc;
+
+	BWTA::Region *enemyRegion;
+	BWTA::BaseLocation *enemyBaseLocation;
+	BWTA::BaseLocation *enemyExpansion;
+	std::vector<BWTA::BaseLocation*> enemyExpansions;
 
 	// The main program class
 	ExampleAIModule* mainProgram;
