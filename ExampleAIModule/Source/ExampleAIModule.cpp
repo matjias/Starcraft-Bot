@@ -62,9 +62,9 @@ void ExampleAIModule::onFrame() {
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 	
-	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
-	//}
+	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
+		Broodwar->drawTextScreen(5, 5 + i * 15, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	}
 
 	/*if (assimilators.size() == 0) {
 		Broodwar->drawTextScreen(200, 5, "%i: %s", 0, "No Assimilators");
@@ -105,8 +105,6 @@ void ExampleAIModule::onFrame() {
 	//	Broodwar->drawTextScreen(5, 60 + i * 20, "%s, (%i,%i), %i", enemyStructs.at(i))
 	//}
 
-
-	//Broodwar->drawTextScreen(200, 40, "Reserved minerals: %d", reservedMinerals);
 	Broodwar->drawTextScreen(350, 20, "Scout distance: %i", scoutClass.getDistance());
 
 	Position scoutClassPos = scoutClass.getPos();
@@ -138,13 +136,23 @@ void ExampleAIModule::onFrame() {
 			toDraw);
 	}*/
 	
-	//Broodwar->drawTextScreen(20, 0, "Reserved Min: %d", reservedMinerals);
-	//Broodwar->drawTextScreen(20, 20, "Reserved Gas: %d", reservedGas);
-	//Broodwar->drawTextScreen(20, 40, "Nexuses: %d, W: %d, Q: %d", nexusCount, nexusesWarping, nexusesQueued);
-	//Broodwar->drawTextScreen(20, 60, "Pylons: %d, W: %d, Q: %d", pylonCount, pylonsWarping, pylonsQueued);
-	//Broodwar->drawTextScreen(20, 80, "Gateways: %d, W: %d, Q: %d", gatewayCount, gatewaysWarping,  gatewaysQueued);
-	//Broodwar->drawTextScreen(20, 100, "Workers: %d, W: %d, Q: %d", probeCount, probesWarping, probesQueued);
+	/*Broodwar->drawTextScreen(200, 0, "Reserved Min: %d", buildOrderClass.getReservedMinerals());
+	Broodwar->drawTextScreen(200, 10, "Reserved Gas: %d", buildOrderClass.getReservedGas());
+	Broodwar->drawTextScreen(200, 20, "AvailableSupply: %d", buildOrderClass.getAvailableSupply());
+	Broodwar->drawTextScreen(200, 30, "Nexuses: %d, W: %d, Q: %d", buildOrderClass.nexuses, buildOrderClass.nexusesWarping, buildOrderClass.nexusesQueued);
+	Broodwar->drawTextScreen(200, 40, "Pylons: %d, W: %d, Q: %d", buildOrderClass.pylons, buildOrderClass.pylonsWarping, buildOrderClass.pylonsQueued);
+	Broodwar->drawTextScreen(200, 50, "Gateways: %d, W: %d, Q: %d", buildOrderClass.gateways, buildOrderClass.gatewaysWarping, buildOrderClass.gatewaysQueued);
+	Broodwar->drawTextScreen(200, 60, "CyberCores: %d, W: %d, Q: %d", buildOrderClass.cyberneticsCores, buildOrderClass.cyberneticsCoresWarping, buildOrderClass.cyberneticsCoresQueued);
+	Broodwar->drawTextScreen(200, 70, "Assimilators: %d, W: %d, Q: %d", buildOrderClass.assimilators, buildOrderClass.assimilatorsWarping, buildOrderClass.assimilatorsQueued);
+	Broodwar->drawTextScreen(200, 80, "RoboFacils: %d, W: %d, Q: %d", buildOrderClass.roboticsFacilities, buildOrderClass.roboticsFacilitiesWarping, buildOrderClass.roboticsFacilitiesQueued);
+	Broodwar->drawTextScreen(200, 90, "Observatories: %d, W: %d, Q: %d", buildOrderClass.observatories, buildOrderClass.observatoriesWarping, buildOrderClass.observatoriesQueued);
+	Broodwar->drawTextScreen(200, 100, "Stargates: %d, W: %d, Q: %d", buildOrderClass.stargates, buildOrderClass.stargatesWarping, buildOrderClass.stargatesQueued);
 
+	Broodwar->drawTextScreen(200, 110, "Probes: %d, W: %d, Q: %d", buildOrderClass.probes, buildOrderClass.probesWarping, buildOrderClass.probesQueued);
+	Broodwar->drawTextScreen(200, 120, "Zealots: %d, W: %d, Q: %d", buildOrderClass.zealots, buildOrderClass.zealotsWarping, buildOrderClass.zealotsQueued);
+	Broodwar->drawTextScreen(200, 130, "Dragoons: %d, W: %d, Q: %d", buildOrderClass.dragoons, buildOrderClass.dragoonsWarping, buildOrderClass.dragoonsQueued);
+	Broodwar->drawTextScreen(200, 140, "Observers: %d, W: %d, Q: %d", buildOrderClass.observers, buildOrderClass.observersWarping, buildOrderClass.observersQueued);
+	Broodwar->drawTextScreen(200, 150, "Corsairs: %d, W: %d, Q: %d", buildOrderClass.corsairs, buildOrderClass.corsairsWarping, buildOrderClass.corsairsQueued);*/
 
 	// BWTA2 drawing on the map
 	if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self())
@@ -185,12 +193,13 @@ void ExampleAIModule::onFrame() {
 		buildOrderClass.useSecondBuildOrder();
 	}
 
-	// Add resource invesments
+	// Resource investing
 	else {
 		buildOrderClass.addInvestments();
-
-		// Reorder investment priorities
-		buildOrderClass.reorderInvestments();
+		if (!buildOrderClass.investmentList.empty()) {
+			buildOrderClass.addRequiredTech();
+			buildOrderClass.reorderInvestments();
+		}
 	}
 	
 	// All Units loop
@@ -245,23 +254,14 @@ void ExampleAIModule::onFrame() {
 		}
 
 		// Nexus logic
-		else if (u->getType().isResourceDepot()
-			&& u->isIdle()
-			&& !buildOrderClass.getInvestmentList().empty()
-			&& buildOrderClass.getInvestmentList()[0] == UnitTypes::Protoss_Probe
-			&& Broodwar->self()->minerals() >= buildOrderClass.getInvestmentList()[0].mineralPrice() + buildOrderClass.getReservedMinerals()
-			&& Broodwar->self()->gas() >= buildOrderClass.getInvestmentList()[0].gasPrice() + buildOrderClass.getReservedGas()
-			&& buildOrderClass.getAvailableSupply() >= buildOrderClass.getInvestmentList()[0].supplyRequired() / 2) {
-			buildProbe(u);
+		else if (u->getType().isResourceDepot() && isReadyToBuild(u)) {
+			if (buildOrderClass.getInvestmentList()[0] == UnitTypes::Protoss_Probe) {
+				buildProbe(u);
+			}
 		}
 
 		// Gateway logic
-		else if (u->getType() == UnitTypes::Protoss_Gateway
-			&& u->isIdle()
-			&& !buildOrderClass.getInvestmentList().empty()
-			&& Broodwar->self()->minerals() >= buildOrderClass.getInvestmentList()[0].mineralPrice() + buildOrderClass.getReservedMinerals()
-			&& Broodwar->self()->gas() >= buildOrderClass.getInvestmentList()[0].gasPrice() + buildOrderClass.getReservedGas()
-			&& buildOrderClass.getAvailableSupply() >= buildOrderClass.getInvestmentList()[0].supplyRequired() / 2) {
+		else if (u->getType() == UnitTypes::Protoss_Gateway && isReadyToBuild(u)) {
 			if (buildOrderClass.getInvestmentList()[0] == UnitTypes::Protoss_Zealot) {
 				if (army.buildZealot(u)) {
 					buildOrderClass.setAvailableSupply(buildOrderClass.getAvailableSupply() - buildOrderClass.getInvestmentList()[0].supplyRequired() / 2);
@@ -278,9 +278,32 @@ void ExampleAIModule::onFrame() {
 					buildOrderClass.dequeueInvestmentList();
 				}
 			}
-			
 		}
 		
+		// Robotics Facility logic
+		else if (u->getType() == UnitTypes::Protoss_Robotics_Facility && isReadyToBuild(u)) {
+			if (buildOrderClass.getInvestmentList()[0] == UnitTypes::Protoss_Observer) {
+				if (army.buildObserver(u)) {
+					buildOrderClass.setAvailableSupply(buildOrderClass.getAvailableSupply() - buildOrderClass.getInvestmentList()[0].supplyRequired() / 2);
+					buildOrderClass.observersQueued--;
+					buildOrderClass.observersWarping++;
+					buildOrderClass.dequeueInvestmentList();
+				}
+			}
+		}
+
+		// Stargate logic
+		else if (u->getType() == UnitTypes::Protoss_Stargate && isReadyToBuild(u)) {
+			if (buildOrderClass.getInvestmentList()[0] == UnitTypes::Protoss_Corsair) {
+				if (army.buildCorsair(u)) {
+					buildOrderClass.setAvailableSupply(buildOrderClass.getAvailableSupply() - buildOrderClass.getInvestmentList()[0].supplyRequired() / 2);
+					buildOrderClass.corsairsQueued--;
+					buildOrderClass.corsairsWarping++;
+					buildOrderClass.dequeueInvestmentList();
+				}
+			}
+		}
+
 		// Zealot attack logic
 		army.update(scoutClass);
 	}
@@ -317,6 +340,26 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 		buildOrderClass.gatewaysQueued--;
 		buildOrderClass.gatewaysWarping++;
 	}
+	if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.cyberneticsCoresQueued--;
+		buildOrderClass.cyberneticsCoresWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Assimilator && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.assimilatorsQueued--;
+		buildOrderClass.assimilatorsWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Robotics_Facility && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.roboticsFacilitiesQueued--;
+		buildOrderClass.roboticsFacilitiesWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Observatory && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.observatoriesQueued--;
+		buildOrderClass.observatoriesWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Stargate && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.stargatesQueued--;
+		buildOrderClass.stargatesWarping++;
+	}
 
 	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
 		army.addZealot(unit);
@@ -324,6 +367,14 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 
 	if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self()){
 		army.addDragoon(unit);
+	}
+
+	if (unit->getType() == UnitTypes::Protoss_Observer && unit->getPlayer() == Broodwar->self()){
+		//army.addObserver(unit);
+	}
+
+	if (unit->getType() == UnitTypes::Protoss_Corsair && unit->getPlayer() == Broodwar->self()){
+		//army.addCorsair(unit);
 	}
 
 	if (unit->getPlayer() != Broodwar->self() && unit->getType().isResourceDepot()) {
@@ -349,41 +400,56 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) {
 
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	if (unit->getType() == UnitTypes::Protoss_Probe && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.probeCount--;
-		for (int i; i < probesMiningGas.size(); i++) {
+		buildOrderClass.probes--;
+		for (int i = 0; i < probesMiningGas.size(); i++) {
 			if (probesMiningGas.at(i) == unit) {
 				probesMiningGas.at(i) = 0;
 			}
 		}
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.zealotCount--;
+		buildOrderClass.zealots--;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.dragoonCount--;
+		buildOrderClass.dragoons--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Observer && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.observers--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Corsair && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.corsairs--;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Nexus && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.nexusCount--;
+		buildOrderClass.nexuses--;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Pylon && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.pylonCount--;
+		buildOrderClass.pylons--;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.gatewayCount--;
+		buildOrderClass.gateways--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.cyberneticsCores--;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Assimilator && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.assimilatorCount--;
-		for (int i; i < assimilators.size(); i++) {
+		buildOrderClass.assimilators--;
+		for (int i = 0; i < assimilators.size(); i++) {
 			if (assimilators.at(i) == unit) {
 				assimilators.erase(assimilators.begin() + i);
-				for (int j; j < 3; j++) {
+				for (int j = 0; j < 3; j++) {
 					probesMiningGas.erase(assimilators.begin() + i * 3);
 				}
 			}
 		}
 	}
-	else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.cyberneticsCoreCount--;
+	else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.roboticsFacilities--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Observatory && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.observatories--;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Stargate && unit->getPlayer() == Broodwar->self()) {
+		buildOrderClass.stargates--;
 	}
 
 	if (scoutClass.isScout(unit)) {
@@ -409,36 +475,58 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 	if (unit->getType() == UnitTypes::Protoss_Pylon && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.setSupplyBuffer(buildOrderClass.getSupplyBuffer() - unit->getType().supplyProvided() / 2);
 		buildOrderClass.pylonsWarping--;
-		buildOrderClass.pylonCount++;
+		buildOrderClass.pylons++;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.gatewaysWarping--;
-		buildOrderClass.gatewayCount++;
+		buildOrderClass.gateways++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.cyberneticsCoresWarping--;
+		buildOrderClass.cyberneticsCores++;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Assimilator && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
-		buildOrderClass.assimilatorsWarping--;
-		buildOrderClass.assimilatorCount++;
+		buildOrderClass.setReservedMinerals(buildOrderClass.getReservedMinerals() - unit->getType().mineralPrice());
+		buildOrderClass.setReservedGas(buildOrderClass.getReservedGas() - unit->getType().gasPrice());
+		buildOrderClass.assimilatorsQueued--;
+		buildOrderClass.assimilators++;
 		assimilators.push_back(unit);
 		probesMiningGas.push_back(0);
 		probesMiningGas.push_back(0);
 		probesMiningGas.push_back(0);
 	}
-	else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
-		buildOrderClass.cyberneticsCoresWarping--;
-		buildOrderClass.cyberneticsCoreCount++;
+	else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.roboticsFacilitiesWarping--;
+		buildOrderClass.roboticsFacilities++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Observatory && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.observatoriesWarping--;
+		buildOrderClass.observatories++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Stargate && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.stargatesWarping--;
+		buildOrderClass.stargates++;
 	}
 
 	else if (unit->getType() == UnitTypes::Protoss_Probe && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.probesWarping--;
-		buildOrderClass.probeCount++;
+		buildOrderClass.probes++;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.zealotsWarping--;
-		buildOrderClass.zealotCount++;
+		buildOrderClass.zealots++;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
-		buildOrderClass.zealotsWarping--;
-		buildOrderClass.dragoonCount++;
+		buildOrderClass.dragoonsWarping--;
+		buildOrderClass.dragoons++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Observer && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.observersWarping--;
+		buildOrderClass.observers++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Corsair && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.corsairsWarping--;
+		buildOrderClass.corsairs++;
 	}
 }
 
@@ -522,6 +610,7 @@ void ExampleAIModule::buildBuilding(BWAPI::Unit builder, BWAPI::UnitType buildin
 		builder->build(building, buildLocation);
 
 		buildOrderClass.setReservedMinerals(buildOrderClass.getReservedMinerals() + building.mineralPrice());
+		buildOrderClass.setReservedGas(buildOrderClass.getReservedGas() + building.gasPrice());
 
 		buildOrderClass.dequeueInvestmentList();
 	}
@@ -577,7 +666,7 @@ void ExampleAIModule::mineGas(BWAPI::Unit u) {
 }
 
 bool ExampleAIModule::gasGathererNeeded() {
-	if (buildOrderClass.assimilatorCount > 0 && buildOrderClass.probeCount >= buildOrderClass.assimilatorCount * WORKERS_PER_GEYSER * 2) {
+	if (buildOrderClass.assimilators > 0 && buildOrderClass.probes >= buildOrderClass.assimilators * WORKERS_PER_GEYSER * 2) {
 		for (int i = 0; i < probesMiningGas.size(); i++) {
 			if (probesMiningGas.at(i) == 0) {
 				return true;
@@ -592,6 +681,17 @@ bool ExampleAIModule::isGatheringGas(BWAPI::Unit u) {
 		if (probesMiningGas.at(i) == u) {
 			return true;
 		}
+	}
+	return false;
+}
+
+bool ExampleAIModule::isReadyToBuild(BWAPI::Unit u) {
+	if (!buildOrderClass.getInvestmentList().empty()) {
+		return u->isIdle()
+		&& Broodwar->self()->minerals() - buildOrderClass.getReservedMinerals() >= buildOrderClass.getInvestmentList()[0].mineralPrice()
+		&& Broodwar->self()->gas() - buildOrderClass.getReservedGas() >= buildOrderClass.getInvestmentList()[0].gasPrice()
+		&& buildOrderClass.getAvailableSupply() >= buildOrderClass.getInvestmentList()[0].supplyRequired() / 2
+		&& BWAPI::Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY;
 	}
 	return false;
 }

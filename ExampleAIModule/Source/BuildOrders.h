@@ -10,6 +10,7 @@ public:
 	void useInitialBuildOrder();
 	void useSecondBuildOrder();
 	void addInvestments();
+	void addRequiredTech();
 	void reorderInvestments();
 
 	std::vector<BWAPI::UnitType> buildOrder;
@@ -32,42 +33,87 @@ public:
 	int getReservedGas();
 	void setReservedGas(int a);
 
+	int getProductionSupply();
+
 	// Buildings
-	int nexusCount;
+	int nexuses;
 	int nexusesWarping;
 	int nexusesQueued;
-	int pylonCount;
+	int pylons;
 	int pylonsWarping;
 	int pylonsQueued;
-	int gatewayCount;
+	int gateways;
 	int gatewaysWarping;
 	int gatewaysQueued;
-	int assimilatorCount;
+	int forges;
+	int forgesWarping;
+	int forgesQueued;
+	int photonCannons;
+	int photonCannonsWarping;
+	int photonCannonsQueued;
+	int assimilators;
 	int assimilatorsWarping;
 	int assimilatorsQueued;
-	int cyberneticsCoreCount;
+	int cyberneticsCores;
 	int cyberneticsCoresWarping;
 	int cyberneticsCoresQueued;
+	int roboticsFacilities;
+	int roboticsFacilitiesWarping;
+	int roboticsFacilitiesQueued;
+	int observatories;
+	int observatoriesWarping;
+	int observatoriesQueued;
+	int stargates;
+	int stargatesWarping;
+	int stargatesQueued;
 
 	// Units
-	int probeCount;
+	int probes;
 	int probesQueued;
 	int probesWarping;
-	int zealotCount;
+	int zealots;
 	int zealotsWarping;
 	int zealotsQueued;
-	int dragoonCount;
+	int dragoons;
 	int dragoonsWarping;
 	int dragoonsQueued;
+	int observers;
+	int observersWarping;
+	int observersQueued;
+	int corsairs;
+	int corsairsWarping;
+	int corsairsQueued;
 
 private:
+	bool canAffortSurplusUnit(BWAPI::UnitType u);
 	void updateQueueValues();
+	void moveInvestmentToTop(BWAPI::UnitType u);
+	void moveInvestmentDown(BWAPI::UnitType u);
 
+	void investInPylon();
+	void investInGateway();
+	void investInForge();
+	void investInPhotonCannon();
+	void investInAssimilator();
+	void investInCyberneticsCore();
+	void investInRoboticsFacility();
+	void investInObservatory();
+	void investInStargate();
+
+	void investInProbe();
+	void investInZealot();
+	void investInDragoon();
+	void investInObserver();
+	void investInCorsair();
+
+	bool detectionNeeded();
 	bool pylonNeeded();
 	bool gatewayNeeded();
-	bool workerNeeded();
+	bool probeNeeded();
 	bool zealotNeeded();
 	bool dragoonNeeded();
+	bool observerNeeded();
+	bool corsairNeeded();
 
 	bool firstBuildOrderStarted;
 	bool firstBuildOrderFinished;
@@ -78,4 +124,13 @@ private:
 	int supplyBuffer;
 	int reservedMinerals;
 	int reservedGas;
+
+	bool invisibleSpotted;
+	bool cutProbes;
+
+	int prioritiesMovedDown;
+
+	float zealotRate;
+	float dragoonRate;
+
 };

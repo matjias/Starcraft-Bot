@@ -44,6 +44,7 @@ public:
   bool canbuildProbe();
   bool gasGathererNeeded();
   bool isGatheringGas(BWAPI::Unit u);
+  bool isReadyToBuild(BWAPI::Unit u);
   void buildProbe(BWAPI::Unit u);
   void buildZealot(BWAPI::Unit u);
 

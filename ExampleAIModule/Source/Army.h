@@ -16,6 +16,8 @@ public:
 	void update(Scouting scoutClass);
 	bool buildZealot(BWAPI::Unit u);
 	bool buildDragoon(BWAPI::Unit u);
+	bool buildObserver(BWAPI::Unit u);
+	bool buildCorsair(BWAPI::Unit u);
 	void addZealot(BWAPI::Unit u);
 	void addDragoon(BWAPI::Unit u);
 	void attack(Scouting scoutClass);

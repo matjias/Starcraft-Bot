@@ -88,6 +88,14 @@ bool Army::buildDragoon(BWAPI::Unit u){
 	return u->train(UnitTypes::Protoss_Dragoon);
 }
 
+bool Army::buildObserver(BWAPI::Unit u){
+	return u->train(UnitTypes::Protoss_Observer);
+}
+
+bool Army::buildCorsair(BWAPI::Unit u){
+	return u->train(UnitTypes::Protoss_Corsair);
+}
+
 void Army::addZealot(BWAPI::Unit u){
 	zealots.push_back(u);
 }
