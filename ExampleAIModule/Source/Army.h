@@ -33,6 +33,11 @@ public:
 	void buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list);
 	void combat();
 private:
+	std::vector<BWAPI::Unit> zealotGens;
+	std::vector<BWAPI::Unit> dragoonGens;
+
+	std::vector<BWAPI::Unitset> zealotSquads;
+	std::vector<BWAPI::Unitset> dragoonSquads;
 	void attack();
 };
 
