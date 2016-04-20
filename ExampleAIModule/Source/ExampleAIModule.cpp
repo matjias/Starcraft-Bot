@@ -628,8 +628,8 @@ void ExampleAIModule::drawData() {
 	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
 
 
-	//Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
-	//Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
+	Broodwar->drawTextScreen(500, 40, "FPS: %d", Broodwar->getFPS());
+	//Broodwar->drawTextScreen(500, 20, "Average FPS: %f", Broodwar->getAverageFPS());
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 
@@ -661,11 +661,11 @@ void ExampleAIModule::drawData() {
 	int debugCount = 0;
 	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
 		iterator != enemyStructs.end(); iterator++) {
-		Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
+		/*Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
 			iterator->second->unit.c_str(),
 			Position(iterator->second->location).x, Position(iterator->second->location).y,
 			iterator->second->scoutedTime);
-			
+			*/
 
 		TilePosition p = iterator->first;
 		UnitType u = iterator->second->unit;
