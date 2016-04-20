@@ -529,11 +529,11 @@ bool BuildOrders::detectionNeeded() {
 }
 
 bool BuildOrders::corsairNeeded() {
-	return !corsairsQueued && (observers || stargates) && corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED;/*!corsairsQueued
+	return !corsairsQueued
+		&& ((detectionNeeded && observers >= OBSERVERS_TO_DETECT) || (stargates))
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
-		&& cyberneticsCores
-		&& enemyRace == Zerg
-		&& (!enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Spore_Colony) || stargates)*/
+		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
+		//&& (!enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Spore_Colony) || stargates);
 }
 
 void BuildOrders::updateQueueValues() {
