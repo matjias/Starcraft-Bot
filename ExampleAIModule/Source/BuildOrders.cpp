@@ -107,11 +107,9 @@ void BuildOrders::useSecondBuildOrder() {
 			}
 
 			secondBuildOrderStarted = true;
-<<<<<<< HEAD
-=======
+
 			investmentList = buildOrder2Gate;
 			//investmentList = buildOrderDragoonRush;
->>>>>>> 83844370645d4560291f63bfc7df451bf0fc46cc
 			updateQueueValues();
 		}
 	}

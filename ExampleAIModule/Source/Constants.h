@@ -7,16 +7,12 @@ const int WORKERS_PER_GEYSER = 3;
 const int MINERAL_SURPLUS_LIMIT = 600;
 const int GAS_SURPLUS_LIMIT = 400;
 
-<<<<<<< HEAD
 // Units and buildings
 const int MIN_OBSERVERS = 1;
 const int OBSERVERS_TO_DETECT = 3;
 const int PHOTON_CANNONS_PER_NEXUS = 3;
 const int CORSAIRS_NEEDED = 3;
-const int ZEALOT_RUSH_SIZE = 16;
-=======
 const int ZEALOT_RUSH_SIZE = 4;
->>>>>>> 83844370645d4560291f63bfc7df451bf0fc46cc
 const int DRAGOON_RUSH_SIZE = 16;
 
 // Other

@@ -174,6 +174,7 @@ void Army::addDragoon(BWAPI::Unit u){
 	}
 }
 
+
 void Army::setAnalyzed(bool analyzed){
 	mapAnalyzed = analyzed;
 }
