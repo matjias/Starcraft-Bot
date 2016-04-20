@@ -107,7 +107,6 @@ void BuildOrders::useSecondBuildOrder() {
 			}
 
 			secondBuildOrderStarted = true;
-
 			investmentList = buildOrder2Gate;
 			//investmentList = buildOrderDragoonRush;
 			updateQueueValues();
