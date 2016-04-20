@@ -63,15 +63,7 @@ void ExampleAIModule::onFrame() {
 		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
 	}
 
-	if (expansions.size() > 1) {
-		Broodwar->drawTextScreen(20, 40, "Highlighted multiple expansions");
-	}
-	else if (expansions.size() == 1) {
-		Broodwar->drawTextScreen(20, 40, "Highlighted one expansions");
-	}
-	else {
-		Broodwar->drawTextScreen(20, 40, "Highlighted zero expansions");
-	}
+	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
 	
 	
 	//Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
@@ -145,7 +137,7 @@ void ExampleAIModule::onFrame() {
 	for (int i = 0; i < spawns.size(); i++) {
 		bool toDraw = spawnsBool.at(i) ? 1 : 0;
 
-		Broodwar->drawTextScreen(5, 20 * i + 20, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d, scouted: %d",
+		Broodwar->drawTextScreen(5, 20 * i + 100, "Spawn %i, {%d, %d} dist: %d, dist to scout: %d, scouted: %d",
 			i + 1, Position(spawns.at(i)).x, Position(spawns.at(i)).y,
 			Position(spawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
 			scoutClass.getScout().getApproxDistance(Position(spawns.at(i))),

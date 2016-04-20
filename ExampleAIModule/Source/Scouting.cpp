@@ -195,7 +195,7 @@ void Scouting::updateScout() {
 					dynamicLocations.at(0)->scouted = true;
 
 					if (dynamicLocations.size() > 2 && dynamicLocations.at(2)->scouted) {
-						foundEnemyBase(TilePosition(dynamicLocations.at(2)->location));
+						foundEnemyBase(TilePosition(dynamicLocations.at(1)->location));
 						validMove(currentScout, dynamicLocations.at(1)->location);
 					}
 					else {
@@ -310,6 +310,7 @@ void Scouting::distractEnemyBase() {
 			Position endPos = vec.getEndPosition();
 			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
 		}
+
 
 
 	}
