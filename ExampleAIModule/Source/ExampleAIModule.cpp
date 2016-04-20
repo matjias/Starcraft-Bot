@@ -59,15 +59,10 @@ void ExampleAIModule::onEnd(bool isWinner) {
 
 void ExampleAIModule::onFrame() {
 	drawData();
-	
+
 	// BWTA2 drawing on the map
 	if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self())
 		return;
-
-	//BWTA draw
-	if (analyzed) {
-		drawTerrainData();
-	}
 
 	if (analysis_just_finished) {
 		Broodwar << "Finished analyzing map." << std::endl;;
@@ -76,8 +71,9 @@ void ExampleAIModule::onFrame() {
 
 	// Prevent spamming by only running our onFrame once every number of latency frames.
 	// Latency frames are the number of frames before commands are processed.
-	if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0)
-		//return;
+	if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() != 0) {}
+	//return;
+
 	// End of BWTA2 draw calls
 
 
@@ -307,68 +303,77 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) {
 }
 
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
-	if (unit->getType() == UnitTypes::Protoss_Probe && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.probes--;
-		if (unit = builder) {
-			builder = NULL;
-		}
-		for (int i = 0; i < probesMiningGas.size(); i++) {
-			if (probesMiningGas.at(i) == unit) {
-				probesMiningGas.at(i) = NULL;
+	// Was it one of our units?
+	if (unit->getPlayer() == Broodwar->self()) {
+		// What unit was it?
+		if (unit->getType() == UnitTypes::Protoss_Probe) {
+			buildOrderClass.probes--;
+			if (unit = builder) {
+				builder = NULL;
 			}
-		}
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.zealots--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.dragoons--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Observer && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.observers--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Corsair && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.corsairs--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Nexus && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.nexuses--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Pylon && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.pylons--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.gateways--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.cyberneticsCores--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Assimilator && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.assimilators--;
-		for (int i = 0; i < assimilators.size(); i++) {
-			if (assimilators.at(i) == unit) {
-				assimilators.erase(assimilators.begin() + i);
-				for (int j = 0; j < 3; j++) {
-					probesMiningGas.erase(assimilators.begin() + i * 3);
+			for (int i = 0; i < probesMiningGas.size(); i++) {
+				if (probesMiningGas.at(i) == unit) {
+					probesMiningGas.at(i) = NULL;
 				}
 			}
 		}
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.roboticsFacilities--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Observatory && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.observatories--;
-	}
-	else if (unit->getType() == UnitTypes::Protoss_Stargate && unit->getPlayer() == Broodwar->self()) {
-		buildOrderClass.stargates--;
-	}
+		else if (unit->getType() == UnitTypes::Protoss_Zealot) {
+			buildOrderClass.zealots--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Dragoon) {
+			buildOrderClass.dragoons--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Observer) {
+			buildOrderClass.observers--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Corsair) {
+			buildOrderClass.corsairs--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Nexus) {
+			buildOrderClass.nexuses--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Pylon) {
+			buildOrderClass.pylons--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Gateway) {
+			buildOrderClass.gateways--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core) {
+			buildOrderClass.cyberneticsCores--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Assimilator) {
+			buildOrderClass.assimilators--;
+			for (int i = 0; i < assimilators.size(); i++) {
+				if (assimilators.at(i) == unit) {
+					assimilators.erase(assimilators.begin() + i);
+					for (int j = 0; j < 3; j++) {
+						probesMiningGas.erase(probesMiningGas.begin() + i * 3);
+					}
+				}
+			}
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility) {
+			buildOrderClass.roboticsFacilities--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Observatory) {
+			buildOrderClass.observatories--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Stargate) {
+			buildOrderClass.stargates--;
+		}
 
-	if (scoutClass.isScout(unit)) {
-		scoutClass.scoutHasDied();
+		// Was it our scout?
+		if (scoutClass.isScout(unit)) {
+			scoutClass.scoutHasDied();
+		}
 	}
-	if (unit->getType() == UnitTypes::Protoss_Nexus && unit->getPlayer() != Broodwar->self()) {
-		army.enemyBaseDestroyed();
-		scoutClass.enemyBaseDestroyed();
+	// Or the enemy's
+	else {
+		// Did we destroy t
+		if (unit->getType().isResourceDepot() && unit->getPosition() == scoutClass.returnEnemyBaseLocs()) {
+			army.enemyBaseDestroyed();
+			scoutClass.enemyBaseDestroyed();
+		}
 	}
 }
 
@@ -664,7 +669,7 @@ void ExampleAIModule::drawData() {
 	int debugCount = 0;
 	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
 		iterator != enemyStructs.end(); iterator++) {
-		/*Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i", 
+		/*Broodwar->drawTextScreen(5, 60 + debugCount * 20, "%s, (%i,%i), %i",
 			iterator->second->unit.c_str(),
 			Position(iterator->second->location).x, Position(iterator->second->location).y,
 			iterator->second->scoutedTime);
@@ -673,9 +678,9 @@ void ExampleAIModule::drawData() {
 		TilePosition p = iterator->first;
 		UnitType u = iterator->second->unit;
 
-		Position topLeft = Position(TILE_SIZE * (p.x - u.tileWidth() / 2), 
+		Position topLeft = Position(TILE_SIZE * (p.x - u.tileWidth() / 2),
 			TILE_SIZE * (p.y - u.tileHeight() / 2));
-		Position botRight = Position(topLeft.x + u.tileWidth() * TILE_SIZE, 
+		Position botRight = Position(topLeft.x + u.tileWidth() * TILE_SIZE,
 			topLeft.y + u.tileHeight() * TILE_SIZE);
 		Broodwar->drawBoxMap(topLeft, botRight, Colors::Red);
 
@@ -738,4 +743,11 @@ void ExampleAIModule::drawData() {
 	Broodwar->drawTextScreen(200, 140, "Observers: %d, W: %d, Q: %d", buildOrderClass.observers, buildOrderClass.observersWarping, buildOrderClass.observersQueued);
 	Broodwar->drawTextScreen(200, 150, "Corsairs: %d, W: %d, Q: %d", buildOrderClass.corsairs, buildOrderClass.corsairsWarping, buildOrderClass.corsairsQueued);*/
 
+
+
+
+	//BWTA draw
+	if (analyzed) {
+		drawTerrainData();
+	}
 }

@@ -311,9 +311,6 @@ void Scouting::distractEnemyBase() {
 			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
 		}
 
-
-
-
 	}
 }
 
