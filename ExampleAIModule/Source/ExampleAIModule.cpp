@@ -343,6 +343,7 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target) {
 }
 
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
+
 	if (unit->getType().isBuilding() && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.setReservedMinerals(buildOrderClass.getReservedMinerals() - unit->getType().mineralPrice());
 		buildOrderClass.setReservedGas(buildOrderClass.getReservedGas() - unit->getType().gasPrice());
@@ -382,6 +383,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 
 	if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self()){
+
 		army.addDragoon(unit);
 	}
 
