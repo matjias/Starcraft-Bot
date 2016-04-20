@@ -1,11 +1,14 @@
 #pragma once
 #include <BWAPI.h>
+#include "ExampleAIModule.h"
 
 class BuildOrders
 {
 public:
 	BuildOrders();
 	~BuildOrders();
+
+	void _init(ExampleAIModule* mainProg);
 
 	void useInitialBuildOrder();
 	void useSecondBuildOrder();
@@ -85,6 +88,10 @@ public:
 	int corsairsQueued;
 
 private:
+	ExampleAIModule* mainProgram;
+
+	void defineBuildOrders();
+
 	bool canAffortSurplusUnit(BWAPI::UnitType u);
 	void updateQueueValues();
 	void moveInvestmentToTop(BWAPI::UnitType u);

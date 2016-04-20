@@ -34,9 +34,10 @@ void ExampleAIModule::onStart() {
 
 	builder = 0;
 
+	// Initialize classes
+	buildOrderClass._init(this);
 	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 
-	// Scouting stuff
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
 
 	// BWTA2 stuffs
@@ -95,7 +96,8 @@ void ExampleAIModule::onFrame() {
 		}
 	}*/
 
-	//std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
+	std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructs = scoutClass.getEnemyStructures();
+
 	//int debugCount = 0;
 	//for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructs.begin();
 	//	iterator != enemyStructs.end(); iterator++) {
@@ -224,12 +226,12 @@ void ExampleAIModule::onFrame() {
 			if (!scoutClass.isScouting() && !scoutClass.returnFoundEnemyBase()) {
 				scoutClass.assignScout(u);
 				if (u == builder) {
-					builder = 0;
+					builder = NULL;
 				}
 			}
 
 			// Assign builder
-			if (builder == 0 && !scoutClass.isScout(u)) {
+			if (builder == NULL && !scoutClass.isScout(u)) {
 				builder = u;
 			}
 			
@@ -409,9 +411,12 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) {
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	if (unit->getType() == UnitTypes::Protoss_Probe && unit->getPlayer() == Broodwar->self()) {
 		buildOrderClass.probes--;
+		if (unit = builder) {
+			builder = NULL;
+		}
 		for (int i = 0; i < probesMiningGas.size(); i++) {
 			if (probesMiningGas.at(i) == unit) {
-				probesMiningGas.at(i) = 0;
+				probesMiningGas.at(i) = NULL;
 			}
 		}
 	}
@@ -499,9 +504,9 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 		buildOrderClass.assimilatorsQueued--;
 		buildOrderClass.assimilators++;
 		assimilators.push_back(unit);
-		probesMiningGas.push_back(0);
-		probesMiningGas.push_back(0);
-		probesMiningGas.push_back(0);
+		probesMiningGas.push_back(NULL);
+		probesMiningGas.push_back(NULL);
+		probesMiningGas.push_back(NULL);
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.roboticsFacilitiesWarping--;
@@ -665,7 +670,7 @@ void ExampleAIModule::mineMinerals(BWAPI::Unit u) {
 
 void ExampleAIModule::mineGas(BWAPI::Unit u) {
 	for (int i = 0; i < probesMiningGas.size(); i++) {
-		if (probesMiningGas.at(i) == 0) {
+		if (probesMiningGas.at(i) == NULL) {
 			probesMiningGas.at(i) = u;
 			u->gather(assimilators.at(i / WORKERS_PER_GEYSER));
 			break;
@@ -676,7 +681,7 @@ void ExampleAIModule::mineGas(BWAPI::Unit u) {
 bool ExampleAIModule::gasGathererNeeded() {
 	if (buildOrderClass.assimilators > 0 && buildOrderClass.probes >= buildOrderClass.assimilators * WORKERS_PER_GEYSER * 2) {
 		for (int i = 0; i < probesMiningGas.size(); i++) {
-			if (probesMiningGas.at(i) == 0) {
+			if (probesMiningGas.at(i) == NULL) {
 				return true;
 			}
 		}

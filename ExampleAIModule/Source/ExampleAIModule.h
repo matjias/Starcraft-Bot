@@ -49,5 +49,4 @@ public:
   void buildZealot(BWAPI::Unit u);
 
   void scoutClassRequestedScout(BWAPI::UnitType u);
-
 };
