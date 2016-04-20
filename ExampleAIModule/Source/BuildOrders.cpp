@@ -530,7 +530,7 @@ bool BuildOrders::detectionNeeded() {
 
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
-		&& ((detectionNeeded && observers >= OBSERVERS_TO_DETECT) || (stargates))
+		&& ((detectionNeeded() && observers >= OBSERVERS_TO_DETECT) || (stargates))
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
 		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
 		//&& (!enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Spore_Colony) || stargates);

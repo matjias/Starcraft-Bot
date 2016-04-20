@@ -313,6 +313,7 @@ void Scouting::distractEnemyBase() {
 
 
 
+
 	}
 }
 
