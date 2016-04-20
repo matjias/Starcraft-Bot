@@ -22,6 +22,7 @@ BWAPI::Position enemyBaseLocs;
 Position idleLoc, enemyChoke, attackLoc;
 bool mapAnalyzed, enemyBaseDest = false, zealotRush = false;
 int moved, countAtEnemyChoke, zealotCount, attackNumber;
+std::string fuckerString = "omg";
 
 Army::Army(){}
 
@@ -34,6 +35,7 @@ void Army::_init(){
 }
 
 void Army::update(Scouting scoutClass){
+
 	//Getting information from BWTA
 	if (mapAnalyzed){
 		idleLoc = BWTA::getNearestChokepoint(Position(Broodwar->self()->getStartLocation()))->getCenter();
@@ -63,10 +65,10 @@ void Army::update(Scouting scoutClass){
 			}
 		}
 	}
-	if (dragoonSquads.size() > 0 && zealotGens.size() > 0){
+	if (dragoonSquads.size() > 0 && dragoonGens.size() > 0){
 		for (int i = 0; i < dragoonSquads.size(); i++){
-			if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
-				zealotSquads.at(i).move(idleLoc);
+			if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(dragoonSquads.at(i), TilePosition(idleLoc))){
+				dragoonSquads.at(i).move(idleLoc);
 			}
 		}
 	}
@@ -76,6 +78,12 @@ void Army::update(Scouting scoutClass){
 	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
 		attack(1);
 	}
+
+	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
+	Broodwar->drawTextScreen(300, 200, "HejZ %i", zealotSquads.size());
+	Broodwar->drawTextScreen(300, 220, " HejD %i",dragoonSquads.size());
+	Broodwar->drawTextScreen(300, 240, " GensZ %i" ,zealotGens.size());
+	Broodwar->drawTextScreen(300, 250, " genD %i",dragoonGens.size());
 
 }
 
@@ -142,6 +150,9 @@ bool Army::buildCorsair(BWAPI::Unit u){
 
 void Army::addZealot(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of
+	if (zealotGens.size() == 0){
+		zealotGens.push_back(u);
+	}
 	if (zealotSquads.size() > 0){
 		for (int i = 0; i < zealotSquads.size(); i++){
 			if (zealotSquads.at(i).size() < 4){
@@ -159,6 +170,9 @@ void Army::addZealot(BWAPI::Unit u){
 
 void Army::addDragoon(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of unit in squad
+	if (dragoonGens.size() == 0){
+		dragoonGens.push_back(u);
+	}
 	if (dragoonSquads.size() > 0){
 		for (int i = 0; i < dragoonSquads.size(); i++){
 			if (dragoonSquads.at(i).size() < 4){
