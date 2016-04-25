@@ -1,48 +1,24 @@
 #include "BuildOrders.h"
 #include "Constants.h"
-#include "Scouting.h"
+#include "ExampleAIModule.h"
 #include <vector>
 
 BuildOrders::BuildOrders() {
-	nexuses = 1;
-	probes = 4;
-	
-	zealotRate = 1.0;
-	dragoonRate = 1.0;
 
-	// Initial build order
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Pylon);
-	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
-
-	// 2 Gate - "9/9 Gateways"
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Pylon);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
-	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
-
-	// Dragoon Rush - "One Zealot before Cybernetics Core"
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Gateway);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Assimilator);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Zealot);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Pylon);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
-	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Cybernetics_Core);
 }
 
 BuildOrders::~BuildOrders() {
+
+}
+
+void BuildOrders::_init(ExampleAIModule* m) {
+	mainProgram = m;
+
+	nexuses = 1;
+	probes = 4;
+
+	zealotRate = 1.0;
+	dragoonRate = 1.0;
 }
 
 void BuildOrders::useInitialBuildOrder() {
@@ -530,10 +506,13 @@ bool BuildOrders::detectionNeeded() {
 
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
-		&& ((detectionNeeded && observers >= OBSERVERS_TO_DETECT) || (stargates))
+
+		&& ((detectionNeeded()
+		&& observers >= OBSERVERS_TO_DETECT
+		/*&& mainProgram->getEnemyStructures().find(BWAPI::UnitTypes::Zerg_Spore_Colony) != mainProgram->getEnemyStructures().end()*/)
+		|| stargates + stargatesWarping)
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
 		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
-		//&& (!enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Spore_Colony) || stargates);
 }
 
 void BuildOrders::updateQueueValues() {
@@ -643,4 +622,38 @@ void BuildOrders::investInObserver() {
 void BuildOrders::investInCorsair() {
 	investmentList.push_back(BWAPI::UnitTypes::Protoss_Corsair);
 	corsairsQueued++;
+}
+
+void BuildOrders::defineBuildOrders() {
+
+	// Initial build order
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Pylon);
+	buildOrderInitial.push_back(BWAPI::UnitTypes::Protoss_Probe);
+
+	// 2 Gate - "9/9 Gateways"
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Gateway);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Pylon);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+	buildOrder2Gate.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+
+	// Dragoon Rush - "One Zealot before Cybernetics Core"
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Gateway);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Assimilator);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Zealot);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Pylon);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Probe);
+	buildOrderDragoonRush.push_back(BWAPI::UnitTypes::Protoss_Cybernetics_Core);
 }

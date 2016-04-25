@@ -78,13 +78,13 @@ void Army::update(Scouting scoutClass){
 	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
 		attack(1);
 	}
-
+	/*
 	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
 	Broodwar->drawTextScreen(300, 200, "HejZ %i", zealotSquads.size());
 	Broodwar->drawTextScreen(300, 220, " HejD %i",dragoonSquads.size());
 	Broodwar->drawTextScreen(300, 240, " GensZ %i" ,zealotGens.size());
 	Broodwar->drawTextScreen(300, 250, " genD %i",dragoonGens.size());
-
+	*/
 }
 
 void Army::attack(int atNum){
