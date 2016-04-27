@@ -80,7 +80,7 @@ void BuildOrders::useSecondBuildOrder() {
 				}
 				else {
 					investmentList = buildOrderDragoonRush;
-					zealotRate = 0.8; // TODO: Add Highb Templars
+					zealotRate = 0.8; // TODO: Add High Templars
 					dragoonRate = 0.2;
 				}
 			}

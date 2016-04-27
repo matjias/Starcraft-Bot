@@ -35,7 +35,14 @@ void ExampleAIModule::onStart() {
 	builder = 0;
 
 	// Initialize classes
+<<<<<<< HEAD
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
+=======
+	buildOrderClass._init(this);
+	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
+
+	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
+>>>>>>> 436561d55e67f8dcc9889d903433bbffb52445d2
 
 	buildOrderClass._init(&scoutClass);
 	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
@@ -286,7 +293,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 
 	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
-		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
+		scoutClass.recordUnitDiscover(unit, TilePosition(unit->getPosition()), Broodwar->getFrameCount());
 	}
 }
 
@@ -556,14 +563,6 @@ bool isAnalyzed(){
 	return analyzed;
 }
 
-void ExampleAIModule::scoutClassRequestedScout(BWAPI::UnitType u) {
-	// Send a request to buildOrder that we would like to
-	// make this unit ASAP, also maybe some logic for keeping
-	// track of when it is finished so we can call
-	// scoutClass.assigScout(Observer) on it.
-
-}
-
 
 // BWTA2 functions
 DWORD WINAPI AnalyzeThread() {
@@ -642,6 +641,21 @@ void ExampleAIModule::drawData() {
 	Broodwar->drawTextScreen(500, 50, "Zealot rate: %f", buildOrderClass.zealotRate);
 	Broodwar->drawTextScreen(500, 60, "Dragoon rate: %f", buildOrderClass.dragoonRate);
 	Broodwar->drawTextScreen(500, 70, "All-in: %s", buildOrderClass.getAllIn() ? "true" : "false");
+
+	/*
+	std::map<UnitType, Scouting::UnitStruct*> enemyUnits = scoutClass.getEnemyUnits();
+	int debugCount = 0;
+	for (std::map<UnitType, Scouting::UnitStruct*>::iterator iterator = enemyUnits.begin();
+		iterator != enemyUnits.end(); iterator++) {
+		
+		Broodwar->drawTextScreen(20, 60 + debugCount * 20, "%s, %i",
+		iterator->first.c_str(),
+		iterator->second->unit.size());
+
+		debugCount++;
+	}
+	*/
+
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 
 	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {

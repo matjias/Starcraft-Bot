@@ -16,7 +16,7 @@ Scouting::Scouting() { }
 
 Scouting::~Scouting() { }
 
-void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, ExampleAIModule* mainProg) {
+void Scouting::_init(TilePosition::list locs, TilePosition loc) {
 	TilePosition::list unsortedSpawns = locs;
 
 	// Currently just insertion sorting but should be fine for such a small data set
@@ -48,8 +48,6 @@ void Scouting::_init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, Ex
 		
 		dynamicLocations.push_back(locStruct);
 	}
-
-	mainProgram = mainProg;
 }
 
 bool Scouting::isScouting() {
@@ -247,15 +245,6 @@ void Scouting::updateToScoutList() {
 	}
 }
 
-void Scouting::requestScout() {
-	if (foundEnemy && enemyStructures.count(enemyBaseLoc) == 0) {
-		// Enemy base has been destroyed, we want an observer
-		// not to scout the possible expansion slots for 
-		// the remaining foes/structures
-		mainProgram->scoutClassRequestedScout(BWAPI::UnitTypes::Protoss_Observer);
-	}
-}
-
 void Scouting::distractEnemyBase() {
 	// Make sure we are in the enemy's region,
 	// and if we are not, we need to move there
@@ -305,102 +294,116 @@ void Scouting::distractEnemyBase() {
 
 
 		// Moving logic
-
+		
 		BWTA::Polygon enemyPoly = BWTA::getRegion(returnEnemyBaseLocs())->getPolygon();
-
 		UnitCommand lastCommand = currentScout->getLastCommand();
 		Position commandPos = lastCommand.getTargetPosition();
 
-		
+		// Debug, shows the position of the current move position
 		Broodwar->drawCircleMap(commandPos, 3, Colors::Green, true);
 
 		// is the position inside our polygon?
-		bool posInsidePoly = false;
 		int polyAt = -1;
 		for (int i = 0; i < enemyPoly.size(); i++) {
 			if (enemyPoly.at(i) == commandPos) {
 				polyAt = i;
-				posInsidePoly = true;
 				break;
 			}
 		}
-		// Or are we just moving somewhere else inside their base?
-		if (enemyPoly.isInside(commandPos)) {
-		//	posInsidePoly = true;
-		}
+
+		// Are we moving somewhere along the edges of the polygon?
+		if (polyAt != -1) {
+			// Are we close enough to start moving to the next point along the polygon?
+			if (currentScout->getDistance(enemyPoly.at(polyAt)) < 
+				currentScout->getType().sightRange()) {
+				// Find the positions in the Polygon of the next 2 points
+				int nextPoly = (polyAt + 1) % enemyPoly.size();
+				int nextPoly2 = (polyAt + 2) % enemyPoly.size();
 
 
-		if (posInsidePoly) {
-			// Are we moving somewhere along the edges of the polygon?
-			if (polyAt != -1) {
-				// Are we close enough to start moving to the next point along the polygon?
-				if (currentScout->getDistance(enemyPoly.at(polyAt)) < 50) {
-					// Now we need to check if can just increment
-					// polyAt, or if we need to return it to 0
-					if (polyAt == enemyPoly.size() - 1) {
-						polyAt = 0;
-					}
-					else {
-						polyAt++;
-					}
-					
-					//validMove(currentScout, enemyPoly.at(polyAt));
-					currentScout->move(enemyPoly.at(polyAt));
+				// Edge case: Is the next point on the polygon in a spike?
+				// That is, would it just be easier to move on to the next point
+				// on the polygon.
+				if (enemyPoly.at(polyAt).getDistance(enemyPoly.at(nextPoly2)) <
+					enemyPoly.at(polyAt).getDistance(enemyPoly.at(nextPoly))) {
+						
+					currentScout->move(enemyPoly.at(nextPoly2));
+				}
+				else {
+					currentScout->move(enemyPoly.at(nextPoly));
 				}
 			}
 		}
 		else {
-			// Let's start moving somewhere in the polygon
-			//validMove(currentScout, enemyPoly.at(0));
 			currentScout->move(enemyPoly.at(0));
 		}
 		
 
-		/*
-		// Tell our scout to stand on the enemy chokepoint
-		// so it doesn't just go and die immediately (need to implement kiting logic)
-		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
-		if (enemyChoke != NULL) {
-			validMove(currentScout, enemyChoke->getCenter() + returnEnemyBaseLocs() / 128);
+	}
+}
+
+void Scouting::recordUnitDiscover(Unit u, TilePosition loc, int timeTick) {
+	if (u->getType().isBuilding()) {
+		// If we do not already know a building
+		// at this location we save it for later
+		if (enemyStructures.count(loc) == 0) {
+			BuildingStruct *buildStruct = new BuildingStruct();
+			buildStruct->unit = u->getType();
+			buildStruct->scoutedTime = timeTick;
+			enemyStructures.insert(std::pair<TilePosition, BuildingStruct*>(loc, buildStruct));
+		}
+	}
+	else {
+		// First time for this unittype?
+		if (enemyUnits.count(u->getType()) == 0) {
+			// We just add it to a new vector which we push onto the map
+			UnitStruct *unitStruct = new UnitStruct();
+
+			std::vector<Unit> vec;
+			vec.push_back(u);
+
+			unitStruct->unit = vec;
+			unitStruct->scoutedTime = timeTick;
+
+			enemyUnits.insert(std::pair<UnitType, UnitStruct*>(u->getType(), unitStruct));
 		}
 		else {
-			validMove(currentScout, returnEnemyBaseLocs());
+			std::vector<Unit> vec = enemyUnits.at(u->getType())->unit;
+
+			for (auto &unit : vec) {
+				if (unit == u) {
+					// Used for debugging how BWAPI::UNit worked
+					//Broodwar->sendText("Unit was already recorded.");
+
+					return;
+				}
+			}
+
+			
+			enemyUnits.at(u->getType())->unit.push_back(u);
+			
+
 		}
-		*/
-
-
 
 	}
 }
 
-void Scouting::recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick) {
-	if (!u.isBuilding()) {
-		return;
-	}
-
-	// If we do not already know a building
-	// at this location we save it for later
-	if (enemyStructures.count(loc) == 0) {
-		BuildingStruct *buildStruct = new BuildingStruct();
-		buildStruct->unit = u;
-		buildStruct->location = loc;
-		buildStruct->scoutedTime = timeTick;
-		enemyStructures.insert(std::pair<BWAPI::TilePosition, BuildingStruct*>(loc, buildStruct));
-	}
-}
-
-void Scouting::recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc) {
-	if (u.isBuilding()) {
+void Scouting::recordUnitDestroy(Unit u, TilePosition loc) {
+	if (u->getType().isBuilding()) {
 		enemyStructures.erase(loc); // Erase should have a check for if the key exists in the map
 	}
 }
 
 
-std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> Scouting::getEnemyStructures() {
+std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> Scouting::getEnemyStructures() {
 	// Used for our micro and macro to either
 	// move to kill the structure, or use for knowledge
 	// as to what buildOrder should we continue with
 	return enemyStructures;
+}
+
+std::map<BWAPI::UnitType, Scouting::UnitStruct*> Scouting::getEnemyUnits() {
+	return enemyUnits;
 }
 
 int Scouting::getEnemyStructureCount(UnitType u) {
@@ -437,8 +440,7 @@ void Scouting::validAttack(Unit unitToAttack, Unit targetUnit) {
 void Scouting::enemyBaseDestroyed() {
 	// TODO: Logic for scouting the entire map and 
 	//		 recorded units/structures for the win
-	requestScout(); // A function whose entire purpose is calling one other function...
-					// This programming is so brilliant
+	
 }
 
 int Scouting::getDistance() {
@@ -484,7 +486,7 @@ void Scouting::set_BWTA_Analyzed() {
 	Used for displaying information about scouting to
 	the screen, so we can ensure correct behaviour
 */
-BWAPI::Position Scouting::getPos() {
+Position Scouting::getPos() {
 	return dynamicLocations.at(0)->location;
 }
 

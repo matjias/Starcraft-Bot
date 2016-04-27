@@ -11,7 +11,7 @@ class Scouting {
 public:
 	Scouting();
 	~Scouting();
-	void _init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc, ExampleAIModule* mainProg);
+	void _init(BWAPI::TilePosition::list locs, BWAPI::TilePosition loc);
 	bool isScouting();
 	bool assignScout(BWAPI::Unit scout);
 	bool hasAssignedScout();
@@ -23,7 +23,6 @@ public:
 	void scoutHasDied();
 	bool returnFoundEnemyBase();
 	BWAPI::Position returnEnemyBaseLocs();
-	void requestScout();
 
 	// Enemy expansion functions
 	void findEnemyExpansions();
@@ -37,8 +36,12 @@ public:
 	/*----- Start of Structs -----*/
 	struct BuildingStruct {
 		BWAPI::UnitType unit;
-		BWAPI::TilePosition location;
 		int scoutedTime; // Represented in game ticks since start
+	};
+
+	struct UnitStruct {
+		std::vector<BWAPI::Unit> unit;
+		int scoutedTime;
 	};
 
 	struct CustomMapCompare {
@@ -56,9 +59,12 @@ public:
 	};
 	/*----- End of Structs -----*/
 
-	void recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick);
-	void recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc);
-	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, CustomMapCompare> getEnemyStructures();
+	// Methods for maintaining and accessing enemy units and structures
+	// that have been scouted thus far
+	void recordUnitDiscover(BWAPI::Unit u, BWAPI::TilePosition loc, int timeTick);
+	void recordUnitDestroy(BWAPI::Unit u, BWAPI::TilePosition loc);
+	std::map<BWAPI::TilePosition, BuildingStruct*, CustomMapCompare> getEnemyStructures();
+	std::map<BWAPI::UnitType, UnitStruct*> getEnemyUnits();
 	int getEnemyStructureCount(BWAPI::UnitType u);
 	void enemyBaseDestroyed();
 
@@ -75,7 +81,7 @@ public:
 	std::vector<bool> getDynamicSpawnBools();
 
 private:
-	// Private functions that Scouting uses
+	// Private functions that the class uses
 	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
 	void distractEnemyBase();
@@ -86,8 +92,7 @@ private:
 	// Global variables needed for Scouting
 	BWAPI::Unit currentScout;
 	bool hasScout, foundEnemy, BWTA_isAnalyzed;
-	std::vector<Scouting::LocationStruct*> dynamicLocations;
-	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare> enemyStructures;
+	std::vector<LocationStruct*> dynamicLocations;
 	BWAPI::TilePosition enemyBaseLoc;
 
 	BWTA::Region *enemyRegion;
@@ -95,6 +100,6 @@ private:
 	BWTA::BaseLocation *enemyExpansion;
 	std::vector<BWTA::BaseLocation*> enemyExpansions;
 
-	// The main program class
-	ExampleAIModule* mainProgram;
+	std::map<BWAPI::TilePosition, BuildingStruct*, CustomMapCompare> enemyStructures;
+	std::map<BWAPI::UnitType, UnitStruct*> enemyUnits;
 };
