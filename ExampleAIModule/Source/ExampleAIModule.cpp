@@ -450,10 +450,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 		buildOrderClass.assimilators--;
 		for (int i = 0; i < assimilators.size(); i++) {
 			if (assimilators.at(i) == unit) {
-				assimilators.erase(assimilators.begin() + i);
 				for (int j = 0; j < 3; j++) {
 					probesMiningGas.erase(assimilators.begin() + i * 3);
 				}
+				assimilators.erase(assimilators.begin() + i);
 			}
 		}
 	}
