@@ -20,7 +20,7 @@ std::vector<Unitset> dragoonSquads;
 BWAPI::Position enemyBaseLocs;
 
 Position idleLoc, enemyChoke, attackLoc;
-bool mapAnalyzed, enemyBaseDest = false, zealotRush = false;
+bool mapAnalyzed, enemyBaseDest = false, zealotRush = false, rushInitiated = false;
 int moved, countAtEnemyChoke, zealotCount, attackNumber;
 std::string fuckerString = "omg";
 
@@ -57,26 +57,22 @@ void Army::update(Scouting scoutClass){
 		}
 	}
 
-	//Move to own region choke point, could probably be done in one function with squads and gens as arguments
-	if (zealotSquads.size() > 0 && zealotGens.size() > 0){
-		for (int i = 0; i < zealotSquads.size(); i++){
-			if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
-				zealotSquads.at(i).move(idleLoc);
-			}
-		}
-	}
-	if (dragoonSquads.size() > 0 && dragoonGens.size() > 0){
-		for (int i = 0; i < dragoonSquads.size(); i++){
-			if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(dragoonSquads.at(i), TilePosition(idleLoc))){
-				dragoonSquads.at(i).move(idleLoc);
-			}
-		}
-	}
-	
+	//Debugging
+	//debugDraw(dragoonSquads, dragoonGens);
+	//debugDraw(zealotSquads, zealotGens);
+
+	//Move to own region choke point
+	idleMovement(zealotSquads, zealotGens);
+	idleMovement(dragoonSquads, dragoonGens);
+
+	//zealotRush();
 
 	//Attack
 	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
 		attack(1);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Protoss){
+		zealotRush();
 	}
 	/*
 	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
@@ -85,6 +81,16 @@ void Army::update(Scouting scoutClass){
 	Broodwar->drawTextScreen(300, 240, " GensZ %i" ,zealotGens.size());
 	Broodwar->drawTextScreen(300, 250, " genD %i",dragoonGens.size());
 	*/
+}
+
+void Army::idleMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
+	if (squads.size() > 0 && gens.size() > 0){
+		for (int i = 0; i < squads.size(); i++){
+			if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(idleLoc))){
+				squads.at(i).attack(idleLoc);
+			}
+		}
+	}
 }
 
 void Army::attack(int atNum){
@@ -99,37 +105,29 @@ void Army::attack(Scouting scoutClass){
 }
 
 void Army::attack(){
+	attackMovement(zealotSquads, zealotGens);
+	attackMovement(dragoonSquads, dragoonGens);
+	combat();
+}
 
-	zealotRush();
-
-
-
-	/*for (int i = 0; i < attackNumber; i++){
-		if (squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
-			zealotSquads.at(i).attack(attackLoc);
+void Army::attackMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
+	for (int i = 0; i < attackNumber; i++){
+		if (squadAtPos(squads.at(i), TilePosition(enemyChoke))){
+			squads.at(i).attack(attackLoc);
 		}
-		else if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
-			zealotSquads.at(i).attack(enemyChoke);
+		else if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(enemyChoke))){
+			squads.at(i).attack(enemyChoke);
 		}
-		if (squadAtPos(dragoonSquads.at(i), TilePosition(enemyChoke))){
-			dragoonSquads.at(i).attack(attackLoc);
-		}
-		else if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
-			dragoonSquads.at(i).attack(enemyChoke);
-		}
-	}*/
+	}
 }
 
 void Army::combat(){
 	for (Unitset squad : dragoonSquads){
 		for (Unit uSelf : squad){
-			if (!uSelf->canAttack){
-				for (Unit unit : uSelf->getUnitsInRadius(5)){
-					if (unit->getPlayer() != Broodwar->self()){
-						int x = uSelf->getPosition().x + (uSelf->getPosition().x - unit->getPosition().x) * (-1 + (-1 / fabs(1.0*uSelf->getPosition().x - unit->getPosition().x)));
-						int y = uSelf->getPosition().y + (uSelf->getPosition().y - unit->getPosition().y) * (-1 + (-1 / fabs(1.0*uSelf->getPosition().y - unit->getPosition().y)));
-						uSelf->move(Position(x,y));
-					}
+			if (!uSelf->canAttack()){
+				for (Unit unit : uSelf->getUnitsInRadius(200)){
+					uSelf->attack(escapePos(uSelf));
+					break;
 				}
 			}
 		}
@@ -137,14 +135,9 @@ void Army::combat(){
 }
 
 void Army::zealotRush(){
-	for (Unitset squad : zealotSquads){
-		for (Unit u : squad){
-			if (unitAtPos(u, TilePosition(enemyChoke)) && countAtEnemyChoke > ZEALOT_RUSH_SIZE){
-				u->attack(attackLoc);
-			}
-			else if (u->canAttackMove() && u->isIdle() && !unitAtPos(u, TilePosition(enemyChoke))){
-				u->move(enemyChoke);
-			}
+	for (int i = 0; i < zealotSquads.size(); i++){
+		if (!squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke)) && zealotCount > ZEALOT_RUSH_SIZE && !rushInitiated){
+			zealotGens.at(i)->attack(enemyChoke);
 		}
 	}
 }
@@ -167,6 +160,7 @@ bool Army::buildCorsair(BWAPI::Unit u){
 
 void Army::addZealot(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of
+	zealotCount++;
 	if (zealotGens.size() == 0){
 		zealotGens.push_back(u);
 	}
@@ -223,6 +217,11 @@ bool Army::unitAtPos(Unit u, TilePosition pos){
 		&& u->getTilePosition().y > pos.y - 6
 		&& u->getTilePosition().y < pos.y + 6;
 }
+/*
+BWTA::Chokepoint getNextChokePoint(){
+
+}
+*/
 
 
 void Army::enemyBaseDestroyed(){
@@ -246,3 +245,40 @@ void Army::enemyBaseDestroyed(){
 	}
 }*/
 
+
+
+void Army::debugDraw(std::vector<Unitset> squads, std::vector<Unit> gens){
+	if (squads.size() > 0 && gens.size() > 0){
+		for (int i = 0; i < squads.size(); i++){
+			for (Unit unit : squads.at(i)){
+				if (unit != NULL){
+					Unitset enemies = unit->getUnitsInRadius(unit->getType().sightRange(), Filter::IsEnemy && Filter::CanAttack);
+
+					for (auto &enemy : enemies){
+
+						Color colorToDraw = enemy->getType().isWorker() ? Colors::Green : Colors::Red;
+						Broodwar->drawCircleMap(enemy->getPosition(),
+							enemy->getType().groundWeapon().maxRange(),
+							colorToDraw);
+
+						Position startPos = unit->getPosition();
+						Position endPos = escapePos(unit);
+						Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+Position Army::escapePos(Unit unit){
+	Unit enemy = unit->getClosestUnit(Filter::IsEnemy && Filter::CanAttack, unit->getType().sightRange());
+	if (enemy != NULL){
+		int x = unit->getPosition().x + (unit->getPosition().x - enemy->getPosition().x) * (-1 + (-1 / fabs(1.0*unit->getPosition().x - enemy->getPosition().x)));
+		int y = unit->getPosition().y + (unit->getPosition().y - enemy->getPosition().y) * (-1 + (-1 / fabs(1.0*unit->getPosition().y - enemy->getPosition().y)));
+		return Position(x, y);
+	}
+	return unit->getPosition();
+}
