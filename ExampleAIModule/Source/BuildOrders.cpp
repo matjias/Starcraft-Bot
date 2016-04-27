@@ -1,24 +1,26 @@
 #include "BuildOrders.h"
 #include "Constants.h"
 #include "ExampleAIModule.h"
+#include "Scouting.h"
 #include <vector>
 
 BuildOrders::BuildOrders() {
-
+	defineBuildOrders();
+	zealotRate = 0.0;
+	dragoonRate = 0.0;
+	allIn = false;
 }
 
 BuildOrders::~BuildOrders() {
 
 }
 
-void BuildOrders::_init(ExampleAIModule* m) {
-	mainProgram = m;
+void BuildOrders::_init(Scouting* s) {
+	scoutClass = s;
 
 	nexuses = 1;
 	probes = 4;
 
-	zealotRate = 1.0;
-	dragoonRate = 1.0;
 }
 
 void BuildOrders::useInitialBuildOrder() {
@@ -27,9 +29,9 @@ void BuildOrders::useInitialBuildOrder() {
 			firstBuildOrderFinished = true;
 		}
 		else {
-			firstBuildOrderStarted = true;
 			investmentList = buildOrderInitial;
 			updateQueueValues();
+			firstBuildOrderStarted = true;
 		}
 	}
 }
@@ -42,50 +44,62 @@ void BuildOrders::useSecondBuildOrder() {
 		else {
 
 			// VS Protoss
-			if (true /*enemyRace == Protoss*/) {
-				if (false /*closeToEnemyBase*/) {
+			if (BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Protoss) {
+				if (closeToEnemyBase() || (!enemyBaseFound() && smallMap())) {
 					investmentList = buildOrder2Gate;
-					cutProbes = true;
+					zealotRate = 1.0;
+					allIn = true;
 				}
-				else if (true /*closeToEnemyBase*/) {
+				else {
 					investmentList = buildOrderDragoonRush;
+					zealotRate = 0.2;
+					dragoonRate = 0.8;
 				}
 			}
 
 			// VS Terran
-			else if (false /*enemyRace == Terran*/) {
-				if (false /*closeToEnemyBase*/) {
+			else if (BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
+				if (closeToEnemyBase() || (!enemyBaseFound() && smallMap())) {
 					investmentList = buildOrder2Gate;
+					zealotRate = 1.0;
+					allIn = true;
 				}
-				else if (false /*closeToEnemyBase*/) {
+				else {
 					investmentList = buildOrderDragoonRush;
+					zealotRate = 0.2;
+					dragoonRate = 0.8;
 				}
 			}
 
 			// VS Zerg
-			else if (false /*enemyRace == Zerg*/) {
-				if (false /*closeToEnemyBase*/) {
+			else if (BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
+				if (closeToEnemyBase() || (!enemyBaseFound() && smallMap())) {
 					investmentList = buildOrder2Gate;
+					zealotRate = 1.0;
+					allIn = true;
 				}
-				else if (true /*closeToEnemyBase*/) {
+				else {
 					investmentList = buildOrderDragoonRush;
+					zealotRate = 0.8; // TODO: Add Highb Templars
+					dragoonRate = 0.2;
 				}
 			}
 
 			// VS undiscovered random race
 			else {
-				if (false /*closeToEnemyBase*/) {
+				if (smallMap()) {
 					investmentList = buildOrder2Gate;
+					zealotRate = 1.0;
+					allIn = true;
 				}
-				else if (false /*closeToEnemyBase*/) {
-					investmentList = buildOrderDragoonRush;
+				else {
+					// Expand
+					zealotRate = 1.0;
 				}
 			}
 
-			secondBuildOrderStarted = true;
-			investmentList = buildOrder2Gate;
-			//investmentList = buildOrderDragoonRush;
 			updateQueueValues();
+			secondBuildOrderStarted = true;
 		}
 	}
 }
@@ -266,7 +280,7 @@ void BuildOrders::reorderInvestments() {
 	}
 
 	// Probe production
-	if (probesWarping < nexuses && probes + probesWarping + probesQueued < MAX_WORKERS && !cutProbes) {
+	if (probesWarping < nexuses && probes + probesWarping + probesQueued < MAX_WORKERS && !allIn) {
 		moveInvestmentToTop(BWAPI::UnitTypes::Protoss_Probe);
 	}
 	else if (investmentList[0] == BWAPI::UnitTypes::Protoss_Probe) {
@@ -458,6 +472,10 @@ void BuildOrders::setReservedGas(int a) {
 	reservedGas = a;
 }
 
+bool BuildOrders::getAllIn() {
+	return allIn;
+}
+
 bool BuildOrders::pylonNeeded() {
 	return (availableSupply + supplyBuffer <= getProductionSupply()
 		&& BWAPI::Broodwar->self()->supplyTotal() / 2 < MAX_SUPPLY);
@@ -476,40 +494,84 @@ bool BuildOrders::gatewayNeeded() {
 }
 
 bool BuildOrders::probeNeeded() {
-	return !probesQueued && probesWarping < nexuses && probes + probesWarping + probesQueued < MAX_WORKERS;
+	//if (cutProbes && scoutClass->getEnemyStructureCount(BWAPI::Broodwar->enemy()->getRace().getWorker()) < probes) { // TODO: getEnemyUnitCount
+	//	cutProbes = false;
+	//}
+	return !allIn
+		&& !probesQueued
+		&& probesWarping < nexuses
+		&& probes + probesWarping + probesQueued < (nexuses + nexusesWarping) * WORKERS_PER_MINERAL_LINE + (assimilators + assimilatorsWarping) * WORKERS_PER_GEYSER
+		&& probes + probesWarping + probesQueued < MAX_WORKERS;
 }
 
 bool BuildOrders::zealotNeeded() {
 	return !zealotsQueued
-		&& zealotRate >= 0
-		&& (zealots + zealotsWarping + zealotsQueued) * zealotRate <= (dragoons + dragoonsWarping + dragoonsQueued) * dragoonRate;
+		&& zealotRate > 0.0
+		&& ((zealots + zealotsWarping + zealotsQueued) / zealotRate <= (dragoons + dragoonsWarping + dragoonsQueued) / dragoonRate
+			|| dragoonRate == 0);
 		//&& ((BWAPI::Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT && !BWAPI::Broodwar->self()->gas() - reservedGas > GAS_SURPLUS_LIMIT));
 }
 
 bool BuildOrders::dragoonNeeded() {
 	return !dragoonsQueued
-		&& dragoonRate >= 0
-		&& (dragoons + dragoonsWarping + dragoonsQueued) * dragoonRate <= (zealots + zealotsWarping + zealotsQueued) * zealotRate;
+		&& dragoonRate > 0
+		&& dragoonRate > 0.0
+		&& ((dragoons + dragoonsWarping + dragoonsQueued) / dragoonRate <= (zealots + zealotsWarping + zealotsQueued) / zealotRate
+			|| zealotRate == 0);
 }
 
 bool BuildOrders::observerNeeded() {
 	return !observersQueued
-		&& (cyberneticsCores && assimilators || roboticsFacilities || observatories)
+		&& (cyberneticsCores
+		&& assimilators
+		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() / 2 +
+		dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() / 2 +
+		corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() / 2 >= ARMY_SUPPLY_BEFORE_OBSERVERS
+		|| roboticsFacilities
+		|| observatories)
 		&& (observers + observersWarping + observersQueued < MIN_OBSERVERS
-		|| (observers + observersWarping + observersQueued < OBSERVERS_TO_DETECT && invisibleSpotted));
+		&& !corsairsQueued
+		|| observers + observersWarping + observersQueued < OBSERVERS_TO_DETECT
+		&& detectionNeeded());
 }
 
 bool BuildOrders::detectionNeeded() {
-	return false; // (invisibleSpotted || enemyBuildings.contains(BWAPI::UnitTypes::Protoss_Templars_Archives) || enemyBuildings.contains(BWAPI::UnitTypes::Terran_Factory) || enemyBuildings.contains(BWAPI::UnitTypes::Terran_Starport) || enemyBuildings.contains(BWAPI::UnitTypes::Terran_Control_Tower) || enemyBuildings.contains(BWAPI::UnitTypes::Terran_Science_Facility) || enemyBuildings.contains(BWAPI::UnitTypes::Terran_Control_Tower) || enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Hydralisk_Den) || enemyBuildings.contains(BWAPI::UnitTypes::Zerg_Lair))
-	//&& ((observers + observersWarping + observersQueued) < OBSERVERS_NEEDED || (photonCannons + photonCannonsWarping + photonCannonsQueued) < CANNONS_PER_NEXUS * nexuses;
+	return (invisibleSpotted
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Templar_Archives)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observatory)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Factory)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Starport)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Science_Facility)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Covert_Ops)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hydralisk_Den)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lair)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observer) // TODO: Unit map
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Templar)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Archon)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Arbiter)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture_Spider_Mine)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Ghost)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker)
+			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker_Egg))
+		&& ((observers + observersWarping + observersQueued) < OBSERVERS_TO_DETECT
+			|| (photonCannons + photonCannonsWarping + photonCannonsQueued) < DEFENSE_STRUCTURES_PER_BASE * nexuses);
 }
 
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
-
-		&& ((detectionNeeded()
-		&& observers >= OBSERVERS_TO_DETECT
-		/*&& mainProgram->getEnemyStructures().find(BWAPI::UnitTypes::Zerg_Spore_Colony) != mainProgram->getEnemyStructures().end()*/)
+		&& (!detectionNeeded() || detectionNeeded() && observers >= OBSERVERS_TO_DETECT)
+		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() + // TODO: Army supply
+			dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() +
+			corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() >= ARMY_SUPPLY_BEFORE_CORSAIRS
+		&& (scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Spore_Colony) <
+			(scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hatchery) +
+				scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lair) +
+				scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hive)) * DEFENSE_STRUCTURES_PER_BASE
 		|| stargates + stargatesWarping)
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
 		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
@@ -622,6 +684,22 @@ void BuildOrders::investInObserver() {
 void BuildOrders::investInCorsair() {
 	investmentList.push_back(BWAPI::UnitTypes::Protoss_Corsair);
 	corsairsQueued++;
+}
+
+bool BuildOrders::enemyBaseFound() {
+	return scoutClass->returnEnemyBaseLocs().x != 0
+		&& scoutClass->returnEnemyBaseLocs().y != 0;
+}
+
+bool BuildOrders::smallMap() {
+	return (BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight() < 128 * 128);
+}
+
+bool BuildOrders::closeToEnemyBase() {
+	if (scoutClass->returnEnemyBaseLocs().x != 0) {
+		return (scoutClass->returnEnemyBaseLocs().getDistance(BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation())) <= 128 * 32);
+	}
+	return false;
 }
 
 void BuildOrders::defineBuildOrders() {

@@ -412,6 +412,8 @@ int Scouting::getEnemyStructureCount(UnitType u) {
 			amount++;
 		}
 	}
+
+	return amount;
 }
 
 void Scouting::validMove(Unit unitToMove, Position targetLoc) {

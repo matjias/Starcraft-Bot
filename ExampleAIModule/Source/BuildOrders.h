@@ -1,6 +1,7 @@
 #pragma once
 #include <BWAPI.h>
 #include "ExampleAIModule.h"
+#include "Scouting.h"
 
 class BuildOrders
 {
@@ -8,7 +9,7 @@ public:
 	BuildOrders();
 	~BuildOrders();
 
-	void _init(ExampleAIModule* mainProg);
+	void _init(Scouting* scoutClass);
 
 	void useInitialBuildOrder();
 	void useSecondBuildOrder();
@@ -35,6 +36,7 @@ public:
 	void setReservedMinerals(int a);
 	int getReservedGas();
 	void setReservedGas(int a);
+	bool getAllIn();
 
 	int getProductionSupply();
 
@@ -87,15 +89,23 @@ public:
 	int corsairsWarping;
 	int corsairsQueued;
 
+	float zealotRate; // TODO: Move to private
+	float dragoonRate;
+
 private:
-	ExampleAIModule* mainProgram;
-
+	// Initial functions
 	void defineBuildOrders();
-
-	bool canAffortSurplusUnit(BWAPI::UnitType u);
 	void updateQueueValues();
+
+	bool firstBuildOrderStarted;
+	bool firstBuildOrderFinished;
+	bool secondBuildOrderStarted;
+	bool secondBuildOrderFinished;
+	
+	// Investment functions
 	void moveInvestmentToTop(BWAPI::UnitType u);
 	void moveInvestmentDown(BWAPI::UnitType u);
+	bool canAffortSurplusUnit(BWAPI::UnitType u);
 
 	void investInPylon();
 	void investInGateway();
@@ -122,10 +132,13 @@ private:
 	bool observerNeeded();
 	bool corsairNeeded();
 
-	bool firstBuildOrderStarted;
-	bool firstBuildOrderFinished;
-	bool secondBuildOrderStarted;
-	bool secondBuildOrderFinished;
+	// Map and enemy information functions
+	bool enemyBaseFound();
+	bool smallMap();
+	bool closeToEnemyBase();
+
+	// Variables
+	Scouting* scoutClass;
 
 	int availableSupply;
 	int supplyBuffer;
@@ -133,11 +146,11 @@ private:
 	int reservedGas;
 
 	bool invisibleSpotted;
-	bool cutProbes;
 
 	int prioritiesMovedDown;
 
-	float zealotRate;
-	float dragoonRate;
+	//float zealotRate; TODO: Uncomment
+	//float dragoonRate;
+	bool allIn;
 
 };

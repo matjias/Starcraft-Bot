@@ -35,10 +35,10 @@ void ExampleAIModule::onStart() {
 	builder = 0;
 
 	// Initialize classes
-	buildOrderClass._init(this);
-	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
-
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
+
+	buildOrderClass._init(&scoutClass);
+	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 
 	// BWTA2 stuffs
 	BWTA::readMap();
@@ -634,19 +634,19 @@ void ExampleAIModule::drawData() {
 		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
 	}
 
-	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
+	//Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
 
-
-	Broodwar->drawTextScreen(500, 40, "FPS: %d", Broodwar->getFPS());
-	//Broodwar->drawTextScreen(500, 20, "Average FPS: %f", Broodwar->getAverageFPS());
+	Broodwar->drawTextScreen(500, 30, "FPS: %d", Broodwar->getFPS());
+	//Broodwar->drawTextScreen(500, 40, "Average FPS: %f", Broodwar->getAverageFPS());
+	Broodwar->drawTextScreen(500, 40, "%s", Broodwar->enemy()->getRace().c_str());
+	Broodwar->drawTextScreen(500, 50, "Zealot rate: %f", buildOrderClass.zealotRate);
+	Broodwar->drawTextScreen(500, 60, "Dragoon rate: %f", buildOrderClass.dragoonRate);
+	Broodwar->drawTextScreen(500, 70, "All-in: %s", buildOrderClass.getAllIn() ? "true" : "false");
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
-	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 
-	Broodwar->drawTextScreen(5, 20, "%s", Broodwar->enemy()->getRace().c_str());
-
-	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
-	//}
+	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
+		Broodwar->drawTextScreen(5, 5 + i * 10, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	}
 
 	/*if (assimilators.size() == 0) {
 	Broodwar->drawTextScreen(200, 5, "%i: %s", 0, "No Assimilators");
