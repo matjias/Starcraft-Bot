@@ -34,6 +34,7 @@ public:
   void drawTerrainData();
 
   // Our functions
+  void drawData();
   void mineMinerals(BWAPI::Unit u);
   void mineGas(BWAPI::Unit u);
   void buildBuilding(BWAPI::Unit builder, BWAPI::UnitType building);

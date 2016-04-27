@@ -57,7 +57,7 @@ void Army::update(Scouting scoutClass){
 		}
 	}
 
-	//Move to own region choke point
+	//Move to own region choke point, could probably be done in one function with squads and gens as arguments
 	if (zealotSquads.size() > 0 && zealotGens.size() > 0){
 		for (int i = 0; i < zealotSquads.size(); i++){
 			if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(idleLoc))){
@@ -78,13 +78,13 @@ void Army::update(Scouting scoutClass){
 	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
 		attack(1);
 	}
-
+	/*
 	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
 	Broodwar->drawTextScreen(300, 200, "HejZ %i", zealotSquads.size());
 	Broodwar->drawTextScreen(300, 220, " HejD %i",dragoonSquads.size());
 	Broodwar->drawTextScreen(300, 240, " GensZ %i" ,zealotGens.size());
 	Broodwar->drawTextScreen(300, 250, " genD %i",dragoonGens.size());
-
+	*/
 }
 
 void Army::attack(int atNum){
@@ -99,24 +99,41 @@ void Army::attack(Scouting scoutClass){
 }
 
 void Army::attack(){
-	for (int i = 0; i < attackNumber; i++){
+
+	zealotRush();
+
+
+
+	/*for (int i = 0; i < attackNumber; i++){
 		if (squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
 			zealotSquads.at(i).attack(attackLoc);
 		}
 		else if (zealotGens.at(i)->canAttackMove() && zealotGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
-			zealotSquads.at(i).move(enemyChoke);
+			zealotSquads.at(i).attack(enemyChoke);
 		}
 		if (squadAtPos(dragoonSquads.at(i), TilePosition(enemyChoke))){
 			dragoonSquads.at(i).attack(attackLoc);
 		}
 		else if (dragoonGens.at(i)->canAttackMove() && dragoonGens.at(i)->isIdle() && !squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke))){
-			dragoonSquads.at(i).move(enemyChoke);
+			dragoonSquads.at(i).attack(enemyChoke);
 		}
-	}
+	}*/
 }
 
 void Army::combat(){
-	
+	for (Unitset squad : dragoonSquads){
+		for (Unit uSelf : squad){
+			if (!uSelf->canAttack()){
+				for (Unit unit : uSelf->getUnitsInRadius(5)){
+					if (unit->getPlayer() != Broodwar->self()){
+						int x = uSelf->getPosition().x + (uSelf->getPosition().x - unit->getPosition().x) * (-1 + (-1 / fabs(1.0*uSelf->getPosition().x - unit->getPosition().x)));
+						int y = uSelf->getPosition().y + (uSelf->getPosition().y - unit->getPosition().y) * (-1 + (-1 / fabs(1.0*uSelf->getPosition().y - unit->getPosition().y)));
+						uSelf->move(Position(x,y));
+					}
+				}
+			}
+		}
+	}
 }
 
 void Army::zealotRush(){

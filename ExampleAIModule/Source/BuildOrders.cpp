@@ -506,6 +506,7 @@ bool BuildOrders::detectionNeeded() {
 
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
+
 		&& ((detectionNeeded()
 		&& observers >= OBSERVERS_TO_DETECT
 		/*&& mainProgram->getEnemyStructures().find(BWAPI::UnitTypes::Zerg_Spore_Colony) != mainProgram->getEnemyStructures().end()*/)

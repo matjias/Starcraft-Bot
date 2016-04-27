@@ -12,7 +12,7 @@ const int MIN_OBSERVERS = 1;
 const int OBSERVERS_TO_DETECT = 3;
 const int PHOTON_CANNONS_PER_NEXUS = 3;
 const int CORSAIRS_NEEDED = 3;
-const int ZEALOT_RUSH_SIZE = 4;
+const int ZEALOT_RUSH_SIZE = 12;
 const int DRAGOON_RUSH_SIZE = 16;
 
 // Other
