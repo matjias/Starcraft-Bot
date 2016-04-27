@@ -350,6 +350,7 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 						probesMiningGas.erase(probesMiningGas.begin() + i * 3);
 					}
 				}
+				assimilators.erase(assimilators.begin() + i);
 			}
 		}
 		else if (unit->getType() == UnitTypes::Protoss_Robotics_Facility) {

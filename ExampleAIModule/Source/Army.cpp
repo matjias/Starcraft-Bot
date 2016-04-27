@@ -60,7 +60,7 @@ void Army::update(Scouting scoutClass){
 	//Debugging
 	//debugDraw(dragoonSquads, dragoonGens);
 	//debugDraw(zealotSquads, zealotGens);
-
+	
 	//Move to own region choke point
 	idleMovement(zealotSquads, zealotGens);
 	idleMovement(dragoonSquads, dragoonGens);
@@ -118,8 +118,8 @@ void Army::attackMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
 		else if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(enemyChoke))){
 			squads.at(i).attack(enemyChoke);
 		}
-	}
-}
+		}
+		}
 
 void Army::combat(){
 	for (Unitset squad : dragoonSquads){
