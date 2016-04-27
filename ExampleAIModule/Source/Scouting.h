@@ -59,6 +59,7 @@ public:
 	void recordUnitDiscover(BWAPI::UnitType u, BWAPI::TilePosition loc, int timeTick);
 	void recordUnitDestroy(BWAPI::UnitType u, BWAPI::TilePosition loc);
 	std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, CustomMapCompare> getEnemyStructures();
+	int getEnemyStructureCount(BWAPI::UnitType u);
 	void enemyBaseDestroyed();
 
 	

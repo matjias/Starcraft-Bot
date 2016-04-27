@@ -272,15 +272,7 @@ void Scouting::distractEnemyBase() {
 	// Otherwise, we must be in their region,
 	// and we can start harassing in one form or another
 	else {
-		// Tell our scout to stand on the enemy chokepoint
-		// so it doesn't just go and die immediately (need to implement kiting logic)
-		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
-		if (enemyChoke != NULL) {
-			validMove(currentScout, enemyChoke->getCenter() + returnEnemyBaseLocs() / 128);
-		}
-		else {
-			validMove(currentScout, returnEnemyBaseLocs());
-		}
+		// Visualizing methods for enemy units and our scout
 
 		// Draw our vision for our scout, and record all enemy units in this range
 		Broodwar->drawCircleMap(currentScout->getPosition(), currentScout->getType().sightRange(),
@@ -310,6 +302,73 @@ void Scouting::distractEnemyBase() {
 			Position endPos = vec.getEndPosition();
 			Broodwar->drawLineMap(startPos, endPos, Colors::Orange);
 		}
+
+
+		// Moving logic
+
+		BWTA::Polygon enemyPoly = BWTA::getRegion(returnEnemyBaseLocs())->getPolygon();
+
+		UnitCommand lastCommand = currentScout->getLastCommand();
+		Position commandPos = lastCommand.getTargetPosition();
+
+		
+		Broodwar->drawCircleMap(commandPos, 3, Colors::Green, true);
+
+		// is the position inside our polygon?
+		bool posInsidePoly = false;
+		int polyAt = -1;
+		for (int i = 0; i < enemyPoly.size(); i++) {
+			if (enemyPoly.at(i) == commandPos) {
+				polyAt = i;
+				posInsidePoly = true;
+				break;
+			}
+		}
+		// Or are we just moving somewhere else inside their base?
+		if (enemyPoly.isInside(commandPos)) {
+		//	posInsidePoly = true;
+		}
+
+
+		if (posInsidePoly) {
+			// Are we moving somewhere along the edges of the polygon?
+			if (polyAt != -1) {
+				// Are we close enough to start moving to the next point along the polygon?
+				if (currentScout->getDistance(enemyPoly.at(polyAt)) < 50) {
+					// Now we need to check if can just increment
+					// polyAt, or if we need to return it to 0
+					if (polyAt == enemyPoly.size() - 1) {
+						polyAt = 0;
+					}
+					else {
+						polyAt++;
+					}
+					
+					//validMove(currentScout, enemyPoly.at(polyAt));
+					currentScout->move(enemyPoly.at(polyAt));
+				}
+			}
+		}
+		else {
+			// Let's start moving somewhere in the polygon
+			//validMove(currentScout, enemyPoly.at(0));
+			currentScout->move(enemyPoly.at(0));
+		}
+		
+
+		/*
+		// Tell our scout to stand on the enemy chokepoint
+		// so it doesn't just go and die immediately (need to implement kiting logic)
+		BWTA::Chokepoint *enemyChoke = BWTA::getNearestChokepoint(returnEnemyBaseLocs());
+		if (enemyChoke != NULL) {
+			validMove(currentScout, enemyChoke->getCenter() + returnEnemyBaseLocs() / 128);
+		}
+		else {
+			validMove(currentScout, returnEnemyBaseLocs());
+		}
+		*/
+
+
 
 	}
 }
@@ -342,6 +401,17 @@ std::map<BWAPI::TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapComp
 	// move to kill the structure, or use for knowledge
 	// as to what buildOrder should we continue with
 	return enemyStructures;
+}
+
+int Scouting::getEnemyStructureCount(UnitType u) {
+	int amount = 0;
+
+	for (std::map<TilePosition, Scouting::BuildingStruct*, Scouting::CustomMapCompare>::iterator iterator = enemyStructures.begin();
+		iterator != enemyStructures.end(); iterator++) {
+		if (iterator->second->unit == u) {
+			amount++;
+		}
+	}
 }
 
 void Scouting::validMove(Unit unitToMove, Position targetLoc) {
