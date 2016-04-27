@@ -38,7 +38,7 @@ void ExampleAIModule::onStart() {
 	buildOrderClass._init(this);
 	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 
-	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
+	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
 
 	// BWTA2 stuffs
 	BWTA::readMap();
@@ -286,7 +286,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 
 	if (unit->getPlayer() != Broodwar->self() && !unit->getType().isNeutral()) {
-		scoutClass.recordUnitDiscover(unit->getType(), TilePosition(unit->getPosition()), Broodwar->getFrameCount());
+		scoutClass.recordUnitDiscover(unit, TilePosition(unit->getPosition()), Broodwar->getFrameCount());
 	}
 }
 
@@ -556,14 +556,6 @@ bool isAnalyzed(){
 	return analyzed;
 }
 
-void ExampleAIModule::scoutClassRequestedScout(BWAPI::UnitType u) {
-	// Send a request to buildOrder that we would like to
-	// make this unit ASAP, also maybe some logic for keeping
-	// track of when it is finished so we can call
-	// scoutClass.assigScout(Observer) on it.
-
-}
-
 
 // BWTA2 functions
 DWORD WINAPI AnalyzeThread() {
@@ -635,6 +627,20 @@ void ExampleAIModule::drawData() {
 	}
 
 	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
+
+	/*
+	std::map<UnitType, Scouting::UnitStruct*> enemyUnits = scoutClass.getEnemyUnits();
+	int debugCount = 0;
+	for (std::map<UnitType, Scouting::UnitStruct*>::iterator iterator = enemyUnits.begin();
+		iterator != enemyUnits.end(); iterator++) {
+		
+		Broodwar->drawTextScreen(20, 60 + debugCount * 20, "%s, %i",
+		iterator->first.c_str(),
+		iterator->second->unit.size());
+
+		debugCount++;
+	}
+	*/
 
 
 	Broodwar->drawTextScreen(500, 40, "FPS: %d", Broodwar->getFPS());
