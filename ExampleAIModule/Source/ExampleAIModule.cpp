@@ -35,14 +35,7 @@ void ExampleAIModule::onStart() {
 	builder = 0;
 
 	// Initialize classes
-<<<<<<< HEAD
-	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation(), this);
-=======
-	buildOrderClass._init(this);
-	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
-
 	scoutClass._init(Broodwar->getStartLocations(), Broodwar->self()->getStartLocation());
->>>>>>> 436561d55e67f8dcc9889d903433bbffb52445d2
 
 	buildOrderClass._init(&scoutClass);
 	buildOrderClass.setAvailableSupply((Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
