@@ -264,13 +264,9 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 		buildOrderClass.stargatesWarping++;
 	}
 
-	if (unit->getType() == UnitTypes::Protoss_Zealot && unit->getPlayer() == Broodwar->self()){
-		army.addZealot(unit);
-	}
-
-	if (unit->getType() == UnitTypes::Protoss_Dragoon && unit->getPlayer() == Broodwar->self()){
-
-		army.addDragoon(unit);
+	//bool function isArmyUnit?
+	if ((unit->getType() == UnitTypes::Protoss_Zealot || unit->getType() == UnitTypes::Protoss_Dragoon) && unit->getPlayer() == Broodwar->self()){
+		army.addUnit(unit);
 	}
 
 	if (unit->getType() == UnitTypes::Protoss_Observer && unit->getPlayer() == Broodwar->self()){
@@ -626,14 +622,7 @@ void ExampleAIModule::drawData() {
 		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
 	}
 
-	//Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
-
-	Broodwar->drawTextScreen(500, 30, "FPS: %d", Broodwar->getFPS());
-	//Broodwar->drawTextScreen(500, 40, "Average FPS: %f", Broodwar->getAverageFPS());
-	Broodwar->drawTextScreen(500, 40, "%s", Broodwar->enemy()->getRace().c_str());
-	Broodwar->drawTextScreen(500, 50, "Zealot rate: %f", buildOrderClass.zealotRate);
-	Broodwar->drawTextScreen(500, 60, "Dragoon rate: %f", buildOrderClass.dragoonRate);
-	Broodwar->drawTextScreen(500, 70, "All-in: %s", buildOrderClass.getAllIn() ? "true" : "false");
+	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
 
 	/*
 	std::map<UnitType, Scouting::UnitStruct*> enemyUnits = scoutClass.getEnemyUnits();
@@ -650,6 +639,9 @@ void ExampleAIModule::drawData() {
 	*/
 
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
+	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
+
+	Broodwar->drawTextScreen(5, 20, "%s", Broodwar->enemy()->getRace().c_str());
 
 	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
 		Broodwar->drawTextScreen(5, 5 + i * 10, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
