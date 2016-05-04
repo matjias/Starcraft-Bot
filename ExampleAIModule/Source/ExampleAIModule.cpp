@@ -207,7 +207,7 @@ void ExampleAIModule::onFrame() {
 		}
 
 		// Zealot attack logic
-		army.update(scoutClass);
+		//army.update(scoutClass);
 	}
 }
 
@@ -242,6 +242,14 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.gatewaysQueued--;
 		buildOrderClass.gatewaysWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Forge && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.forgesQueued--;
+		buildOrderClass.forgesWarping++;
+	}
+	if (unit->getType() == UnitTypes::Protoss_Photon_Cannon && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.photonCannonsQueued--;
+		buildOrderClass.photonCannonsWarping++;
 	}
 	if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.cyberneticsCoresQueued--;
@@ -338,6 +346,12 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 		else if (unit->getType() == UnitTypes::Protoss_Gateway) {
 			buildOrderClass.gateways--;
 		}
+		else if (unit->getType() == UnitTypes::Protoss_Forge) {
+			buildOrderClass.forges--;
+		}
+		else if (unit->getType() == UnitTypes::Protoss_Photon_Cannon) {
+			buildOrderClass.photonCannons--;
+		}
 		else if (unit->getType() == UnitTypes::Protoss_Cybernetics_Core) {
 			buildOrderClass.cyberneticsCores--;
 		}
@@ -393,6 +407,14 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 		buildOrderClass.setSupplyBuffer(buildOrderClass.getSupplyBuffer() - unit->getType().supplyProvided() / 2);
 		buildOrderClass.pylonsWarping--;
 		buildOrderClass.pylons++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Forge && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.forgesWarping--;
+		buildOrderClass.forges++;
+	}
+	else if (unit->getType() == UnitTypes::Protoss_Photon_Cannon && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
+		buildOrderClass.photonCannonsWarping--;
+		buildOrderClass.photonCannons++;
 	}
 	else if (unit->getType() == UnitTypes::Protoss_Gateway && unit->getPlayer() == Broodwar->self() && Broodwar->elapsedTime() > 1) {
 		buildOrderClass.gatewaysWarping--;
@@ -621,6 +643,8 @@ void ExampleAIModule::drawData() {
 	Broodwar->drawTextScreen(500, 50, "Zealot rate: %f", buildOrderClass.zealotRate);
 	Broodwar->drawTextScreen(500, 60, "Dragoon rate: %f", buildOrderClass.dragoonRate);
 	Broodwar->drawTextScreen(500, 70, "All-in: %s", buildOrderClass.getAllIn() ? "true" : "false");
+	Broodwar->drawTextScreen(500, 80, "Reserved Min: %d", buildOrderClass.getReservedMinerals());
+	Broodwar->drawTextScreen(500, 90, "Reserved Gas: %d", buildOrderClass.getReservedGas());
 
 	/*
 	std::map<UnitType, Scouting::UnitStruct*> enemyUnits = scoutClass.getEnemyUnits();
