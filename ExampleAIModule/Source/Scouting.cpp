@@ -16,12 +16,12 @@ Scouting::Scouting() { }
 
 Scouting::~Scouting() { }
 
-void Scouting::_init(TilePosition::list locs, TilePosition loc) {
-	TilePosition::list unsortedSpawns = locs;
+void Scouting::_init(TilePosition::list spawnLocations, TilePosition ownSpawn) {
+	TilePosition::list unsortedSpawns = spawnLocations;
 
 	// Currently just insertion sorting but should be fine for such a small data set
 	for (int i = 0; i < unsortedSpawns.size() - 1; i++) {
-		if (unsortedSpawns.at(i) == loc) {
+		if (unsortedSpawns.at(i) == ownSpawn) {
 			// We are looking at our spawn position, so we want to move that to
 			// the very back of the list
 			std::swap(unsortedSpawns.at(i), unsortedSpawns.at(unsortedSpawns.size() - 1));
@@ -30,7 +30,9 @@ void Scouting::_init(TilePosition::list locs, TilePosition loc) {
 		for (int j = i; j > 0; j--) {
 			// If current spawnLocation is closer than the previous spawn location
 			// we move it further to 0, to indicate closest spawn.
-			if (unsortedSpawns.at(j).getApproxDistance(loc) < unsortedSpawns.at(j - 1).getApproxDistance(loc)) {
+			if (unsortedSpawns.at(j).getApproxDistance(ownSpawn) < 
+				unsortedSpawns.at(j - 1).getApproxDistance(ownSpawn)) {
+
 				std::swap(unsortedSpawns.at(j), unsortedSpawns.at(j - 1));
 			}
 		}
@@ -66,22 +68,10 @@ bool Scouting::assignScout(Unit scout) {
 		// or if we have enough scouts out to check every location at once
 		return false;
 	}
-	oneScoutAll(scout);
+	currentScout = scout;
+	validMove(currentScout, dynamicLocations.at(0)->location);
 	hasScout = true;
 	return true;
-}
-
-bool Scouting::assignScoutandLoc(Unit scout, Position loc) {
-	// ????
-	validMove(scout, loc);
-
-	return true;
-}
-
-void Scouting::oneScoutAll(Unit u) {
-	currentScout = u;
-
-	validMove(currentScout, dynamicLocations.at(0)->location);
 }
 
 void Scouting::foundEnemyBase(TilePosition loc) {
@@ -98,63 +88,69 @@ void Scouting::foundEnemyBase(TilePosition loc) {
 
 void Scouting::findEnemyExpansions() {
 	enemyRegion = BWTA::getRegion(returnEnemyBaseLocs());
-	if (enemyRegion != NULL) {
-		enemyBaseLocation = BWTA::getNearestBaseLocation(returnEnemyBaseLocs());
-		if (enemyBaseLocation != NULL) {
-			const double FACTOR = 2;
+	// If for some reason we dont get their region
+	if (enemyRegion == NULL) {
+		return;
+	}
 
-			std::set<BWTA::BaseLocation*> allBaseLocations = BWTA::getBaseLocations();
+	enemyBaseLocation = BWTA::getNearestBaseLocation(returnEnemyBaseLocs());
+	// If for some reason we cannot get the base location
+	if (enemyBaseLocation == NULL) {
+		return;
+	}
 
-			BWTA::BaseLocation* currentClosestExpansion;
-			std::vector<BWTA::BaseLocation*> currentValidExpansions;
+	const double FACTOR = 2;
 
-			double shortestDist = std::numeric_limits<double>::max();
+	std::set<BWTA::BaseLocation*> allBaseLocations = BWTA::getBaseLocations();
 
-			for (auto &baseLocation : allBaseLocations) {
-				// Continue if we do not care about this expansion place
-				if (baseLocation == enemyBaseLocation || baseLocation->isIsland() ||
-					baseLocation == BWTA::getStartLocation(Broodwar->self())) {
+	BWTA::BaseLocation* currentClosestExpansion;
+	std::vector<BWTA::BaseLocation*> currentValidExpansions;
 
-					continue;
-				}
+	double shortestDist = std::numeric_limits<double>::max();
 
-				// Is this the first time we're looping through?
-				if (currentClosestExpansion == NULL) {
-					currentClosestExpansion = baseLocation;
-					currentValidExpansions.push_back(baseLocation);
-					shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
-				}
+	for (auto &baseLocation : allBaseLocations) {
+		// Continue if we do not care about this expansion place
+		if (baseLocation == enemyBaseLocation || baseLocation->isIsland() ||
+			baseLocation == BWTA::getStartLocation(Broodwar->self())) {
 
-				// Else we check if the baseLocation is even worth considering
-				else if (enemyBaseLocation->getGroundDistance(baseLocation) <= shortestDist * FACTOR) {
-					// Did we find a new shortest expansion?
-					if (enemyBaseLocation->getGroundDistance(baseLocation) < shortestDist) {
-						currentClosestExpansion = baseLocation;
-						shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+			continue;
+		}
 
-						// Update our validEnemyExpansions vector
-						std::vector<BWTA::BaseLocation*> temp;
-						temp.push_back(baseLocation);
-						for (int i = 0; i < currentValidExpansions.size(); i++) {
-							if (enemyBaseLocation->getGroundDistance(currentValidExpansions.at(i)) <= shortestDist * FACTOR) {
-								temp.push_back(currentValidExpansions.at(i));
-							}
-						}
+		// Is this the first time we're looping through?
+		if (currentClosestExpansion == NULL) {
+			currentClosestExpansion = baseLocation;
+			currentValidExpansions.push_back(baseLocation);
+			shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+		}
 
-						currentValidExpansions = temp;
+		// Else we check if the baseLocation is even worth considering
+		else if (enemyBaseLocation->getGroundDistance(baseLocation) <= shortestDist * FACTOR) {
+			// Did we find a new shortest expansion?
+			if (enemyBaseLocation->getGroundDistance(baseLocation) < shortestDist) {
+				currentClosestExpansion = baseLocation;
+				shortestDist = enemyBaseLocation->getGroundDistance(baseLocation);
+
+				// Update our validEnemyExpansions vector
+				std::vector<BWTA::BaseLocation*> temp;
+				temp.push_back(baseLocation);
+				for (int i = 0; i < currentValidExpansions.size(); i++) {
+					if (enemyBaseLocation->getGroundDistance(currentValidExpansions.at(i)) <= shortestDist * FACTOR) {
+						temp.push_back(currentValidExpansions.at(i));
 					}
-					// If we didn't we just add it to our vector of valid expansions
-					else {
-						currentValidExpansions.push_back(baseLocation);
-					}
 				}
+
+				currentValidExpansions = temp;
 			}
-			currentValidExpansions.shrink_to_fit();
-
-			enemyExpansion = currentClosestExpansion;
-			enemyExpansions = currentValidExpansions;
+			// If we didn't we just add it to our vector of valid expansions
+			else {
+				currentValidExpansions.push_back(baseLocation);
+			}
 		}
 	}
+	currentValidExpansions.shrink_to_fit();
+
+	enemyExpansion = currentClosestExpansion;
+	enemyExpansions = currentValidExpansions;
 }
 
 BWTA::BaseLocation* Scouting::closestEnemyExpansion() {

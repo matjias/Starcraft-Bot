@@ -15,7 +15,6 @@ public:
 	bool isScouting();
 	bool assignScout(BWAPI::Unit scout);
 	bool hasAssignedScout();
-	bool assignScoutandLoc(BWAPI::Unit scout, BWAPI::Position loc);
 	void updateScout();
 	bool endScouting();
 	int getDistance();
@@ -82,7 +81,6 @@ public:
 
 private:
 	// Private functions that the class uses
-	void oneScoutAll(BWAPI::Unit u);
 	void updateToScoutList();
 	void distractEnemyBase();
 	void validMove(BWAPI::Unit unitToMove, BWAPI::Position targetLoc);
