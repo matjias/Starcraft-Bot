@@ -472,24 +472,11 @@ void ExampleAIModule::buildBuilding(BWAPI::Unit builder, BWAPI::UnitType buildin
 	}
 }
 
-bool ExampleAIModule::canBuildSupply() {
-	if (Broodwar->self()->minerals() >= UnitTypes::Protoss_Pylon.mineralPrice() + buildOrderClass.getReservedMinerals()
-		&& Broodwar->self()->gas() >= UnitTypes::Protoss_Pylon.gasPrice() + buildOrderClass.getReservedGas()) {
-		for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-			if (buildOrderClass.getInvestmentList()[i] == UnitTypes::Protoss_Pylon) {
-				return false;
-			}
-		}
-		return true;
-	}
-	return false;
-}
-
-bool ExampleAIModule::canbuildProbe() {
+/*bool ExampleAIModule::canbuildProbe() {
 	return buildOrderClass.getAvailableSupply() >= UnitTypes::Protoss_Probe.supplyRequired() / 2
 		&& Broodwar->self()->minerals() >= UnitTypes::Protoss_Probe.mineralPrice() + buildOrderClass.getReservedMinerals()
 		&& Broodwar->self()->gas() >= UnitTypes::Protoss_Probe.gasPrice() + buildOrderClass.getReservedGas();
-}
+}*/
 
 void ExampleAIModule::buildProbe(BWAPI::Unit u) {
 	u->train(u->getType().getRace().getWorker());
@@ -499,13 +486,13 @@ void ExampleAIModule::buildProbe(BWAPI::Unit u) {
 	buildOrderClass.dequeueInvestmentList();
 }
 
-bool ExampleAIModule::canBuildGateway() {
+/*bool ExampleAIModule::canBuildGateway() {
 	if (Broodwar->self()->minerals() >= UnitTypes::Protoss_Gateway.mineralPrice() + buildOrderClass.getReservedMinerals()
 		&& Broodwar->self()->gas() >= UnitTypes::Protoss_Gateway.gasPrice() + buildOrderClass.getReservedGas()) {
 		return true;
 	}
 	return false;
-}
+}*/
 
 void ExampleAIModule::mineMinerals(BWAPI::Unit u) {
 	u->gather(u->getClosestUnit(IsMineralField));
@@ -750,9 +737,6 @@ void ExampleAIModule::drawData() {
 	Broodwar->drawTextScreen(200, 130, "Dragoons: %d, W: %d, Q: %d", buildOrderClass.dragoons, buildOrderClass.dragoonsWarping, buildOrderClass.dragoonsQueued);
 	Broodwar->drawTextScreen(200, 140, "Observers: %d, W: %d, Q: %d", buildOrderClass.observers, buildOrderClass.observersWarping, buildOrderClass.observersQueued);
 	Broodwar->drawTextScreen(200, 150, "Corsairs: %d, W: %d, Q: %d", buildOrderClass.corsairs, buildOrderClass.corsairsWarping, buildOrderClass.corsairsQueued);*/
-
-
-
 
 	//BWTA draw
 	if (analyzed) {
