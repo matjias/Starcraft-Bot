@@ -90,40 +90,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ExampleAIModule - OLD.cpp" />
     <ClCompile Include="Source\Army.cpp" />
+    <ClCompile Include="Source\BuildingPlacer.cpp" />
     <ClCompile Include="Source\BuildOrders.cpp" />
+    <ClCompile Include="Source\CombatUnits.cpp" />
     <ClCompile Include="Source\CustomVector.cpp" />
     <ClCompile Include="Source\Dll.cpp" />
+    <ClCompile Include="Source\ExampleAIModule - OLD.cpp" />
     <ClCompile Include="Source\ExampleAIModule.cpp" />
+    <ClCompile Include="Source\HarassUnits.cpp" />
+    <ClCompile Include="Source\ProbeUnits.cpp" />
+    <ClCompile Include="Source\ResourceSpender.cpp" />
     <ClCompile Include="Source\Scouting.cpp" />
-    <ClCompile Include="BuildingPlacer.cpp" />
-    <ClCompile Include="CombatUnits.cpp" />
-    <ClCompile Include="HarassUnits.cpp" />
-    <ClCompile Include="ProbeUnits.cpp" />
-    <ClCompile Include="ResourceSpender.cpp" />
-    <ClCompile Include="ScoutManager.cpp" />
-    <ClCompile Include="StrategyDecider.cpp" />
-    <ClCompile Include="Tactician.cpp" />
-    <ClCompile Include="UnitHandler.cpp" />
+    <ClCompile Include="Source\ScoutManager.cpp" />
+    <ClCompile Include="Source\StrategyDecider.cpp" />
+    <ClCompile Include="Source\Tactician.cpp" />
+    <ClCompile Include="Source\UnitHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExampleAIModule - OLD.h" />
     <ClInclude Include="Source\Army.h" />
+    <ClInclude Include="Source\BuildingPlacer.h" />
     <ClInclude Include="Source\BuildOrders.h" />
+    <ClInclude Include="Source\CombatUnits.h" />
     <ClInclude Include="Source\Constants.h" />
     <ClInclude Include="Source\CustomVector.h" />
+    <ClInclude Include="Source\ExampleAIModule - OLD.h" />
     <ClInclude Include="Source\ExampleAIModule.h" />
+    <ClInclude Include="Source\HarassUnits.h" />
+    <ClInclude Include="Source\ProbeUnits.h" />
+    <ClInclude Include="Source\ResourceSpender.h" />
     <ClInclude Include="Source\Scouting.h" />
-    <ClInclude Include="BuildingPlacer.h" />
-    <ClInclude Include="CombatUnits.h" />
-    <ClInclude Include="HarassUnits.h" />
-    <ClInclude Include="ProbeUnits.h" />
-    <ClInclude Include="ResourceSpender.h" />
-    <ClInclude Include="ScoutManager.h" />
-    <ClInclude Include="StrategyDecider.h" />
-    <ClInclude Include="Tactician.h" />
-    <ClInclude Include="UnitHandler.h" />
+    <ClInclude Include="Source\ScoutManager.h" />
+    <ClInclude Include="Source\StrategyDecider.h" />
+    <ClInclude Include="Source\Tactician.h" />
+    <ClInclude Include="Source\UnitHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
