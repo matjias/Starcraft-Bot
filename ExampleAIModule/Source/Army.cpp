@@ -65,15 +65,14 @@ void Army::update(Scouting scoutClass){
 	idleMovement(zealotSquads, zealotGens);
 	idleMovement(dragoonSquads, dragoonGens);
 
-	//zealotRush();
 
 	//Attack
-	if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
-		attack(1);
+	if (Broodwar->enemy()->getRace() == Races::Protoss){
+		if (zealotCount > ZEALOT_RUSH_SIZE)	zealotRush();
 	}
-	else if (Broodwar->enemy()->getRace() == Races::Protoss){
-		zealotRush();
-	}
+	else if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
+		attack();
+	} 
 	/*
 	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
 	Broodwar->drawTextScreen(300, 200, "HejZ %i", zealotSquads.size());
@@ -118,8 +117,8 @@ void Army::attackMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
 		else if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(enemyChoke))){
 			squads.at(i).attack(enemyChoke);
 		}
-		}
-		}
+	}
+}
 
 void Army::combat(){
 	for (Unitset squad : dragoonSquads){
@@ -135,10 +134,9 @@ void Army::combat(){
 }
 
 void Army::zealotRush(){
-	for (int i = 0; i < zealotSquads.size(); i++){
-		if (!squadAtPos(zealotSquads.at(i), TilePosition(enemyChoke)) && zealotCount > ZEALOT_RUSH_SIZE && !rushInitiated){
-			zealotGens.at(i)->attack(enemyChoke);
-		}
+	if (!rushInitiated){
+		attackNumber = zealotSquads.size();
+		attackMovement(zealotSquads, zealotGens);
 	}
 }
 
