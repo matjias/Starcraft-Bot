@@ -17,3 +17,7 @@ const int ARMY_SUPPLY_BEFORE_OBSERVERS = 8;
 const int ARMY_SUPPLY_BEFORE_CORSAIRS = 2;
 const int ZEALOT_RUSH_SIZE = 12;
 const int DRAGOON_RUSH_SIZE = 16;
+
+// Scouting and map size
+const int MEDIUM_MAP_SIZE = 128 * 128; // 128 * 128
+const int RUSH_DISTANCE_CEIL = 128 * 32; // 128 * 32
