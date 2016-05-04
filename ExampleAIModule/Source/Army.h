@@ -32,10 +32,11 @@ public:
 	void addSquadMember(BWAPI::Unit u);
 	void buildSquad(std::vector<std::pair<BWAPI::UnitType, int>> list);
 	void combat();
-	void Army::idleMovement(std::vector<BWAPI::Unitset> squads, std::vector<BWAPI::Unit> gens);
-	void Army::attackMovement(std::vector<BWAPI::Unitset> squads, std::vector<BWAPI::Unit> gens);
+	void Army::idleMovement(std::vector<BWAPI::Unitset> *squads, std::vector<BWAPI::Unit> *gens);
+	void Army::attackMovement(std::vector<BWAPI::Unitset> *squads, std::vector<BWAPI::Unit> *gens);
 	void Army::debugDraw(std::vector<BWAPI::Unitset> squads, std::vector<BWAPI::Unit> gens);
 	BWAPI::Position Army::escapePos(BWAPI::Unit unit);
+	void Army::addUnit(BWAPI::Unit u);
 private:
 	std::vector<BWAPI::Unit> zealotGens;
 	std::vector<BWAPI::Unit> dragoonGens;
@@ -43,6 +44,7 @@ private:
 	std::vector<BWAPI::Unitset> zealotSquads;
 	std::vector<BWAPI::Unitset> dragoonSquads;
 	void attack();
+	void Army::saveUnitToSquad(BWAPI::Unit u, std::vector<BWAPI::Unitset> *squads, std::vector<BWAPI::Unit> *gens);
 };
 
 

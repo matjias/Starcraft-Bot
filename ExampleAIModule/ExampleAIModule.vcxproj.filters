@@ -17,6 +17,36 @@
     <ClCompile Include="Source\Scouting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BuildingPlacer.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CombatUnits.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HarassUnits.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProbeUnits.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceSpender.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ScoutManager.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StrategyDecider.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tactician.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UnitHandler.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ExampleAIModule - OLD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Army.h">
@@ -37,6 +67,36 @@
     <ClInclude Include="Source\Scouting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\UnitHandler.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BuildingPlacer.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CombatUnits.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\HarassUnits.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProbeUnits.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceSpender.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ScoutManager.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StrategyDecider.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tactician.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ExampleAIModule - OLD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -44,6 +104,12 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{a2bccc82-2f26-4939-964d-21d85cdf6d0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\New stuffs">
+      <UniqueIdentifier>{a3f9dfbc-77f8-4050-8911-ece8910e8826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\New stuffs">
+      <UniqueIdentifier>{6b7228d4-7aea-4a66-aa5f-4fa2ded49449}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

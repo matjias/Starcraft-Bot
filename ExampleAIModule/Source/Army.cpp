@@ -22,7 +22,6 @@ BWAPI::Position enemyBaseLocs;
 Position idleLoc, enemyChoke, attackLoc;
 bool mapAnalyzed, enemyBaseDest = false, zealotRush = false, rushInitiated = false;
 int moved, countAtEnemyChoke, zealotCount, attackNumber;
-std::string fuckerString = "omg";
 
 Army::Army(){}
 
@@ -62,8 +61,8 @@ void Army::update(Scouting scoutClass){
 	//debugDraw(zealotSquads, zealotGens);
 	
 	//Move to own region choke point
-	idleMovement(zealotSquads, zealotGens);
-	idleMovement(dragoonSquads, dragoonGens);
+	idleMovement(&zealotSquads, &zealotGens);
+	idleMovement(&dragoonSquads, &dragoonGens);
 
 
 	//Attack
@@ -72,21 +71,18 @@ void Army::update(Scouting scoutClass){
 	}
 	else if (zealotSquads.size() > 1 && dragoonSquads.size() > 1){
 		attack();
-	} 
-	/*
-	Broodwar->drawTextScreen(300, 180, "%s", fuckerString.c_str());
-	Broodwar->drawTextScreen(300, 200, "HejZ %i", zealotSquads.size());
-	Broodwar->drawTextScreen(300, 220, " HejD %i",dragoonSquads.size());
-	Broodwar->drawTextScreen(300, 240, " GensZ %i" ,zealotGens.size());
-	Broodwar->drawTextScreen(300, 250, " genD %i",dragoonGens.size());
-	*/
+	}
+	Broodwar->drawTextScreen(100, 200, "Hejefsdfsdf %i", zealotCount);
+	Broodwar->drawTextScreen(100, 220, "HejZ %i", zealotSquads.size());
+	Broodwar->drawTextScreen(100, 240, "GensZ %i", zealotGens.size());
+	Broodwar->drawTextScreen(100, 260, "omg faf %i", moved);
 }
 
-void Army::idleMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
-	if (squads.size() > 0 && gens.size() > 0){
-		for (int i = 0; i < squads.size(); i++){
-			if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(idleLoc))){
-				squads.at(i).attack(idleLoc);
+void Army::idleMovement(std::vector<Unitset> *squads, std::vector<Unit> *gens){
+	if (squads->size() > 0 && gens->size() > 0){
+		for (int i = 0; i < squads->size() - 1; i++){
+			if (gens->at(i)->canAttackMove() && gens->at(i)->isIdle() && !squadAtPos(squads->at(i), TilePosition(idleLoc))){
+				squads->at(i).attack(idleLoc);
 			}
 		}
 	}
@@ -104,18 +100,18 @@ void Army::attack(Scouting scoutClass){
 }
 
 void Army::attack(){
-	attackMovement(zealotSquads, zealotGens);
-	attackMovement(dragoonSquads, dragoonGens);
+	attackMovement(&zealotSquads, &zealotGens);
+	attackMovement(&dragoonSquads, &dragoonGens);
 	combat();
 }
 
-void Army::attackMovement(std::vector<Unitset> squads, std::vector<Unit> gens){
+void Army::attackMovement(std::vector<Unitset> *squads, std::vector<Unit> *gens){
 	for (int i = 0; i < attackNumber; i++){
-		if (squadAtPos(squads.at(i), TilePosition(enemyChoke))){
-			squads.at(i).attack(attackLoc);
+		if (squadAtPos(squads->at(i), TilePosition(enemyChoke))){
+			squads->at(i).attack(attackLoc);
 		}
-		else if (gens.at(i)->canAttackMove() && gens.at(i)->isIdle() && !squadAtPos(squads.at(i), TilePosition(enemyChoke))){
-			squads.at(i).attack(enemyChoke);
+		else if (gens->at(i)->canAttackMove() && gens->at(i)->isIdle() && !squadAtPos(squads->at(i), TilePosition(enemyChoke))){
+			squads->at(i).attack(enemyChoke);
 		}
 	}
 }
@@ -131,12 +127,12 @@ void Army::combat(){
 			}
 		}
 	}
-}
+} 
 
 void Army::zealotRush(){
 	if (!rushInitiated){
 		attackNumber = zealotSquads.size();
-		attackMovement(zealotSquads, zealotGens);
+		attackMovement(&zealotSquads, &zealotGens);
 	}
 }
 
@@ -156,6 +152,11 @@ bool Army::buildCorsair(BWAPI::Unit u){
 	return u->train(UnitTypes::Protoss_Corsair);
 }
 
+/*
+Combine add function in one(would actually end up in two(more?)!) method 
+where it recognizes the unit type and so on.
+*/
+/*
 void Army::addZealot(BWAPI::Unit u){
 	// Find a more intelligent solution for inserting right amount of
 	zealotCount++;
@@ -196,6 +197,37 @@ void Army::addDragoon(BWAPI::Unit u){
 		}
 	}
 }
+*/
+
+
+void Army::addUnit(Unit u){
+	if (u->getType() == UnitTypes::Protoss_Zealot && u->getPlayer() == Broodwar->self()){
+		zealotCount++;
+		saveUnitToSquad(u, &zealotSquads, &zealotGens);
+	}
+	else if (u->getType() == UnitTypes::Protoss_Dragoon && u->getPlayer() == Broodwar->self()){
+		saveUnitToSquad(u, &dragoonSquads, &dragoonGens);
+	}
+}
+
+void Army::saveUnitToSquad(Unit u, std::vector<Unitset> *squads, std::vector<Unit> *gens){
+	if (gens->size() == 0){
+		gens->push_back(u);
+	}
+	if (squads->size() > 0){
+		for (int i = 0; i < squads->size(); i++){
+			if (squads->at(i).size() < 4){
+				squads->at(i).insert(u);
+				break;
+			}
+			else if (i == squads->size() - 1){
+				squads->push_back(Unitset());
+				squads->at(i + 1).insert(u);
+				gens->push_back(u);
+			}
+		}
+	}
+}
 
 
 void Army::setAnalyzed(bool analyzed){
@@ -215,7 +247,16 @@ bool Army::unitAtPos(Unit u, TilePosition pos){
 		&& u->getTilePosition().y > pos.y - 6
 		&& u->getTilePosition().y < pos.y + 6;
 }
+
+
+
 /*
+Implement own path finding for making sure squads move together.
+
+Also add function for idle placement of squads before attacking.
+Make sure they'll attack any incoming enemies, with appropriate combat micro. 
+
+
 BWTA::Chokepoint getNextChokePoint(){
 
 }
@@ -225,24 +266,6 @@ BWTA::Chokepoint getNextChokePoint(){
 void Army::enemyBaseDestroyed(){
 	enemyBaseDest = true;
 }
-/*void Army::addSquadMember(Unit u){
-	//UnitType uType = u->getType();
-	switch (u->getType())
-	{
-	case UnitTypes::Protoss_Zealot: addZealot(u);
-		break;
-	default:
-		break;
-	}
-
-
-	if (!squads.empty()){
-		if (!squads.at(i).empty()){
-			squads.at(i).insert(u);
-		}
-	}
-}*/
-
 
 
 void Army::debugDraw(std::vector<Unitset> squads, std::vector<Unit> gens){
