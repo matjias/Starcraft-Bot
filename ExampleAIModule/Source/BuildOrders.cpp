@@ -514,6 +514,7 @@ bool BuildOrders::zealotNeeded() {
 
 bool BuildOrders::dragoonNeeded() {
 	return !dragoonsQueued
+		&& (!allIn || (cyberneticsCores && assimilators))
 		&& dragoonRate > 0
 		&& dragoonRate > 0.0
 		&& ((dragoons + dragoonsWarping + dragoonsQueued) / dragoonRate <= (zealots + zealotsWarping + zealotsQueued) / zealotRate
@@ -522,23 +523,22 @@ bool BuildOrders::dragoonNeeded() {
 
 bool BuildOrders::observerNeeded() {
 	return !observersQueued
-		&& !allIn
-		&& (cyberneticsCores
+		&& (!allIn || (roboticsFacilities && observatories && assimilators))
+		&& ((cyberneticsCores
 		&& assimilators
 		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() / 2 +
 		dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() / 2 +
-		corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() / 2 >= ARMY_SUPPLY_BEFORE_OBSERVERS
+		corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() / 2 >= ARMY_SUPPLY_BEFORE_OBSERVERS)
 		|| roboticsFacilities
 		|| observatories)
-		&& (observers + observersWarping + observersQueued < MIN_OBSERVERS
-		&& !corsairsQueued
-		|| observers + observersWarping + observersQueued < OBSERVERS_TO_DETECT
-		&& detectionNeeded());
+		&& ((observers + observersWarping + observersQueued < MIN_OBSERVERS
+		&& !corsairsQueued)
+		|| (observers + observersWarping + observersQueued < OBSERVERS_TO_DETECT
+		&& detectionNeeded()));
 }
 
 bool BuildOrders::detectionNeeded() {
-	return (invisibleSpotted
-			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Templar_Archives)
+	return (scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Templar_Archives)
 			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observatory)
 			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Factory)
 			|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Starport)
@@ -567,8 +567,8 @@ bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
 		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
-		&& !allIn
-		&& (!detectionNeeded() || detectionNeeded() && observers >= OBSERVERS_TO_DETECT)
+		&& (!allIn || stargates && assimilators)
+		&& (!detectionNeeded() || (detectionNeeded() && observers >= OBSERVERS_TO_DETECT))
 		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() + // TODO: Army supply
 			dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() +
 			corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() >= ARMY_SUPPLY_BEFORE_CORSAIRS
@@ -694,12 +694,12 @@ bool BuildOrders::enemyBaseFound() {
 }
 
 bool BuildOrders::smallMap() {
-	return (BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight() < 128 * 128);
+	return (BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight() < MEDIUM_MAP_SIZE);
 }
 
 bool BuildOrders::closeToEnemyBase() {
 	if (scoutClass->returnEnemyBaseLocs().x != 0) {
-		return (scoutClass->returnEnemyBaseLocs().getDistance(BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation())) <= 128 * 32);
+		return (scoutClass->returnEnemyBaseLocs().getDistance(BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation())) <= RUSH_DISTANCE_CEIL);
 	}
 	return false;
 }
