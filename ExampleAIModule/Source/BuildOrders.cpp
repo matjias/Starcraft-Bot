@@ -522,6 +522,7 @@ bool BuildOrders::dragoonNeeded() {
 
 bool BuildOrders::observerNeeded() {
 	return !observersQueued
+		&& !allIn
 		&& (cyberneticsCores
 		&& assimilators
 		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() / 2 +
@@ -564,6 +565,9 @@ bool BuildOrders::detectionNeeded() {
 
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
+		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg
+		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
+		&& !allIn
 		&& (!detectionNeeded() || detectionNeeded() && observers >= OBSERVERS_TO_DETECT)
 		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() + // TODO: Army supply
 			dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() +
@@ -572,9 +576,7 @@ bool BuildOrders::corsairNeeded() {
 			(scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hatchery) +
 				scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lair) +
 				scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hive)) * DEFENSE_STRUCTURES_PER_BASE
-		|| stargates + stargatesWarping)
-		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
-		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
+		|| stargates + stargatesWarping);
 }
 
 void BuildOrders::updateQueueValues() {
