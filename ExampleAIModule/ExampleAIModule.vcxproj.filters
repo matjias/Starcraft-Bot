@@ -17,9 +17,6 @@
     <ClCompile Include="Source\Scouting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExampleAIModule - OLD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\BuildingPlacer.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
@@ -47,6 +44,9 @@
     <ClCompile Include="Source\UnitHandler.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ExampleAIModule - OLD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Army.h">
@@ -67,8 +67,8 @@
     <ClInclude Include="Source\Scouting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ExampleAIModule - OLD.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\UnitHandler.h">
+      <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
     <ClInclude Include="Source\BuildingPlacer.h">
       <Filter>Header Files\New stuffs</Filter>
@@ -94,8 +94,8 @@
     <ClInclude Include="Source\Tactician.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UnitHandler.h">
-      <Filter>Header Files\New stuffs</Filter>
+    <ClInclude Include="Source\ExampleAIModule - OLD.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

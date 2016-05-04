@@ -20,7 +20,6 @@ void BuildOrders::_init(Scouting* s) {
 
 	nexuses = 1;
 	probes = 4;
-
 }
 
 void BuildOrders::useInitialBuildOrder() {
@@ -131,6 +130,16 @@ void BuildOrders::addInvestments() {
 	if (corsairNeeded()) {
 		investInCorsair();
 	}
+
+	/*if (groundWeaponsNeeded()) {
+		investInGroundWeapons();
+	}
+	if (groundArmorNeeded()) {
+		investInGroundArmor();
+	}
+	if (singularityChargeNeeded()) {
+		investInSingularityCharge();
+	}*/
 }
 
 void BuildOrders::addRequiredTech() {
@@ -301,8 +310,6 @@ void BuildOrders::reorderInvestments() {
 	if (availableSupply <= getProductionSupply() && investmentList[0] != BWAPI::UnitTypes::Protoss_Pylon) {
 		moveInvestmentToTop(BWAPI::UnitTypes::Protoss_Pylon);
 	}
-
-
 
 	/*
 	if (investmentList[0] == BWAPI::UnitTypes::Protoss_Dragoon
@@ -578,6 +585,14 @@ bool BuildOrders::corsairNeeded() {
 				scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hive)) * DEFENSE_STRUCTURES_PER_BASE
 		|| stargates + stargatesWarping);
 }
+
+/*bool BuildOrders::groundWeaponsNeeded() {
+	return !allIn
+		//&& groundWeapons < 3
+		&& zealots * BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() + // TODO: Army supply
+		dragoons * BWAPI::UnitTypes::Protoss_Dragoon.supplyRequired() +
+		corsairs * BWAPI::UnitTypes::Protoss_Corsair.supplyRequired() >= ARMY_SUPPLY_BEFORE_UPGRADES;
+}*/
 
 void BuildOrders::updateQueueValues() {
 	for (int i = 0; i < investmentList.size(); i++) {

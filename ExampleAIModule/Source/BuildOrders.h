@@ -123,6 +123,10 @@ private:
 	void investInObserver();
 	void investInCorsair();
 
+	/*void investInGroundWeapons();
+	void investInGroundArmor();
+	void investInSingularityCharge();*/
+
 	bool detectionNeeded();
 	bool pylonNeeded();
 	bool gatewayNeeded();
@@ -131,6 +135,10 @@ private:
 	bool dragoonNeeded();
 	bool observerNeeded();
 	bool corsairNeeded();
+
+	/*bool groundWeaponsNeeded();
+	bool groundArmorNeeded();
+	bool singularityChargeNeeded();*/
 
 	// Map and enemy information functions
 	bool enemyBaseFound();
