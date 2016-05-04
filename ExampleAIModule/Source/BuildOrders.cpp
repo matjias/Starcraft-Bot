@@ -507,10 +507,10 @@ bool BuildOrders::detectionNeeded() {
 bool BuildOrders::corsairNeeded() {
 	return !corsairsQueued
 
-		&& ((detectionNeeded()
-		&& observers >= OBSERVERS_TO_DETECT
-		/*&& mainProgram->getEnemyStructures().find(BWAPI::UnitTypes::Zerg_Spore_Colony) != mainProgram->getEnemyStructures().end()*/)
-		|| stargates + stargatesWarping)
+		//&& ((detectionNeeded()
+		//s&& (observers >= OBSERVERS_TO_DETECT
+		/*&& mainProgram->getEnemyStructures().find(BWAPI::UnitTypes::Zerg_Spore_Colony) != mainProgram->getEnemyStructures().end())s*/
+		//|| stargates + stargatesWarping)
 		&& corsairs + corsairsWarping + corsairsQueued < CORSAIRS_NEEDED
 		&& BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Zerg;
 }

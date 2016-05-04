@@ -626,7 +626,7 @@ void ExampleAIModule::drawData() {
 		Broodwar->drawCircleMap(exp->getPosition(), TILE_SIZE * 3, Colors::Teal);
 	}
 
-	Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
+	//Broodwar->drawTextScreen(20, 40, "Highlighted %i expansions", expansions.size());
 
 	/*
 	std::map<UnitType, Scouting::UnitStruct*> enemyUnits = scoutClass.getEnemyUnits();
@@ -648,11 +648,11 @@ void ExampleAIModule::drawData() {
 	//Broodwar->drawTextScreen(200, 20, "Available Supply: %d + %d", availableSupply, supplyBuffer);
 	//Broodwar->drawTextScreen(200, 40, "Gateways: %d", gatewayCount);
 
-	Broodwar->drawTextScreen(5, 20, "%s", Broodwar->enemy()->getRace().c_str());
+	Broodwar->drawTextScreen(500, 20, "%s", Broodwar->enemy()->getRace().c_str());
 
-	//for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
-	//	Broodwar->drawTextScreen(5, 5 + i * 20, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
-	//}
+	for (int i = 0; i < buildOrderClass.getInvestmentList().size(); i++) {
+		Broodwar->drawTextScreen(5, 5 + i * 10, "%i: %s", i, buildOrderClass.getInvestmentList().at(i).c_str());
+	}
 
 	/*if (assimilators.size() == 0) {
 	Broodwar->drawTextScreen(200, 5, "%i: %s", 0, "No Assimilators");
