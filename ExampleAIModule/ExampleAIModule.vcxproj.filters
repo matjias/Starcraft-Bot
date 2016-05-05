@@ -47,6 +47,9 @@
     <ClCompile Include="Source\ExampleAIModule - OLD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Squad.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Army.h">
@@ -96,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="Source\ExampleAIModule - OLD.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Squad.h">
+      <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

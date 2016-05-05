@@ -103,6 +103,7 @@
     <ClCompile Include="Source\ResourceSpender.cpp" />
     <ClCompile Include="Source\Scouting.cpp" />
     <ClCompile Include="Source\ScoutManager.cpp" />
+    <ClCompile Include="Source\Squad.cpp" />
     <ClCompile Include="Source\StrategyDecider.cpp" />
     <ClCompile Include="Source\Tactician.cpp" />
     <ClCompile Include="Source\UnitHandler.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="Source\ResourceSpender.h" />
     <ClInclude Include="Source\Scouting.h" />
     <ClInclude Include="Source\ScoutManager.h" />
+    <ClInclude Include="Source\Squad.h" />
     <ClInclude Include="Source\StrategyDecider.h" />
     <ClInclude Include="Source\Tactician.h" />
     <ClInclude Include="Source\UnitHandler.h" />
