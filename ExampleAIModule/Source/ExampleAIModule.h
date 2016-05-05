@@ -2,6 +2,7 @@
 #include <BWAPI.h>
 #include <BWTA.h>
 #include <windows.h>
+#include "ScoutManager.h"
 
 // BWTA Thread Function
 DWORD WINAPI AnalyzeThread();
@@ -33,12 +34,13 @@ public:
 
 	// BWTA2 function
 	void drawTerrainData();
-	bool isAnalyzed();
 
 	// Our functions
 	void drawData();
 
 	// Our global variables
 	
+	// Pointers to the other classes
+	ScoutManager ScoutManager;
 	
 };

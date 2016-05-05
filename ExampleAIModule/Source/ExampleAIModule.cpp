@@ -23,12 +23,12 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
-
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }
 
 void ExampleAIModule::onFrame() {
+	// Debug drawing
 	drawData();
 
 	// BWTA2 drawing on the map
@@ -40,7 +40,7 @@ void ExampleAIModule::onFrame() {
 		analysis_just_finished = false;
 	}
 
-
+	
 
 }
 
@@ -59,7 +59,14 @@ void ExampleAIModule::onPlayerLeft(BWAPI::Player player) { }
 void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
+	// Is it one of our own units?
+	if (Broodwar->self() == unit->getPlayer()) {
 
+	}
+	// Was it an enemy unit?
+	else if (Broodwar->enemy() == unit->getPlayer()) {
+		ScoutManager.recordUnitDiscover(unit);
+	}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) { }
@@ -71,7 +78,14 @@ void ExampleAIModule::onUnitHide(BWAPI::Unit unit) { }
 void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
 
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
-	
+	// Is it one of our own units?
+	if (Broodwar->self() == unit->getPlayer()) {
+
+	}
+	// Was it an enemy unit?
+	else if (Broodwar->enemy() == unit->getPlayer()) {
+		ScoutManager.recordUnitDestroy(unit);
+	}
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) { }
@@ -98,10 +112,6 @@ DWORD WINAPI AnalyzeThread() {
 
 	
 	return 0;
-}
-
-bool ExampleAIModule::isAnalyzed(){
-	return analyzed;
 }
 
 void ExampleAIModule::drawTerrainData() {
@@ -153,9 +163,24 @@ void ExampleAIModule::drawTerrainData() {
 // End of BWTA2 functions
 
 void ExampleAIModule::drawData() {
-	
 	//BWTA draw
 	if (analyzed) {
 		drawTerrainData();
 	}
+
+	// ScoutManager debug
+	TilePosition::list scoutSpawns = ScoutManager.getSpawns();
+	std::vector<bool> scoutSpawnBools = ScoutManager.getSpawnBools();
+	for (unsigned int i = 0; i < scoutSpawns.size(); i++) {
+		bool draw = scoutSpawnBools.at(i) ? 1 : 0;
+
+		Broodwar->drawTextScreen(20, 20 + 10 * i, "Spawn %i: (%d, %d), dist: %d, scouted: %d",
+			i,
+			Position(scoutSpawns.at(i)).x,
+			Position(scoutSpawns.at(i)).y,
+			Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
+			draw
+		);
+	}
+
 }
