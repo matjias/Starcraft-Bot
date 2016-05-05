@@ -35,5 +35,5 @@ private:
 
 	void debugDraw(std::vector<Squad> squads);
 
-	BWAPI::Position escapePos(Unit unit);
+	BWAPI::Position escapePos(BWAPI::Unit unit);
 };
