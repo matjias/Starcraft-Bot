@@ -11,6 +11,7 @@ public:
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);
 	int recordUnitDestroy(BWAPI::Unit u);
+	void recordUnitEvade(BWAPI::Unit u);
 
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();

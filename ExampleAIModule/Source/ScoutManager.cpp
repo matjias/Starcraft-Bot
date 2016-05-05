@@ -78,6 +78,17 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	return elementsRemoved;
 }
 
+void ScoutManager::recordUnitEvade(Unit u) {
+	if (enemyUnits.count(u->getID()) == 1) {
+		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
+		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
+	}
+	else {
+		// Something went wrong, for now just tell the client
+		Broodwar->sendText("A unit has evaded that wasnt recorded");
+	}
+}
+
 
 void ScoutManager::updateScoutManager() {
 

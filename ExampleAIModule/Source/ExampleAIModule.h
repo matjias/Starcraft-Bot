@@ -2,6 +2,9 @@
 #include <BWAPI.h>
 #include <BWTA.h>
 #include <windows.h>
+
+#include "StrategyDecider.h"
+#include "Tactician.h"
 #include "ScoutManager.h"
 
 // BWTA Thread Function
@@ -40,7 +43,9 @@ public:
 
 	// Our global variables
 	
-	// Pointers to the other classes
+	// The classes that the AI Module holds
+	StrategyDecider StrategyDecider;
+	Tactician Tactician;
 	ScoutManager ScoutManager;
 	
 };

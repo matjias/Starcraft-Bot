@@ -69,7 +69,11 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 }
 
-void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) { }
+void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
+	if (Broodwar->enemy() == unit->getPlayer()) {
+		ScoutManager.recordUnitEvade(unit);
+	}
+}
 
 void ExampleAIModule::onUnitShow(BWAPI::Unit unit) { }
 
