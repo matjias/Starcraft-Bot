@@ -1,5 +1,6 @@
 #pragma once
-
+#include <BWAPI.h>
+#include "StrategyDecider.h"
 
 class Tactician {
 public:
@@ -17,4 +18,10 @@ public:
 
 private:
 	GameStage currentStage;
+
+
+	StrategyDecider *strategy;
+
+
+
 };

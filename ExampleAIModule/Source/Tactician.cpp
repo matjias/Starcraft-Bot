@@ -8,13 +8,23 @@ Tactician::Tactician() {
 Tactician::~Tactician() { }
 
 void Tactician::updateTactician() {
-	if (currentStage == Start) {
+	switch (currentStage) {
+	case Start:
+		strategy->currentStrategy;
 
-	}
-	else if (currentStage == Early) {
+		break;
 
-	}
-	else if (currentStage == Mid) {
+	case Early:
 
+
+		break;
+
+	case Mid:
+
+
+		break;
 	}
+
+
+
 }
