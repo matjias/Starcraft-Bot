@@ -41,6 +41,6 @@ public:
 	// Our global variables
 	
 	// Pointers to the other classes
-	ScoutManager* ScoutManager;
+	ScoutManager ScoutManager;
 	
 };

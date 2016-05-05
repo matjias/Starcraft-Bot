@@ -23,12 +23,12 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
-	
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }
 
 void ExampleAIModule::onFrame() {
+	// Debug drawing
 	drawData();
 
 	// BWTA2 drawing on the map
@@ -40,7 +40,7 @@ void ExampleAIModule::onFrame() {
 		analysis_just_finished = false;
 	}
 
-
+	
 
 }
 
@@ -65,7 +65,7 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
-		ScoutManager->recordUnitDiscover(unit);
+		ScoutManager.recordUnitDiscover(unit);
 	}
 }
 
@@ -84,7 +84,7 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
-		ScoutManager->recordUnitDestroy(unit);
+		ScoutManager.recordUnitDestroy(unit);
 	}
 }
 
@@ -168,5 +168,19 @@ void ExampleAIModule::drawData() {
 		drawTerrainData();
 	}
 
+	// ScoutManager debug
+	TilePosition::list scoutSpawns = ScoutManager.getSpawns();
+	std::vector<bool> scoutSpawnBools = ScoutManager.getSpawnBools();
+	for (unsigned int i = 0; i < scoutSpawns.size(); i++) {
+		bool draw = scoutSpawnBools.at(i) ? 1 : 0;
+
+		Broodwar->drawTextScreen(20, 20 + 10 * i, "Spawn %i: (%d, %d), dist: %d, scouted: %d",
+			i,
+			Position(scoutSpawns.at(i)).x,
+			Position(scoutSpawns.at(i)).y,
+			Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
+			draw
+		);
+	}
 
 }
