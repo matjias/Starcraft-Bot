@@ -9,7 +9,6 @@ UnitHandler::UnitHandler() { }
 UnitHandler::~UnitHandler() { }
 
 void UnitHandler::_init(){
-	combatUnits = CombatUnits();
 	combatUnits._init();
 }
 
