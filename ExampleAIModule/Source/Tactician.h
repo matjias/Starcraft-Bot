@@ -1,27 +1,37 @@
 #pragma once
 #include <BWAPI.h>
-#include "StrategyDecider.h"
+#include "Constants.h"
+#include "ResourceSpender.h"
+#include "UnitHandler.h"
+#include "ScoutManager.h"
 
 class Tactician {
 public:
 	Tactician();
 	~Tactician();
+	
+	bool _init(ScoutManager* scoutMan);
 
-	enum GameStage {
-		Start, Early, EarlyMid,
-		Mid, MidLate, Late
-	};
+	
 
-	void updateTactician();
+	void updateTactician(StrategyName currentStrategy);
 
+
+	bool recordNewUnit(BWAPI::Unit u);
+	bool recordDeadUnit(BWAPI::Unit u);
 
 
 private:
+	StrategyName lastKnownStrategy;
 	GameStage currentStage;
 
+	void updateTacticianStart();
 
-	StrategyDecider *strategy;
+	// Classes it holds
+	ResourceSpender ResourceSpender;
+	UnitHandler UnitHandler;
 
-
+	// Class pointers
+	ScoutManager* ScoutManagerPtr;
 
 };

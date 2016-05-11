@@ -1,26 +1,32 @@
 #pragma once
+#include "Constants.h"
 #include "ScoutManager.h"
+#include "Tactician.h"
 
 class StrategyDecider {
 public:
 	StrategyDecider();
 	~StrategyDecider();
 
+	bool _init(Tactician* tact, ScoutManager* scoutMan);
 
-	enum StrategyName {
-		// Default has no direct goal in mind, but just works towards
-		// getting economy, teching up, building an army and harassing
-		// where possible
-		Default,
-		AllIn, Defend,
-		Expand, Turtle
-	};
+	// On frame
+	void update();
+
+	
+	bool needsToUpdateStrategy = true;
+	
+	
 
 	void decideStrategy();
 
-	bool needsToUpdateStrategy = true;
-	StrategyName currentStrategy;
+	
 
 private:
-	ScoutManager* scout;
+	// Class pointers
+	Tactician* TacticianPtr;
+	ScoutManager* ScoutManagerPtr;
+
+	// Variables
+	StrategyName currentStrategy;
 };

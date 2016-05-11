@@ -23,6 +23,8 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
+	StrategyDecider._init(&Tactician, &ScoutManager);
+	Tactician._init(&ScoutManager);
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }
@@ -40,7 +42,8 @@ void ExampleAIModule::onFrame() {
 		analysis_just_finished = false;
 	}
 
-	
+	// Call our game logic
+	StrategyDecider.update();
 
 }
 
@@ -61,6 +64,9 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
+		// Tactician.addNewUnit(unit);
+
+		//Broodwar->sendText("Own unit discovered: %s\n", unit->getType().c_str());
 
 	}
 	// Was it an enemy unit?
@@ -84,7 +90,7 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-
+		Tactician.recordDeadUnit(unit);
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
@@ -99,7 +105,11 @@ void ExampleAIModule::onUnitRenegade(BWAPI::Unit unit) { }
 void ExampleAIModule::onSaveGame(std::string gameName) { }
 
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
+	if (Broodwar->self() == unit->getPlayer()) {
+		Tactician.recordNewUnit(unit);
 
+		//Broodwar->sendText("Own unit completed: %s", unit->getType().c_str());
+	}
 }
 
 // END OF CALLBACKS

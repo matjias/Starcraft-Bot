@@ -1,5 +1,22 @@
 #pragma once
 
+enum StrategyName {
+	// Default has no direct goal in mind, but just works towards
+	// getting economy, teching up, building an army and harassing
+	// where possible
+	Default, Skirmish,
+	AllIn, Defend,
+	Expand, Turtle
+};
+
+enum GameStage {
+	Start, Early, EarlyMid,
+	Mid, MidLate, Late
+};
+
+
+
+// Le olde code grandos suckus
 // Economy
 const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
