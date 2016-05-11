@@ -1,6 +1,7 @@
 #pragma once
 #include "BWAPI.h"
 #include "CombatUnits.h"
+#include "ProbeUnits.h"
 
 class UnitHandler {
 public:
@@ -11,7 +12,10 @@ public:
 
 private:
 	CombatUnits combatUnits;
+	ProbeUnits probeUnits;
+
+	BWAPI::Unitset miningProbes;
 
 	bool isCombatUnit(BWAPI::Unit u);
-
+	bool isProbeUnit(BWAPI::Unit u);
 };
