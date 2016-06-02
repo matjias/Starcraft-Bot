@@ -4,19 +4,22 @@
 // Most of our data types are either ScoutManager or BWAPI
 using namespace BWAPI;
 
-ScoutManager::ScoutManager() {
-	/* 
-		ScoutManager on the constructor creates a list of
-		potential spawn locations our enemy could be in
-		and sorts them based on their distance to our own spawn
-	*/
+ScoutManager::ScoutManager() { }
+
+ScoutManager::~ScoutManager() { }
+
+bool ScoutManager::_init(TilePosition::list allSpawns, TilePosition ownSpawn) {
+	// If we have already defined called _init once 
+	// and defined the spawns, then we just stop
+	if (spawns.size() > 0) {
+		return false;
+	}
 
 	TilePosition::list unsortedSpawns;
-	TilePosition ourSpawn = Broodwar->self()->getStartLocation();
 
 	// Adds all the spawns to a list, excluding our own spawn
-	for (auto &location : Broodwar->getStartLocations()) {
-		if (location != Broodwar->self()->getStartLocation()) {
+	for (auto &location : allSpawns) {
+		if (location != ownSpawn) {
 			unsortedSpawns.push_back(location);
 		}
 	}
@@ -27,8 +30,8 @@ ScoutManager::ScoutManager() {
 	// is small enough for this to not be an issue
 	for (unsigned int i = 1; i < unsortedSpawns.size(); i++) {
 		for (int j = i; j > 0; j--) {
-			if (unsortedSpawns.at(j).getApproxDistance(ourSpawn) <
-				unsortedSpawns.at(j - 1).getApproxDistance(ourSpawn)) {
+			if (unsortedSpawns.at(j).getApproxDistance(ownSpawn) <
+				unsortedSpawns.at(j - 1).getApproxDistance(ownSpawn)) {
 
 				std::swap(unsortedSpawns.at(j), unsortedSpawns.at(j - 1));
 			}
@@ -42,9 +45,9 @@ ScoutManager::ScoutManager() {
 
 		spawns.push_back(locStruct);
 	}
-}
 
-ScoutManager::~ScoutManager() { }
+	return true;
+}
 
 void ScoutManager::recordUnitDiscover(Unit u) {
 	// Do we already know about this unit?
