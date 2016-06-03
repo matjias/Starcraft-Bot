@@ -17,9 +17,6 @@
     <ClCompile Include="Source\Scouting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BuildingPlacer.cpp">
-      <Filter>Source Files\New stuffs</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CombatUnits.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
@@ -50,7 +47,7 @@
     <ClCompile Include="Source\Squad.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
-    <ClCompile Include="BuildingUnits.cpp">
+    <ClCompile Include="Source\BuildingUnits.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,9 +71,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\UnitHandler.h">
-      <Filter>Header Files\New stuffs</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BuildingPlacer.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
     <ClInclude Include="Source\CombatUnits.h">
@@ -106,7 +100,7 @@
     <ClInclude Include="Source\Squad.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
-    <ClInclude Include="BuildingUnits.h">
+    <ClInclude Include="Source\BuildingUnits.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
   </ItemGroup>

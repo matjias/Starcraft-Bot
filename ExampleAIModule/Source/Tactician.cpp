@@ -24,6 +24,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 
 bool Tactician::queueUnit(Unit u){
 	unitHandler.queueUnit(u);
+	return true;
 }
 
 bool Tactician::recordNewUnit(Unit u) {

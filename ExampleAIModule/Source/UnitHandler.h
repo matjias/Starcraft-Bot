@@ -17,8 +17,7 @@ private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
 
-	// Currently functioning as default unitset for probes.
-	BWAPI::Unitset miningProbes;
+	
 	// Me like to play pool and billard wif dem Queues.
 	std::unordered_map<int, BWAPI::Unit> cuedUnits;
 

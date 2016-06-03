@@ -21,3 +21,4 @@ void ProbeUnits::mineMinerals(Unit u) {
 void ProbeUnits::mineGas(Unitset uSet) {
 	uSet.gather(uSet.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Assimilator));
 }
+
