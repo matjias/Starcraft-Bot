@@ -12,17 +12,17 @@ void UnitHandler::_init(){
 	combatUnits._init();
 }
 
-void UnitHandler::queueUnit(Unit u){
-	cuedUnits.insert(std::pair<int, Unit>(u->getID(), u));
+void UnitHandler::addWarpingUnit(Unit u){
+	warpingUnits.insert(std::pair<int, Unit>(u->getID(), u));
 }
 
-void UnitHandler::dequeueUnit(Unit u){
-	cuedUnits.erase(u->getID());
+void UnitHandler::removeWarpingUnit(Unit u){
+	warpingUnits.erase(u->getID());
 }
 
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
-	dequeueUnit(u);
+	removeWarpingUnit(u);
 	if (isCombatUnit(u)){
 		combatUnits.addUnit(u);
 	}
@@ -50,6 +50,6 @@ BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
 }
 
-std::unordered_map<int, BWAPI::Unit> UnitHandler::getQueuedUnits(){
-	return cuedUnits;
+std::unordered_map<int, BWAPI::Unit> UnitHandler::getWarpingUnits(){
+	return warpingUnits;
 }

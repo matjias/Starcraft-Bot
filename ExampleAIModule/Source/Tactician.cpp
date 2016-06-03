@@ -22,8 +22,8 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	return true;
 }
 
-bool Tactician::queueUnit(Unit u){
-	unitHandler.queueUnit(u);
+bool Tactician::addWarpingUnit(Unit u){
+	unitHandler.addWarpingUnit(u);
 	return true;
 }
 
