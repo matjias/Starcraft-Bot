@@ -2,6 +2,7 @@
 #include "BWAPI.h"
 #include "CombatUnits.h"
 #include "ProbeUnits.h"
+#include "BuildingUnits.h"
 
 class UnitHandler {
 public:
@@ -10,9 +11,12 @@ public:
 	void _init();
 	void addUnit(BWAPI::Unit u);
 
+	BuildingUnits* getBuildingUnits();
+
 private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
+	BuildingUnits buildingUnits;
 
 	BWAPI::Unitset miningProbes;
 

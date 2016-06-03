@@ -7,7 +7,7 @@ Tactician::Tactician() {
 	currentStage = Start;
 
 	unitHandler._init();
-	resourceSpender._init(&unitHandler);
+	resourceSpender._init(unitHandler.getBuildingUnits());
 }
 
 Tactician::~Tactician() { }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UnitHandler.h"
+#include "BuildingUnits.h"
 
 #include <BWAPI.h>
 
@@ -28,7 +28,7 @@ class ResourceSpender {
 public:
 	ResourceSpender();
 	~ResourceSpender();
-	bool _init(UnitHandler* unitHandler);
+	bool _init(BuildingUnits* buildingUnits);
 
 private:
 	void addInvestment(BWAPI::UnitType unitType, bool urgent);
@@ -40,5 +40,5 @@ private:
 
 	std::vector<UnitOrUpgrade> investments;
 
-	UnitHandler* unitHandlerPtr;
+	BuildingUnits* buildingUnitsPtr;
 };

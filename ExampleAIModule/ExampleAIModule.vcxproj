@@ -90,9 +90,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BuildingUnits.cpp" />
     <ClCompile Include="Source\Army.cpp" />
-    <ClCompile Include="Source\BuildingPlacer.cpp" />
+    <ClCompile Include="Source\BuildingUnits.cpp" />
     <ClCompile Include="Source\BuildOrders.cpp" />
     <ClCompile Include="Source\CombatUnits.cpp" />
     <ClCompile Include="Source\CustomVector.cpp" />
@@ -110,9 +109,8 @@
     <ClCompile Include="Source\UnitHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BuildingUnits.h" />
     <ClInclude Include="Source\Army.h" />
-    <ClInclude Include="Source\BuildingPlacer.h" />
+    <ClInclude Include="Source\BuildingUnits.h" />
     <ClInclude Include="Source\BuildOrders.h" />
     <ClInclude Include="Source\CombatUnits.h" />
     <ClInclude Include="Source\Constants.h" />

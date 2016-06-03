@@ -36,3 +36,7 @@ bool UnitHandler::isProbeUnit(Unit u){
 	//Add probes
 	return u->getType() == UnitTypes::Protoss_Probe;
 }
+
+BuildingUnits* UnitHandler::getBuildingUnits() {
+	return &buildingUnits;
+}
