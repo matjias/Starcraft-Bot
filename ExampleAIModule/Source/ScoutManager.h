@@ -1,12 +1,27 @@
+// Dll exports to allow for unit testing
+#ifdef SCOUTMANAGER_EXPORTS
+#	define DLL_SPECIFIER _declspec(dllexport)
+#else
+#	define DLL_SPECIFIER _declspec(dllimport)
+#endif
+
+// Disable dll-interface warnings to private members
+#pragma warning(disable : 4251)
+
+// Now actual program begins
 #pragma once
 #include <BWAPI.h>
 #include <vector>
 #include <unordered_map>
 
-class ScoutManager {
+class DLL_SPECIFIER ScoutManager {
 public:
 	ScoutManager();
 	~ScoutManager();
+
+	// Init function
+	// _init takes parameters (All Spawns, Own Spawn)
+	bool _init(BWAPI::TilePosition::list, BWAPI::TilePosition);
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);

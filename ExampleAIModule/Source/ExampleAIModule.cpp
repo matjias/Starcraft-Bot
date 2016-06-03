@@ -23,6 +23,10 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
+	TilePosition::list allSpawns = Broodwar->getStartLocations();
+	TilePosition ownSpawn = Broodwar->self()->getStartLocation();
+	ScoutManager._init(allSpawns, ownSpawn);
+
 	StrategyDecider._init(&Tactician, &ScoutManager);
 	Tactician._init(&ScoutManager);
 }
@@ -190,8 +194,10 @@ void ExampleAIModule::drawData() {
 
 		Broodwar->drawTextScreen(20, 20 + 10 * i, "Spawn %i: (%d, %d), dist: %d, scouted: %d",
 			i,
-			Position(scoutSpawns.at(i)).x,
-			Position(scoutSpawns.at(i)).y,
+			//Position(scoutSpawns.at(i)).x,
+			scoutSpawns.at(i).x,
+			//Position(scoutSpawns.at(i)).y,
+			scoutSpawns.at(i).y,
 			Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
 			draw
 		);
