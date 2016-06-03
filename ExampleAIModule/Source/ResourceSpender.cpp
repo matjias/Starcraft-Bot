@@ -7,6 +7,16 @@ ResourceSpender::ResourceSpender() { }
 
 ResourceSpender::~ResourceSpender() { }
 
+bool ResourceSpender::_init(UnitHandler* unitHandler) {
+	if (unitHandler == NULL) {
+		return false;
+	}
+
+	unitHandlerPtr = unitHandler;
+
+	return true;
+}
+
 UnitOrUpgrade::UnitOrUpgrade(BWAPI::UnitType unitType) { }
 
 UnitOrUpgrade::UnitOrUpgrade(BWAPI::UpgradeType upgradeType) { }
