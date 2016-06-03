@@ -50,6 +50,6 @@ BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
 }
 
-std::unordered_map<int, BWAPI::Unit> UnitHandler::getWarpingUnits(){
-	return warpingUnits;
+int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
+	return warpingUnits.count(unitType);
 }

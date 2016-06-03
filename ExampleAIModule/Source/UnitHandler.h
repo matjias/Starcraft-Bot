@@ -12,7 +12,7 @@ public:
 	void addUnit(BWAPI::Unit u);
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
-	std::unordered_map<int, BWAPI::Unit> getWarpingUnits();
+	int getWarpingUnitCount(BWAPI::UnitType unitType);
 
 	BuildingUnits* getBuildingUnits();
 
@@ -24,7 +24,7 @@ private:
 	// Currently functioning as default unitset for probes.
 	BWAPI::Unitset miningProbes;
 
-	std::unordered_map<int, BWAPI::Unit> warpingUnits;
+	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 
 	bool isCombatUnit(BWAPI::Unit u);
 	bool isProbeUnit(BWAPI::Unit u);
