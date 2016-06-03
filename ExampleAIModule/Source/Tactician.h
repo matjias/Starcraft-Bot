@@ -28,10 +28,10 @@ private:
 	void updateTacticianStart();
 
 	// Classes it holds
-	ResourceSpender ResourceSpender;
-	UnitHandler UnitHandler;
+	ResourceSpender resourceSpender;
+	UnitHandler unitHandler;
 
 	// Class pointers
-	ScoutManager* ScoutManagerPtr;
+	ScoutManager* scoutManagerPtr;
 
 };

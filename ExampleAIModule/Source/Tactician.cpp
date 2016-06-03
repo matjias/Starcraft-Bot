@@ -6,7 +6,7 @@ using namespace BWAPI;
 Tactician::Tactician() {
 	currentStage = Start;
 
-	UnitHandler._init();
+	unitHandler._init();
 }
 
 Tactician::~Tactician() { }
@@ -16,14 +16,14 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 		return false;
 	}
 
-	ScoutManagerPtr = scoutMan;
+	scoutManagerPtr = scoutMan;
 
 	return true;
 }
 
 bool Tactician::recordNewUnit(Unit u) {
 	// return UnitHandler.addUnit(u);
-	UnitHandler.addUnit(u);
+	unitHandler.addUnit(u);
 	return true;
 }
 
