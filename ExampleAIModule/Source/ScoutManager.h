@@ -11,6 +11,7 @@
 // Now actual program begins
 #pragma once
 #include <BWAPI.h>
+#include <Windows.h>
 #include <vector>
 #include <unordered_map>
 
@@ -21,8 +22,7 @@ public:
 	~ScoutManager();
 
 	// Init function
-	bool _init(BWAPI::TilePosition::list allSpawns, BWAPI::TilePosition ownSpawn);
-	bool _initT();
+	bool _init();
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);

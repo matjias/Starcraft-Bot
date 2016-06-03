@@ -12,49 +12,7 @@ ScoutManager::ScoutManager(Game *gameWrapper) {
 
 ScoutManager::~ScoutManager() { }
 
-bool ScoutManager::_init(TilePosition::list allSpawns, TilePosition ownSpawn) {
-	// If we have already defined called _init once 
-	// and defined the spawns, then we just stop
-	if (spawns.size() > 0) {
-		return false;
-	}
-
-	TilePosition::list unsortedSpawns;
-
-	// Adds all the spawns to a list, excluding our own spawn
-	for (auto &location : allSpawns) {
-		if (location != ownSpawn) {
-			unsortedSpawns.push_back(location);
-		}
-	}
-
-	// Presorts the start locations so the shortest spawn
-	// to our spawn is first in the list, and our spawn is
-	// Uses insertion sort, but the size of spawn locations
-	// is small enough for this to not be an issue
-	for (unsigned int i = 1; i < unsortedSpawns.size(); i++) {
-		for (int j = i; j > 0; j--) {
-			if (unsortedSpawns.at(j).getApproxDistance(ownSpawn) <
-				unsortedSpawns.at(j - 1).getApproxDistance(ownSpawn)) {
-
-				std::swap(unsortedSpawns.at(j), unsortedSpawns.at(j - 1));
-			}
-		}
-	}
-
-	// Now we add them to the list of spawns
-	for (auto &loc : unsortedSpawns) {
-		LocationStruct *locStruct = new LocationStruct();
-		locStruct->location = loc;
-
-		spawns.push_back(locStruct);
-	}
-
-	return true;
-}
-
-
-bool ScoutManager::_initT() {
+bool ScoutManager::_init() {
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -75,8 +33,8 @@ bool ScoutManager::_initT() {
 	// to our spawn is first in the list, and our spawn is
 	// Uses insertion sort, but the size of spawn locations
 	// is small enough for this to not be an issue
-	for (unsigned int i = 1; i < unsortedSpawns.size(); i++) {
-		for (int j = i; j > 0; j--) {
+	for (u_int i = 1; i < unsortedSpawns.size(); i++) {
+		for (u_int j = i; j > 0; j--) {
 			if (unsortedSpawns.at(j).getApproxDistance(ownSpawn) <
 				unsortedSpawns.at(j - 1).getApproxDistance(ownSpawn)) {
 

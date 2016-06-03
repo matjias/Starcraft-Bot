@@ -36,16 +36,40 @@ namespace UnitTest {
 		// The ScoutManager_Test_Init tests concerns the _init function in ScoutManager
 		// This is the function that takes all of the spawns and
 		// saves and sorts the potential enemy spawn locations
+		TEST_METHOD(Broodwar_Mock_Test1) {
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Self_Mock;
 
-		void scoutMan_Test1_Setup() {
+			TilePosition ownSpawn = TilePosition(1, 1);
+			TilePosition enemySpawn = TilePosition(2, 2);
+			TilePosition::list allSpawns;
+			allSpawns.push_back(ownSpawn);
+			allSpawns.push_back(enemySpawn);
 
+			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
+			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
+			PlayerInterface &self = Self_Mock.get();
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
+
+			Assert::AreEqual(self.getStartLocation(), ownSpawn);
+
+			Game &broodwar = Broodwar_Mock.get();
+
+			Assert::AreEqual(broodwar.self()->getStartLocation(), ownSpawn);
+			Assert::AreEqual(broodwar.getStartLocations(), allSpawns);
+
+			ScoutManager scoutMan = ScoutManager(&broodwar);
+			scoutMan._init();
+
+			TilePosition::list recordedSpawns = scoutMan.getSpawns();
+			Assert::AreEqual(recordedSpawns.at(0), enemySpawn);
 		}
 
 		TEST_METHOD(ScoutManager_Test_Init1) {
 			// This first example is a 1v1 map, so _init should only really
 			// have one way of doing this, disregarding any sorting here
-
-			ScoutManager scoutMan;
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Self_Mock;
 
 			// Creates the starting positions
 			TilePosition ownSpawn = TilePosition(1, 1);
@@ -55,10 +79,18 @@ namespace UnitTest {
 			allSpawns.push_back(ownSpawn);
 			allSpawns.push_back(enemySpawn);
 			
+			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
+			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
+			PlayerInterface &self = Self_Mock.get();
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
+			Game &broodwar = Broodwar_Mock.get();
+
+			ScoutManager scoutMan = ScoutManager(&broodwar);
+
 			// Ensure spawns is empty because _init has not been called
 			Assert::AreEqual((int) scoutMan.getSpawns().size(), 0);
 
-			scoutMan._init(allSpawns, ownSpawn);
+			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Tests to make sure only the enemy's spawn is saved
@@ -70,8 +102,8 @@ namespace UnitTest {
 			// This test will now cover a broader spawn range and
 			// ensure that all potential enemy spawns are sorted
 			// correctly according to their length from our own spawn
-
-			ScoutManager scoutMan;
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Self_Mock;
 
 			// Creates the starting positions
 			// These spawn locations are taken from (4)Jade.scx
@@ -88,7 +120,17 @@ namespace UnitTest {
 			allSpawns.push_back(enemySpawn2);
 			allSpawns.push_back(enemySpawn3);
 
-			scoutMan._init(allSpawns, ownSpawn);
+			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
+			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
+			PlayerInterface &self = Self_Mock.get();
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
+			Game &broodwar = Broodwar_Mock.get();
+
+			ScoutManager scoutMan = ScoutManager(&broodwar);
+
+			Assert::AreEqual((int)scoutMan.getSpawns().size(), 0);
+
+			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Now for the actual sorting tests
@@ -106,39 +148,7 @@ namespace UnitTest {
 			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
 		}
 
-		TEST_METHOD(Broodwar_Mock_Test1) {
-			Mock<Game> Broodwar_Mock;
-			Mock<PlayerInterface> Self_Mock;
-			//Mock<Game> Broodwar;
-
-			TilePosition s = TilePosition(1, 1);
-			TilePosition ss = TilePosition(2, 2);
-			TilePosition::list spawns;
-			spawns.push_back(s);
-			spawns.push_back(ss);
-
-			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(s);
-			PlayerInterface &p = Self_Mock.get();
-			
-			Assert::AreEqual(p.getStartLocation(), s);
-
-			When(Method(Broodwar_Mock, self)).AlwaysReturn(&p);
-			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(spawns);
-			
-			//Game &Broodwar = Broodwar_Mock.get();
-			Game &broodwar = Broodwar_Mock.get();
-			
-			Assert::AreEqual(broodwar.self()->getStartLocation(), s);
-			Assert::AreEqual(broodwar.getStartLocations(), spawns);
-
-			ScoutManager scoutMan = ScoutManager(&broodwar);
-			scoutMan._initT();
-
-			TilePosition::list recordedSpawns = scoutMan.getSpawns();
-			Assert::AreEqual(recordedSpawns.at(0), ss);
-
-
-		}
+		
 
 	};
 }
