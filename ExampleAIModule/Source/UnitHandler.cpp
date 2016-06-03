@@ -12,8 +12,17 @@ void UnitHandler::_init(){
 	combatUnits._init();
 }
 
+void UnitHandler::queueUnit(Unit u){
+	cuedUnits.insert(std::pair<int, Unit>(u->getID(), u));
+}
+
+void UnitHandler::dequeueUnit(Unit u){
+	cuedUnits.erase(u->getID());
+}
+
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
+	dequeueUnit(u);
 	if (isCombatUnit(u)){
 		combatUnits.addUnit(u);
 	}
@@ -39,4 +48,8 @@ bool UnitHandler::isProbeUnit(Unit u){
 
 BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
+}
+
+std::unordered_map<int, BWAPI::Unit> UnitHandler::getQueuedUnits(){
+	return cuedUnits;
 }
