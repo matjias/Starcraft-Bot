@@ -12,14 +12,11 @@ public:
 	
 	bool _init(ScoutManager* scoutMan);
 
-	
-
 	void updateTactician(StrategyName currentStrategy);
 
-
+	bool queueUnit(BWAPI::Unit u);
 	bool recordNewUnit(BWAPI::Unit u);
 	bool recordDeadUnit(BWAPI::Unit u);
-
 
 private:
 	StrategyName lastKnownStrategy;

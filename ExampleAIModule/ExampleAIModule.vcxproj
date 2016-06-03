@@ -91,7 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Army.cpp" />
-    <ClCompile Include="Source\BuildingPlacer.cpp" />
+    <ClCompile Include="Source\BuildingUnits.cpp" />
     <ClCompile Include="Source\BuildOrders.cpp" />
     <ClCompile Include="Source\CombatUnits.cpp" />
     <ClCompile Include="Source\CustomVector.cpp" />
@@ -110,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Army.h" />
-    <ClInclude Include="Source\BuildingPlacer.h" />
+    <ClInclude Include="Source\BuildingUnits.h" />
     <ClInclude Include="Source\BuildOrders.h" />
     <ClInclude Include="Source\CombatUnits.h" />
     <ClInclude Include="Source\Constants.h" />
@@ -127,7 +127,11 @@
     <ClInclude Include="Source\Tactician.h" />
     <ClInclude Include="Source\UnitHandler.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\gtest.1.7.0\build\native\gtest.targets" Condition="Exists('packages\gtest.1.7.0\build\native\gtest.targets')" />
   </ImportGroup>
 </Project>

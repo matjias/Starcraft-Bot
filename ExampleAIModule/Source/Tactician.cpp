@@ -7,6 +7,7 @@ Tactician::Tactician() {
 	currentStage = Start;
 
 	unitHandler._init();
+	resourceSpender._init(unitHandler.getBuildingUnits());
 }
 
 Tactician::~Tactician() { }
@@ -21,6 +22,11 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	return true;
 }
 
+bool Tactician::queueUnit(Unit u){
+	unitHandler.queueUnit(u);
+	return true;
+}
+
 bool Tactician::recordNewUnit(Unit u) {
 	// return UnitHandler.addUnit(u);
 	unitHandler.addUnit(u);
@@ -28,7 +34,7 @@ bool Tactician::recordNewUnit(Unit u) {
 }
 
 bool Tactician::recordDeadUnit(Unit u) {
-	// return UnitHandler.removeUnit(u);
+	// return unitHandler.removeUnit(u);
 	return false;
 }
 
