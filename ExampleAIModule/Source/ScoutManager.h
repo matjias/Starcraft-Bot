@@ -20,8 +20,7 @@ public:
 	~ScoutManager();
 
 	// Init function
-	// _init takes parameters (All Spawns, Own Spawn)
-	bool _init(BWAPI::TilePosition::list, BWAPI::TilePosition);
+	bool _init(BWAPI::TilePosition::list allSpawns, BWAPI::TilePosition ownSpawn);
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);

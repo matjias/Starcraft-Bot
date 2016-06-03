@@ -24,8 +24,8 @@ public:
 
 private:
 	// Class pointers
-	Tactician* TacticianPtr;
-	ScoutManager* ScoutManagerPtr;
+	Tactician* tacticianPtr;
+	ScoutManager* scoutManagerPtr;
 
 	// Variables
 	StrategyName currentStrategy;

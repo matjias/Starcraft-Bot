@@ -1,17 +1,20 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "fakeit.hpp"
+
 #include "..\ExampleAIModule\Source\ScoutManager.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BWAPI;
+using namespace fakeit;
 
 // Declaring ToString function for Assert to use
 namespace Microsoft {
 	namespace VisualStudio {
 		namespace CppUnitTestFramework {
 			template<> static std::wstring ToString<TilePosition>(const TilePosition & p) {
-				return L"" + std::to_wstring(p.x) + std::to_wstring(p.y);
+				return L"" + std::to_wstring(p.x) + L", " + std::to_wstring(p.y);
 			}
 		}
 	}
@@ -75,15 +78,37 @@ namespace UnitTest {
 
 			// Now for the actual sorting tests
 			Assert::AreEqual((int)recordedSpawns.size(), 3);
-			
-			// From UnitTestCalculations.mw (maple file) in our repository
-			// we know that the following sorting is correct
-			//	enemySpawn3
-			//	enemySpawn1
-			//	enemySpawn2
+			/*
+				From actual data from starcraft, we know for certain
+				that the following sort is correct because we can do
+				a simple Euclidean check, but Starcraft might not
+				always return a straight forward distance like that
+					enemySpawn3
+					enemySpawn1
+					enemySpawn2
+			*/
 			Assert::AreEqual(recordedSpawns.at(0), enemySpawn3);
 			Assert::AreEqual(recordedSpawns.at(1), enemySpawn1);
 			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
+		}
+
+		TEST_METHOD(Broodwar_Mock_Test1) {
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Self_Mock;
+
+			TilePosition s = TilePosition(1, 1);
+
+			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(s);
+
+			PlayerInterface &p = Self_Mock.get();
+			
+			Assert::AreEqual(p.getStartLocation(), s);
+
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(&p);
+			
+			Game &g = Broodwar_Mock.get();
+
+			Assert::AreEqual(g.self()->getStartLocation(), s);
 		}
 
 	};
