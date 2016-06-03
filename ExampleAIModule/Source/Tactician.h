@@ -29,7 +29,7 @@ private:
 
 	// Classes it holds
 	ResourceSpender ResourceSpender;
-	UnitHandler UnitHandler;
+	UnitHandler unitHandler;
 
 	// Class pointers
 	ScoutManager* ScoutManagerPtr;
