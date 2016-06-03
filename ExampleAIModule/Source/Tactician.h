@@ -16,7 +16,7 @@ public:
 
 	void updateTactician(StrategyName currentStrategy);
 
-
+	bool queueUnit(BWAPI::Unit u);
 	bool recordNewUnit(BWAPI::Unit u);
 	bool recordDeadUnit(BWAPI::Unit u);
 
@@ -28,8 +28,8 @@ private:
 	void updateTacticianStart();
 
 	// Classes it holds
-	ResourceSpender resourceSpender;
-	UnitHandler unitHandler;
+	ResourceSpender ResourceSpender;
+	UnitHandler UnitHandler;
 
 	// Class pointers
 	ScoutManager* scoutManagerPtr;
