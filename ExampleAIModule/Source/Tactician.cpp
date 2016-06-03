@@ -21,6 +21,10 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	return true;
 }
 
+bool Tactician::queueUnit(Unit u){
+	 
+}
+
 bool Tactician::recordNewUnit(Unit u) {
 	// return UnitHandler.addUnit(u);
 	UnitHandler.addUnit(u);

@@ -64,7 +64,7 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		// Tactician.addNewUnit(unit);
+		Tactician.queueUnit(unit);
 
 		//Broodwar->sendText("Own unit discovered: %s\n", unit->getType().c_str());
 
