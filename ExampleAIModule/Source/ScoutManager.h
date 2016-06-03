@@ -17,10 +17,12 @@
 class DLL_SPECIFIER ScoutManager {
 public:
 	ScoutManager();
+	ScoutManager(BWAPI::Game *gameWrapper);
 	~ScoutManager();
 
 	// Init function
 	bool _init(BWAPI::TilePosition::list allSpawns, BWAPI::TilePosition ownSpawn);
+	bool _initT();
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);
@@ -49,6 +51,8 @@ public:
 	std::vector<bool> getSpawnBools();
 
 private:
+	BWAPI::Game* broodwar;
+
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the
 	// key and the element containing various other information

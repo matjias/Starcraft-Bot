@@ -16,6 +16,16 @@ namespace Microsoft {
 			template<> static std::wstring ToString<TilePosition>(const TilePosition & p) {
 				return L"" + std::to_wstring(p.x) + L", " + std::to_wstring(p.y);
 			}
+
+			template<> static std::wstring ToString<TilePosition::list>(const TilePosition::list & p) {
+				std::wstring returnStr = L"";
+				
+				for (auto & s : p) {
+					returnStr += std::to_wstring(s.x) + L"," + std::to_wstring(s.y) + L";";
+				}
+				
+				return returnStr;
+			}
 		}
 	}
 }
@@ -26,6 +36,11 @@ namespace UnitTest {
 		// The ScoutManager_Test_Init tests concerns the _init function in ScoutManager
 		// This is the function that takes all of the spawns and
 		// saves and sorts the potential enemy spawn locations
+
+		void scoutMan_Test1_Setup() {
+
+		}
+
 		TEST_METHOD(ScoutManager_Test_Init1) {
 			// This first example is a 1v1 map, so _init should only really
 			// have one way of doing this, disregarding any sorting here
@@ -78,15 +93,14 @@ namespace UnitTest {
 
 			// Now for the actual sorting tests
 			Assert::AreEqual((int)recordedSpawns.size(), 3);
-			/*
-				From actual data from starcraft, we know for certain
-				that the following sort is correct because we can do
-				a simple Euclidean check, but Starcraft might not
-				always return a straight forward distance like that
-					enemySpawn3
-					enemySpawn1
-					enemySpawn2
-			*/
+			
+			//From actual data from starcraft, we know for certain
+			//that the following sort is correct because we can do
+			//a simple Euclidean check, but Starcraft might not
+			//always return a straight forward distance like that
+			//	  enemySpawn3
+			//	  enemySpawn1
+			//	  enemySpawn2
 			Assert::AreEqual(recordedSpawns.at(0), enemySpawn3);
 			Assert::AreEqual(recordedSpawns.at(1), enemySpawn1);
 			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
@@ -95,20 +109,35 @@ namespace UnitTest {
 		TEST_METHOD(Broodwar_Mock_Test1) {
 			Mock<Game> Broodwar_Mock;
 			Mock<PlayerInterface> Self_Mock;
+			//Mock<Game> Broodwar;
 
 			TilePosition s = TilePosition(1, 1);
+			TilePosition ss = TilePosition(2, 2);
+			TilePosition::list spawns;
+			spawns.push_back(s);
+			spawns.push_back(ss);
 
 			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(s);
-
 			PlayerInterface &p = Self_Mock.get();
 			
 			Assert::AreEqual(p.getStartLocation(), s);
 
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&p);
+			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(spawns);
 			
-			Game &g = Broodwar_Mock.get();
+			//Game &Broodwar = Broodwar_Mock.get();
+			Game &broodwar = Broodwar_Mock.get();
+			
+			Assert::AreEqual(broodwar.self()->getStartLocation(), s);
+			Assert::AreEqual(broodwar.getStartLocations(), spawns);
 
-			Assert::AreEqual(g.self()->getStartLocation(), s);
+			ScoutManager scoutMan = ScoutManager(&broodwar);
+			scoutMan._initT();
+
+			TilePosition::list recordedSpawns = scoutMan.getSpawns();
+			Assert::AreEqual(recordedSpawns.at(0), ss);
+
+
 		}
 
 	};
