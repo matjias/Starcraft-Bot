@@ -45,6 +45,10 @@ bool UnitHandler::isProbeUnit(Unit u){
 	return u->getType() == UnitTypes::Protoss_Probe;
 }
 
+BuildingUnits* UnitHandler::getBuildingUnits() {
+	return &buildingUnits;
+}
+
 std::unordered_map<int, BWAPI::Unit> UnitHandler::getQueuedUnits(){
 	return cuedUnits;
 }

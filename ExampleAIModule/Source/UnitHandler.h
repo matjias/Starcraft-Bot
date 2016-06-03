@@ -2,6 +2,7 @@
 #include "BWAPI.h"
 #include "CombatUnits.h"
 #include "ProbeUnits.h"
+#include "BuildingUnits.h"
 
 class UnitHandler {
 public:
@@ -13,9 +14,12 @@ public:
 	void dequeueUnit(BWAPI::Unit u);
 	std::unordered_map<int, BWAPI::Unit> getQueuedUnits();
 
+	BuildingUnits* getBuildingUnits();
+
 private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
+	BuildingUnits buildingUnits;
 
 	
 	// Me like to play pool and billard wif dem Queues.
