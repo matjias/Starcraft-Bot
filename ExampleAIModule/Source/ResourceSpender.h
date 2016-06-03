@@ -21,12 +21,12 @@ public:
 
 	int gasPrice();
 
+	UnitOrUpgrade & operator=(BWAPI::UnitType unitType);
+	UnitOrUpgrade & operator=(BWAPI::UpgradeType upgradeType);
+	
 private:
 	BWAPI::UnitType unitType;
 	BWAPI::UpgradeType upgradeType;
-
-	UnitOrUpgrade & operator=(BWAPI::UnitType u);
-	UnitOrUpgrade & operator=(BWAPI::UpgradeType u);
 };
 
 class ResourceSpender {

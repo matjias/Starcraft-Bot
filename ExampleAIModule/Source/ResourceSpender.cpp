@@ -25,32 +25,29 @@ UnitOrUpgrade::UnitOrUpgrade(BWAPI::UpgradeType upgradeType) { }
 
 UnitOrUpgrade::~UnitOrUpgrade() { }
 
-BWAPI::UnitType getUnitType() {
-	// @TODO
+BWAPI::UnitType UnitOrUpgrade::getUnitType() {
+	return BWAPI::UnitType();
 }
 
-BWAPI::UpgradeType getUpgradeType() {
-	// @TODO
+BWAPI::UpgradeType UnitOrUpgrade::getUpgradeType() {
+	return BWAPI::UpgradeType();
 }
 
 bool UnitOrUpgrade::isUnitType() const {
-	// @TODO
+	return unitType;
 }
 
 bool UnitOrUpgrade::isUpgradeType() const {
-	// @TODO
+	return upgradeType;
 }
 
 int UnitOrUpgrade::gasPrice() {
-	return 1;
-	
-	// @TODO
-	/*if (isUnitType()) {
+	if (isUnitType()) {
 		return getUnitType().gasPrice();
 	}
 	else {
 		return getUpgradeType().gasPrice();
-	}*/
+	}
 }
 
 void ResourceSpender::addInvestment(BWAPI::UnitType unitType, bool urgent) {
@@ -98,9 +95,7 @@ void ResourceSpender::addNeededTech(int priority) {
 }
 
 bool ResourceSpender::investmentExists(UnitOrUpgrade investment) {
-	return true;
-
-	// @TODO
+	return false;
 	//return (std::find(investments.begin(), investments.end(), investment) != investments.end());
 }
 
