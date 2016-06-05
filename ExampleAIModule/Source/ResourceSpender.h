@@ -20,6 +20,7 @@ public:
 	UnitOrUpgrade type();
 
 	int gasPrice();
+	UnitOrUpgrade UnitOrUpgrade::neededTech();
 
 	UnitOrUpgrade & operator=(BWAPI::UnitType unitType);
 	UnitOrUpgrade & operator=(BWAPI::UpgradeType upgradeType);
@@ -39,7 +40,7 @@ public:
 private:
 	void addInvestment(BWAPI::UnitType unitType, bool urgent);
 	void addInvestment(BWAPI::UpgradeType unitType, bool urgent);
-	void addNeededTech(int priority);
+	void addRequirements(int priority);
 	bool investmentExists(UnitOrUpgrade investment);
 	bool workerNeeded();
 	bool supplyNeeded();
