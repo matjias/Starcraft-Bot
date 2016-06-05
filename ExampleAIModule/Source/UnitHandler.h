@@ -3,6 +3,7 @@
 #include "CombatUnits.h"
 #include "ProbeUnits.h"
 #include "BuildingUnits.h"
+#include "ScoutUnits.h"
 
 class UnitHandler {
 public:
@@ -20,6 +21,7 @@ private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
 	BuildingUnits buildingUnits;
+	ScoutUnits scoutUnits;
 
 	// Currently functioning as default unitset for probes.
 	BWAPI::Unitset miningProbes;
