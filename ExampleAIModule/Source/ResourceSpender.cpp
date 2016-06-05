@@ -72,10 +72,10 @@ void ResourceSpender::addInvestment(BWAPI::UpgradeType upgradeType, bool urgent)
 	}
 }
 
-void ResourceSpender::addNeededTech(int priority) {
+void ResourceSpender::addRequirements(int priority) {
 	if (investments.size() >= 1) {
 
-		// @TODO: add needed buildings
+		// @Add required buildings and upgrades
 
 		// More gas needed
 		if (!investmentExists(investments[BWAPI::UnitTypes::Protoss_Assimilator])
@@ -89,13 +89,14 @@ void ResourceSpender::addNeededTech(int priority) {
 			buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus)))) {
 			
 			investments.insert(investments.begin(), BWAPI::UnitTypes::Protoss_Assimilator);
-			addNeededTech(priority);
+			addRequirements(priority);
 		}
 	}
 }
 
 bool ResourceSpender::investmentExists(UnitOrUpgrade investment) {
 	return false;
+	// @TODO:
 	//return (std::find(investments.begin(), investments.end(), investment) != investments.end());
 }
 
