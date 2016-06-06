@@ -23,5 +23,10 @@ void ProbeUnits::mineGas(Unitset uSet) {
 }
 
 void ProbeUnits::addUnit(Unit u){
+	mineMinerals(u);
 	miningProbes.insert(u);
+}
+
+Unitset* ProbeUnits::getMiningUntis(){
+	return &miningProbes;
 }

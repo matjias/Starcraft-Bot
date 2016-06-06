@@ -9,6 +9,8 @@ public:
 
 	void addUnit(BWAPI::Unit u);
 
+	BWAPI::Unitset* getMiningUntis();
+
 private:
 	int miningCount;
 

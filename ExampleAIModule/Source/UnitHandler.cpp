@@ -49,6 +49,10 @@ BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
 }
 
+ProbeUnits* UnitHandler::getProbeUnits() {
+	return &probeUnits;
+}
+
 int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 	return warpingUnits.count(unitType);
 }
