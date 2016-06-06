@@ -1,8 +1,14 @@
+#ifdef UNITHANDLER_EXPORTS
+#	define DLL_SPECIFIER _declspec(dllexport)
+#else
+#	define DLL_SPECIFIER _declspec(dllimport)
+#endif
+
 #pragma once
 #include <BWAPI.h>
 
 
-class ProbeUnits {
+class DLL_SPECIFIER ProbeUnits {
 public:
 	ProbeUnits();
 	~ProbeUnits();
@@ -10,6 +16,7 @@ public:
 	void addUnit(BWAPI::Unit u);
 
 	BWAPI::Unitset* getMiningUntis();
+	BWAPI::Unit extractUnit();
 
 private:
 	int miningCount;

@@ -9,7 +9,6 @@ ProbeUnits::~ProbeUnits() { }
 
 using namespace BWAPI;
 
-
 void ProbeUnits::mineMinerals(Unitset uSet) {
 	uSet.gather(uSet.getClosestUnit(Filter::IsMineralField));
 }
@@ -29,4 +28,17 @@ void ProbeUnits::addUnit(Unit u){
 
 Unitset* ProbeUnits::getMiningUntis(){
 	return &miningProbes;
+}
+
+Unit ProbeUnits::extractUnit(){
+	Unit tempProbe;
+	for (auto& probe : miningProbes){
+		if (!probe->isCarryingMinerals()){
+			tempProbe = probe;
+			break;
+		}
+		tempProbe = probe;
+	}
+	miningProbes.erase(tempProbe);
+	return tempProbe;
 }
