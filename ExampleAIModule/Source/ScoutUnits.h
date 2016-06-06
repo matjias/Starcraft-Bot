@@ -6,7 +6,9 @@ public:
 	ScoutUnits();
 	~ScoutUnits();
 	
+	bool addUnit(BWAPI::Unit unit);
 
 private:
 	
 };
+
