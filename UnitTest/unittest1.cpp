@@ -4,6 +4,7 @@
 #include "fakeit.hpp"
 
 #include "..\ExampleAIModule\Source\ScoutManager.h"
+#include "..\ExampleAIModule\Source\UnitHandler.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BWAPI;
@@ -109,6 +110,16 @@ namespace UnitTest {
 			Game &g = Broodwar_Mock.get();
 
 			Assert::AreEqual(g.self()->getStartLocation(), s);
+		}
+
+		TEST_METHOD(Mining_Probes){
+			UnitHandler handler;
+			
+			Unit u; 
+
+			handler.addUnit(u);
+
+
 		}
 
 	};

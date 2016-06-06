@@ -21,7 +21,7 @@ void UnitHandler::dequeueUnit(Unit u){
 }
 
 // Deciding where the discovered unit belongs
-void UnitHandler::addUnit(Unit u){
+void UnitHandler::addUnit(	Unit u){
 	dequeueUnit(u);
 	if (isCombatUnit(u)){
 		combatUnits.addUnit(u);
