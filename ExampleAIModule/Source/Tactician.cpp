@@ -80,7 +80,7 @@ void Tactician::updateTacticianStart() {
 	}
 
 	// UnitHandler.mineMinerals()
-
+	
 	unitHandler.update();
 
 }

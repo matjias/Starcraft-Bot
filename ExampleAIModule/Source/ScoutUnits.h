@@ -1,5 +1,6 @@
 #pragma once
 #include "BWAPI.h"
+#include "Constants.h"
 
 class ScoutUnits {
 public:
@@ -8,12 +9,9 @@ public:
 	
 	bool addUnit(BWAPI::Unit unit);
 	int getAmountOfScouts();
-	// std::vector<BWAPI::Unit> getScouts();
+	bool hasScouts();
 	
-	struct ScoutAndGoalStruct {
-		BWAPI::Unit scout;
-		BWAPI::Position goal = BWAPI::Position(0, 0);
-	};
+	std::vector<ScoutAndGoalStruct*> getScouts();
 
 	bool assignGoal(BWAPI::Position goal);
 

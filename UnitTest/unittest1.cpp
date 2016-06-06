@@ -150,21 +150,5 @@ namespace UnitTest {
 		}
 
 		
-
-		TEST_METHOD(Mining_Probes_Test){
-			UnitHandler handler;
-			Mock<UnitInterface> UnitInt_Mock;
-			
-			When(Method(UnitInt_Mock, getID)).AlwaysReturn(12); 
-			UnitInterface &unit = UnitInt_Mock.get();
-
-			handler.addUnit(&unit);
-			Unitset* mineProbes = handler.getProbeUnits()->getMiningUntis();
-			Unitset::iterator it = mineProbes->begin();
-
-			Unit &u = it._Ptr->_Myval;
-
-			Assert::AreEqual(u->getID(), 12);
-		}
 	};
 }

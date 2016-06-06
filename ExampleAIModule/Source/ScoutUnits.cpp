@@ -15,12 +15,17 @@ bool ScoutUnits::addUnit(Unit unit) {
 
 	ScoutAndGoalStruct *newScout = new ScoutAndGoalStruct();
 	newScout->scout = unit;
+	scouts.push_back(newScout);
 
 	return true;
 }
 
 int ScoutUnits::getAmountOfScouts() {
 	return scouts.size();
+}
+
+bool ScoutUnits::hasScouts() {
+	return scouts.size() > 0;
 }
 
 bool ScoutUnits::assignGoal(Position goal) {
@@ -49,6 +54,7 @@ void ScoutUnits::updateScouts() {
 
 		// If goal has not been set we skip it
 		if (goal == Position(0, 0)) {
+			
 			continue;
 		}
 
@@ -56,6 +62,10 @@ void ScoutUnits::updateScouts() {
 		//			example from UnitHandler / Interface
 		scout->move(goal);
 	}
+	//Broodwar->sendText("Slut med at sende");
 
+}
 
+std::vector<ScoutAndGoalStruct*> ScoutUnits::getScouts() {
+	return scouts;
 }
