@@ -125,13 +125,11 @@ void ScoutManager::findEnemySpawn() {
 
 
 		int sightRadius = scoutAndGoal->scout->getType().sightRange();
-		Position goalPosition = scoutAndGoal->goal;
-		if (sightRadius * sightRadius <=
-			goalPosition.x * goalPosition.x + goalPosition.y * goalPosition.y &&
-			broodwar->isVisible(TilePosition(goalPosition))) {
+		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
+		if (broodwar->isVisible(goalPosition.x, goalPosition.y)) {
 
 			for (auto &spawn : spawns) {
-				if (goalPosition == Position(spawn->location)) {
+				if (goalPosition == spawn->location) {
 					spawn->scouted = true;
 					scoutAndGoal->reachedGoal = true;
 					hasToUpdateList = true;

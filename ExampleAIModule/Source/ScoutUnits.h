@@ -1,8 +1,14 @@
+#ifdef SCOUTMANAGER_EXPORTS
+#	define DLL_SPECIFIER _declspec(dllexport)
+#else
+#	define DLL_SPECIFIER _declspec(dllimport)
+#endif
+
 #pragma once
 #include "BWAPI.h"
 #include "Constants.h"
 
-class ScoutUnits {
+class DLL_SPECIFIER ScoutUnits {
 public:
 	ScoutUnits();
 	~ScoutUnits();

@@ -15,7 +15,7 @@ namespace Microsoft {
 	namespace VisualStudio {
 		namespace CppUnitTestFramework {
 			template<> static std::wstring ToString<TilePosition>(const TilePosition & p) {
-				return L"" + std::to_wstring(p.x) + L", " + std::to_wstring(p.y);
+				return L"" + std::to_wstring(p.x) + L"," + std::to_wstring(p.y);
 			}
 
 			template<> static std::wstring ToString<TilePosition::list>(const TilePosition::list & p) {
@@ -66,7 +66,7 @@ namespace UnitTest {
 			Assert::AreEqual(recordedSpawns.at(0), enemySpawn);
 		}
 
-		TEST_METHOD(ScoutManager_Test_Init1) {
+		TEST_METHOD(ScoutManager_Init1) {
 			// This first example is a 1v1 map, so _init should only really
 			// have one way of doing this, disregarding any sorting here
 			Mock<Game> Broodwar_Mock;
@@ -99,7 +99,7 @@ namespace UnitTest {
 			Assert::AreEqual(recordedSpawns.at(0), enemySpawn);
 		}
 
-		TEST_METHOD(ScoutManager_Test_Init2) {
+		TEST_METHOD(ScoutManager_Init2) {
 			// This test will now cover a broader spawn range and
 			// ensure that all potential enemy spawns are sorted
 			// correctly according to their length from our own spawn
@@ -147,6 +147,53 @@ namespace UnitTest {
 			Assert::AreEqual(recordedSpawns.at(0), enemySpawn3);
 			Assert::AreEqual(recordedSpawns.at(1), enemySpawn1);
 			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
+		}
+
+		TEST_METHOD(ScoutManager_UpdateList1) {
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Self_Mock;
+			Mock<UnitInterface> Unit_Mock;
+
+			TilePosition ownSpawn = TilePosition(8, 117);
+			TilePosition enemySpawn1 = TilePosition(7, 7);
+			TilePosition enemySpawn2 = TilePosition(117, 7);
+			TilePosition enemySpawn3 = TilePosition(117, 117);
+
+			TilePosition::list allSpawns;
+			allSpawns.push_back(ownSpawn);
+			allSpawns.push_back(enemySpawn1);
+			allSpawns.push_back(enemySpawn2);
+			allSpawns.push_back(enemySpawn3);
+
+			
+
+			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
+			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
+			PlayerInterface &self = Self_Mock.get();
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
+			
+
+			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)) ).AlwaysReturn(true);
+			
+
+			Game &broodwar = Broodwar_Mock.get();
+			
+
+			ScoutManager scoutMan = ScoutManager(&broodwar);
+			ScoutUnits scoutUnits;
+
+			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
+			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
+			//When(Method(Unit_Mock, move)).AlwaysReturn(true);
+			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
+			
+			Unit u = &Unit_Mock.get();
+
+			scoutUnits.addUnit(u);
+			//scoutMan.beginScouting(&scoutUnits);
+
+			Assert::IsTrue(true);
+
 		}
 
 		TEST_METHOD(Mining_Probes_Test){
