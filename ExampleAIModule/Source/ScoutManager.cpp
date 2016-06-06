@@ -6,9 +6,13 @@ using namespace BWAPI;
 
 ScoutManager::ScoutManager() { }
 
+ScoutManager::ScoutManager(Game *gameWrapper) {
+	broodwar = gameWrapper;
+}
+
 ScoutManager::~ScoutManager() { }
 
-bool ScoutManager::_init(TilePosition::list allSpawns, TilePosition ownSpawn) {
+bool ScoutManager::_init() {
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -16,9 +20,10 @@ bool ScoutManager::_init(TilePosition::list allSpawns, TilePosition ownSpawn) {
 	}
 
 	TilePosition::list unsortedSpawns;
+	TilePosition ownSpawn = broodwar->self()->getStartLocation();
 
 	// Adds all the spawns to a list, excluding our own spawn
-	for (auto &location : allSpawns) {
+	for (auto &location : broodwar->getStartLocations()) {
 		if (location != ownSpawn) {
 			unsortedSpawns.push_back(location);
 		}
@@ -28,8 +33,8 @@ bool ScoutManager::_init(TilePosition::list allSpawns, TilePosition ownSpawn) {
 	// to our spawn is first in the list, and our spawn is
 	// Uses insertion sort, but the size of spawn locations
 	// is small enough for this to not be an issue
-	for (unsigned int i = 1; i < unsortedSpawns.size(); i++) {
-		for (int j = i; j > 0; j--) {
+	for (u_int i = 1; i < unsortedSpawns.size(); i++) {
+		for (u_int j = i; j > 0; j--) {
 			if (unsortedSpawns.at(j).getApproxDistance(ownSpawn) <
 				unsortedSpawns.at(j - 1).getApproxDistance(ownSpawn)) {
 
@@ -54,14 +59,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 	if (enemyUnits.count(u->getID()) == 1) {
 		// Then we update their position and when we last saw it
 		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
-		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
+		enemyUnits.at(u->getID())->lastScouted = broodwar->getFrameCount();
 	}
 	// Otherwise we need to record it
 	else {
 		UnitStruct *uStruct = new UnitStruct();
 		uStruct->unit = u;
 		uStruct->lastKnownPosition = u->getPosition();
-		uStruct->lastScouted = Broodwar->getFrameCount();
+		uStruct->lastScouted = broodwar->getFrameCount();
 
 		enemyUnits.insert(std::pair<int, UnitStruct*>(u->getID(), uStruct));
 	}
@@ -75,7 +80,7 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	if (elementsRemoved == 0) {
 		// TODO: Currently just tells the player about it,
 		// but this should be covered in a unit test
-		Broodwar->sendText("A unit was destroyed which was not recorded");
+		broodwar->sendText("A unit was destroyed which was not recorded");
 	}
 
 	return elementsRemoved;
@@ -84,11 +89,11 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 void ScoutManager::recordUnitEvade(Unit u) {
 	if (enemyUnits.count(u->getID()) == 1) {
 		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
-		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
+		enemyUnits.at(u->getID())->lastScouted = broodwar->getFrameCount();
 	}
 	else {
 		// Something went wrong, for now just tell the client
-		Broodwar->sendText("A unit has evaded that wasnt recorded");
+		broodwar->sendText("A unit has evaded that wasnt recorded");
 	}
 }
 

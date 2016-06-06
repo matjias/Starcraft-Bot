@@ -50,6 +50,9 @@
     <ClCompile Include="Source\BuildingUnits.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ScoutUnits.cpp">
+      <Filter>Source Files\New stuffs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Army.h">
@@ -101,6 +104,9 @@
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
     <ClInclude Include="Source\BuildingUnits.h">
+      <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ScoutUnits.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
   </ItemGroup>

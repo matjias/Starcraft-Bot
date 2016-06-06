@@ -3,6 +3,7 @@
 #include "CombatUnits.h"
 #include "ProbeUnits.h"
 #include "BuildingUnits.h"
+#include "ScoutUnits.h"
 
 class UnitHandler {
 public:
@@ -10,9 +11,9 @@ public:
 	~UnitHandler();
 	void _init();
 	void addUnit(BWAPI::Unit u);
-	void queueUnit(BWAPI::Unit u);
-	void dequeueUnit(BWAPI::Unit u);
-	std::unordered_map<int, BWAPI::Unit> getQueuedUnits();
+	void addWarpingUnit(BWAPI::Unit u);
+	void removeWarpingUnit(BWAPI::Unit u);
+	int getWarpingUnitCount(BWAPI::UnitType unitType);
 
 	BuildingUnits* getBuildingUnits();
 
@@ -20,10 +21,10 @@ private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
 	BuildingUnits buildingUnits;
+	ScoutUnits scoutUnits;
 
-	
-	// Me like to play pool and billard wif dem Queues.
-	std::unordered_map<int, BWAPI::Unit> cuedUnits;
+
+	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 
 	bool isCombatUnit(BWAPI::Unit u);
 	bool isProbeUnit(BWAPI::Unit u);

@@ -44,8 +44,8 @@ public:
 	// Our global variables
 	
 	// The classes that the AI Module holds
-	StrategyDecider StrategyDecider;
-	Tactician Tactician;
-	ScoutManager ScoutManager;
+	StrategyDecider strategyDecider;
+	Tactician tactician;
+	ScoutManager scoutManager;
 	
 };

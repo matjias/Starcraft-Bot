@@ -23,12 +23,11 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
-	TilePosition::list allSpawns = Broodwar->getStartLocations();
-	TilePosition ownSpawn = Broodwar->self()->getStartLocation();
-	ScoutManager._init(allSpawns, ownSpawn);
+	scoutManager = ScoutManager(BroodwarPtr);
+	scoutManager._init();
 
-	StrategyDecider._init(&Tactician, &ScoutManager);
-	Tactician._init(&ScoutManager);
+	strategyDecider._init(&tactician, &scoutManager);
+	tactician._init(&scoutManager);
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }
@@ -47,7 +46,7 @@ void ExampleAIModule::onFrame() {
 	}
 
 	// Call our game logic
-	StrategyDecider.update();
+	strategyDecider.update();
 
 }
 
@@ -68,20 +67,20 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		Tactician.queueUnit(unit);
+		tactician.addWarpingUnit(unit);
 
 		//Broodwar->sendText("Own unit discovered: %s\n", unit->getType().c_str());
 
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
-		ScoutManager.recordUnitDiscover(unit);
+		scoutManager.recordUnitDiscover(unit);
 	}
 }
 
 void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
 	if (Broodwar->enemy() == unit->getPlayer()) {
-		ScoutManager.recordUnitEvade(unit);
+		scoutManager.recordUnitEvade(unit);
 	}
 }
 
@@ -94,11 +93,11 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		Tactician.recordDeadUnit(unit);
+		tactician.recordDeadUnit(unit);
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
-		ScoutManager.recordUnitDestroy(unit);
+		scoutManager.recordUnitDestroy(unit);
 	}
 }
 
@@ -110,7 +109,7 @@ void ExampleAIModule::onSaveGame(std::string gameName) { }
 
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
-		Tactician.recordNewUnit(unit);
+		tactician.recordNewUnit(unit);
 
 		//Broodwar->sendText("Own unit completed: %s", unit->getType().c_str());
 	}
@@ -187,8 +186,8 @@ void ExampleAIModule::drawData() {
 	}
 
 	// ScoutManager debug
-	TilePosition::list scoutSpawns = ScoutManager.getSpawns();
-	std::vector<bool> scoutSpawnBools = ScoutManager.getSpawnBools();
+	TilePosition::list scoutSpawns = scoutManager.getSpawns();
+	std::vector<bool> scoutSpawnBools = scoutManager.getSpawnBools();
 	for (unsigned int i = 0; i < scoutSpawns.size(); i++) {
 		bool draw = scoutSpawnBools.at(i) ? 1 : 0;
 
