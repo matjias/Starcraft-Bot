@@ -38,6 +38,16 @@ bool Tactician::recordDeadUnit(Unit u) {
 	return false;
 }
 
+void Tactician::scout() {
+	// Hack
+	if (!assigned) {
+		unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+		scoutManagerPtr->beginScouting(unitHandler.getScoutUnits());
+		assigned = true;
+	}
+	
+}
+
 void Tactician::updateTactician(StrategyName currentStategy) {
 	if (lastKnownStrategy != currentStategy) {
 		// Some switching logic?
@@ -71,5 +81,6 @@ void Tactician::updateTacticianStart() {
 
 	// UnitHandler.mineMinerals()
 
+	unitHandler.update();
 
 }

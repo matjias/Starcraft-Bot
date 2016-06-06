@@ -29,4 +29,5 @@ private:
 
 	// Variables
 	StrategyName currentStrategy;
+	bool needsScouting;
 };

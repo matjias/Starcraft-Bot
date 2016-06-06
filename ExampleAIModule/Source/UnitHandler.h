@@ -21,8 +21,13 @@ public:
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
 
+	void addScout(BWAPI::UnitType unitType);
+
+	void update();
+
 	BuildingUnits* getBuildingUnits();
 	ProbeUnits* getProbeUnits();
+	ScoutUnits* getScoutUnits();
 
 private:
 	CombatUnits combatUnits;

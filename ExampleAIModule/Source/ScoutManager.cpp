@@ -99,7 +99,7 @@ void ScoutManager::recordUnitEvade(Unit u) {
 
 
 void ScoutManager::updateScoutManager() {
-
+	
 }
 
 bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
@@ -110,6 +110,7 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
 	scoutUnits = scoutUnitsPtr;
 
 	// More scoutUnits calls here
+	scoutUnits->assignGoal(Position(spawns.at(0)->location));
 
 	return true;
 }
