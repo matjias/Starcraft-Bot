@@ -27,7 +27,6 @@ void UnitHandler::addUnit(Unit u){
 		combatUnits.addUnit(u);
 	}
 	else if (isProbeUnit(u)){
-		// Add functionality for gas probes. 
 		probeUnits.addUnit(u);
 	}
 }
