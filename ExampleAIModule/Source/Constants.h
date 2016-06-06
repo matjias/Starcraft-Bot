@@ -1,4 +1,5 @@
 #pragma once
+#include "BWAPI.h"
 
 enum StrategyName {
 	// Default has no direct goal in mind, but just works towards
@@ -12,6 +13,12 @@ enum StrategyName {
 enum GameStage {
 	Start, Early, EarlyMid,
 	Mid, MidLate, Late
+};
+
+struct ScoutAndGoalStruct {
+	BWAPI::Unit scout;
+	BWAPI::Position goal = BWAPI::Position(0, 0);
+	bool reachedGoal = false;
 };
 
 // Le olde code grandos suckus

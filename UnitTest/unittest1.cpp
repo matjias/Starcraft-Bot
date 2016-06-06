@@ -149,30 +149,28 @@ namespace UnitTest {
 			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
 		}
 
-		
-
 		TEST_METHOD(Mining_Probes_Test){
 			UnitHandler handler;
-			Mock<Unit> Únit_Mock;
-			
-			When(Method(Unit_Mock, getID)).AlwaysReturn(12);
+			Mock<UnitInterface> UnitInt_Mock;
 
-			Unitset uSet;
+			When(Method(UnitInt_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
+			When(Method(UnitInt_Mock, getID)).AlwaysReturn(12); 
+			UnitInterface &unit = UnitInt_Mock.get();
 
-			handler.addUnit(u);
-			Unitset* mineProbes = handler.getProbeUnits()->getMiningUntis();
-			Unitset::iterator unit = mineProbes->begin();
+			handler.addUnit(&unit);
+			Unitset* mineProbes = handler.getProbeUnits()->getMiningUnits();
+			Unitset::iterator it = mineProbes->begin();
+			Unit u = *it;
 
-			uSet.insert(u);
-
-
-
-			Assert::AreEqual();
+			Assert::AreEqual(u->getID(), 12);
 		}
+<<<<<<< HEAD
 
 		TEST_METHOD(BuildingUnits_Test_Init1) {
 			Tactician tactician;
 
 		}
+=======
+>>>>>>> bd8d3a9905043276609bf9da9d0e69a6559092c7
 	};
 }

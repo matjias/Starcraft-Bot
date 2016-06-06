@@ -27,8 +27,13 @@ void UnitHandler::addUnit(Unit u){
 		combatUnits.addUnit(u);
 	}
 	else if (isProbeUnit(u)){
-		// Add functionality for gas probes. 
 		probeUnits.addUnit(u);
+	}
+}
+
+void UnitHandler::addScout(UnitType unitType) {
+	if (unitType == UnitTypes::Protoss_Probe) {
+		scoutUnits.addUnit(probeUnits.extractUnit());
 	}
 }
 
@@ -53,6 +58,14 @@ ProbeUnits* UnitHandler::getProbeUnits() {
 	return &probeUnits;
 }
 
+ScoutUnits* UnitHandler::getScoutUnits() {
+	return &scoutUnits;
+}
+
 int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 	return warpingUnits.count(unitType);
+}
+
+void UnitHandler::update() {
+	scoutUnits.updateScouts();
 }

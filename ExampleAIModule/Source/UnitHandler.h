@@ -1,4 +1,4 @@
-#ifdef SCOUTMANAGER_EXPORTS
+#ifdef UNITHANDLER_EXPORTS
 #	define DLL_SPECIFIER _declspec(dllexport)
 #else
 #	define DLL_SPECIFIER _declspec(dllimport)
@@ -21,8 +21,13 @@ public:
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
 
+	void addScout(BWAPI::UnitType unitType);
+
+	void update();
+
 	BuildingUnits* getBuildingUnits();
 	ProbeUnits* getProbeUnits();
+	ScoutUnits* getScoutUnits();
 
 private:
 	CombatUnits combatUnits;
