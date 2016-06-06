@@ -34,11 +34,7 @@ void UnitHandler::addUnit(Unit u){
 
 void UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
-		Unitset* probes = probeUnits.getMiningUnits();
-
-		Unitset::iterator it = probes->begin();
-
-		scoutUnits.addUnit(it._Ptr->_Myval);
+		scoutUnits.addUnit(probeUnits.extractUnit());
 	}
 }
 

@@ -15,7 +15,7 @@ public:
 
 	void addUnit(BWAPI::Unit u);
 
-	BWAPI::Unitset* getMiningUntis();
+	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
 
 private:
