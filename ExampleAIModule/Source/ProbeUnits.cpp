@@ -78,6 +78,10 @@ void ProbeUnits::increaseGasMiners(int amount){
 	update();
 }
 
+int ProbeUnits::getWorkerCount() {
+	return miningProbes.size();
+}
+
 void ProbeUnits::decreaseGasMiners(int amount){
 	moveUnits(&gasProbes, &miningProbes, amount);
 	update();

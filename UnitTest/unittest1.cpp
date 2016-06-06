@@ -211,5 +211,13 @@ namespace UnitTest {
 
 			Assert::AreEqual(u->getID(), 12);
 		}
+<<<<<<< HEAD
+
+		TEST_METHOD(BuildingUnits_Test_Init1) {
+			Tactician tactician;
+
+		}
+=======
+>>>>>>> bd8d3a9905043276609bf9da9d0e69a6559092c7
 	};
 }

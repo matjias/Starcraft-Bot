@@ -14,6 +14,7 @@ public:
 	~ProbeUnits();
 
 	void addUnit(BWAPI::Unit u);
+	int getWorkerCount();
 	void increaseGasMiners(int amount);
 	void decreaseGasMiners(int amount);
 	void update();
