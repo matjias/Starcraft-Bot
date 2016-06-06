@@ -38,6 +38,11 @@ bool Tactician::recordDeadUnit(Unit u) {
 	return false;
 }
 
+void Tactician::scout() {
+	// Hack
+	unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+}
+
 void Tactician::updateTactician(StrategyName currentStategy) {
 	if (lastKnownStrategy != currentStategy) {
 		// Some switching logic?

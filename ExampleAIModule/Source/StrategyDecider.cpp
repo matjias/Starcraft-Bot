@@ -3,6 +3,7 @@
 
 StrategyDecider::StrategyDecider() {
 	currentStrategy = Default;
+	needsScouting = true;
 }
 
 StrategyDecider::~StrategyDecider() { }
@@ -19,6 +20,10 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
+	if (needsScouting) {
+		tacticianPtr->scout();
+	}
+
 	tacticianPtr->updateTactician(currentStrategy);
 
 }

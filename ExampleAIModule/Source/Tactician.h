@@ -13,6 +13,7 @@ public:
 	bool _init(ScoutManager* scoutMan);
 
 	void updateTactician(StrategyName currentStrategy);
+	void scout();
 
 	bool addWarpingUnit(BWAPI::Unit u);
 	bool recordNewUnit(BWAPI::Unit u);

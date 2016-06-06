@@ -33,6 +33,12 @@ void UnitHandler::addUnit(Unit u){
 	}
 }
 
+void UnitHandler::addScout(UnitType unitType) {
+	if (unitType == UnitTypes::Protoss_Probe) {
+
+	}
+}
+
 // Expand on tactical decisions. What is our current strategy 
 // and should the unit in this situation really be added here
 // 

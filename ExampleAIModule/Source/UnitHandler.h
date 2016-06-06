@@ -15,6 +15,8 @@ public:
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
 
+	void addScout(BWAPI::UnitType unitType);
+
 	BuildingUnits* getBuildingUnits();
 
 private:
