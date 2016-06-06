@@ -8,6 +8,7 @@ public:
 	~ProbeUnits();
 
 	void addUnit(BWAPI::Unit u);
+	int getWorkerCount();
 
 	BWAPI::Unitset* getMiningUntis();
 

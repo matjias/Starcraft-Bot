@@ -170,5 +170,9 @@ namespace UnitTest {
 			Assert::AreEqual();
 		}
 
+		TEST_METHOD(BuildingUnits_Test_Init1) {
+			Tactician tactician;
+
+		}
 	};
 }

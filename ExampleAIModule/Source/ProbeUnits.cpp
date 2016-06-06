@@ -30,3 +30,7 @@ void ProbeUnits::addUnit(Unit u){
 Unitset* ProbeUnits::getMiningUntis(){
 	return &miningProbes;
 }
+
+int ProbeUnits::getWorkerCount() {
+	return miningProbes.size();
+}
