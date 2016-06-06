@@ -34,7 +34,11 @@ void UnitHandler::addUnit(Unit u){
 
 void UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
+		Unitset* probes = probeUnits.getMiningUnits();
 
+		Unitset::iterator it = probes->begin();
+
+		scoutUnits.addUnit(it._Ptr->_Myval);
 	}
 }
 
@@ -59,6 +63,14 @@ ProbeUnits* UnitHandler::getProbeUnits() {
 	return &probeUnits;
 }
 
+ScoutUnits* UnitHandler::getScoutUnits() {
+	return &scoutUnits;
+}
+
 int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 	return warpingUnits.count(unitType);
+}
+
+void UnitHandler::update() {
+	scoutUnits.updateScouts();
 }

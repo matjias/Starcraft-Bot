@@ -27,6 +27,6 @@ void ProbeUnits::addUnit(Unit u){
 	miningProbes.insert(u);
 }
 
-Unitset* ProbeUnits::getMiningUntis(){
+Unitset* ProbeUnits::getMiningUnits(){
 	return &miningProbes;
 }

@@ -40,7 +40,12 @@ bool Tactician::recordDeadUnit(Unit u) {
 
 void Tactician::scout() {
 	// Hack
-	unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+	if (!assigned) {
+		unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+		scoutManagerPtr->beginScouting(unitHandler.getScoutUnits());
+		assigned = true;
+	}
+	
 }
 
 void Tactician::updateTactician(StrategyName currentStategy) {
@@ -76,5 +81,6 @@ void Tactician::updateTacticianStart() {
 
 	// UnitHandler.mineMinerals()
 
+	unitHandler.update();
 
 }

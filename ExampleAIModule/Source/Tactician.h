@@ -32,4 +32,6 @@ private:
 	// Class pointers
 	ScoutManager* scoutManagerPtr;
 
+	bool assigned = false;
+
 };

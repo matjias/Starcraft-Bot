@@ -23,8 +23,11 @@ public:
 
 	void addScout(BWAPI::UnitType unitType);
 
+	void update();
+
 	BuildingUnits* getBuildingUnits();
 	ProbeUnits* getProbeUnits();
+	ScoutUnits* getScoutUnits();
 
 private:
 	CombatUnits combatUnits;

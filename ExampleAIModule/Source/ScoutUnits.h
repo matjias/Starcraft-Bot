@@ -12,7 +12,7 @@ public:
 	
 	struct ScoutAndGoalStruct {
 		BWAPI::Unit scout;
-		BWAPI::Position goal = Position(0, 0);
+		BWAPI::Position goal = BWAPI::Position(0, 0);
 	};
 
 	bool assignGoal(BWAPI::Position goal);
