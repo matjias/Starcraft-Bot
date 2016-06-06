@@ -15,6 +15,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "ScoutUnits.h"
+
 class DLL_SPECIFIER ScoutManager {
 public:
 	ScoutManager();
@@ -44,7 +46,11 @@ public:
 	struct LocationStruct {
 		BWAPI::TilePosition location;
 		bool scouted = false;
+		bool hasScout = false;
 	};
+
+	// Regular scouting functions
+	bool beginScouting(ScoutUnits* scoutUnitsPtr);
 
 	// Debug functions
 	BWAPI::TilePosition::list getSpawns();
@@ -52,6 +58,7 @@ public:
 
 private:
 	BWAPI::Game* broodwar;
+	ScoutUnits* scoutUnits;
 
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the

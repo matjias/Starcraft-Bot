@@ -1,13 +1,14 @@
 #pragma once
 #include "BWAPI.h"
-#include "UnitHandler.h"
 
 class ScoutUnits {
 public:
 	ScoutUnits();
 	~ScoutUnits();
 	
+	bool addUnit(BWAPI::Unit unit);
 
 private:
 	
 };
+

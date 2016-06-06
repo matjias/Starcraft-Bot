@@ -6,8 +6,8 @@ using namespace BWAPI;
 
 ScoutManager::ScoutManager() { }
 
-ScoutManager::ScoutManager(Game *gameWrapper) {
-	broodwar = gameWrapper;
+ScoutManager::ScoutManager(Game *gamePtr) {
+	broodwar = gamePtr;
 }
 
 ScoutManager::~ScoutManager() { }
@@ -102,7 +102,17 @@ void ScoutManager::updateScoutManager() {
 
 }
 
+bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
+	if (scoutUnits != NULL || scoutUnitsPtr == NULL) {
+		return false;
+	}
+	
+	scoutUnits = scoutUnitsPtr;
 
+	// More scoutUnits calls here
+
+	return true;
+}
 
 
 // Debug functions
