@@ -1,3 +1,9 @@
+#ifdef SCOUTMANAGER_EXPORTS
+#	define DLL_SPECIFIER _declspec(dllexport)
+#else
+#	define DLL_SPECIFIER _declspec(dllimport)
+#endif
+
 #pragma once
 #include "BWAPI.h"
 #include "CombatUnits.h"
@@ -5,7 +11,7 @@
 #include "BuildingUnits.h"
 #include "ScoutUnits.h"
 
-class UnitHandler {
+class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
 	~UnitHandler();
@@ -18,6 +24,7 @@ public:
 	void addScout(BWAPI::UnitType unitType);
 
 	BuildingUnits* getBuildingUnits();
+	ProbeUnits* getProbeUnits();
 
 private:
 	CombatUnits combatUnits;
@@ -25,8 +32,6 @@ private:
 	BuildingUnits buildingUnits;
 	ScoutUnits scoutUnits;
 
-	// Currently functioning as default unitset for probes.
-	BWAPI::Unitset miningProbes;
 
 	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 

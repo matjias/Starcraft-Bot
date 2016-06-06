@@ -28,8 +28,7 @@ void UnitHandler::addUnit(Unit u){
 	}
 	else if (isProbeUnit(u)){
 		// Add functionality for gas probes. 
-		miningProbes.insert(u);
-		probeUnits.mineMinerals(u);
+		probeUnits.addUnit(u);
 	}
 }
 
@@ -54,6 +53,10 @@ bool UnitHandler::isProbeUnit(Unit u){
 
 BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
+}
+
+ProbeUnits* UnitHandler::getProbeUnits() {
+	return &probeUnits;
 }
 
 int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {

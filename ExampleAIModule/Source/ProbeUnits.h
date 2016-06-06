@@ -7,13 +7,18 @@ public:
 	ProbeUnits();
 	~ProbeUnits();
 
-	void mineMinerals(BWAPI::Unitset uSet);
-	void mineMinerals(BWAPI::Unit u);
-	void mineGas(BWAPI::Unitset uSet);
+	void addUnit(BWAPI::Unit u);
 
+	BWAPI::Unitset* getMiningUntis();
 
 private:
 	int miningCount;
 
-	
+	// Currently functioning as default unitset for probes.
+	BWAPI::Unitset miningProbes;
+
+	void mineMinerals(BWAPI::Unitset uSet);
+	void mineMinerals(BWAPI::Unit u);
+	void mineGas(BWAPI::Unitset uSet);
+
 };

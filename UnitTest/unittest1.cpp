@@ -4,6 +4,7 @@
 #include "fakeit.hpp"
 
 #include "..\ExampleAIModule\Source\ScoutManager.h"
+#include "..\ExampleAIModule\Source\UnitHandler.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BWAPI;
@@ -149,6 +150,25 @@ namespace UnitTest {
 		}
 
 		
+
+		TEST_METHOD(Mining_Probes_Test){
+			UnitHandler handler;
+			Mock<Unit> Únit_Mock;
+			
+			When(Method(Unit_Mock, getID)).AlwaysReturn(12);
+
+			Unitset uSet;
+
+			handler.addUnit(u);
+			Unitset* mineProbes = handler.getProbeUnits()->getMiningUntis();
+			Unitset::iterator unit = mineProbes->begin();
+
+			uSet.insert(u);
+
+
+
+			Assert::AreEqual();
+		}
 
 	};
 }

@@ -16,9 +16,14 @@ void CombatUnits::idleUpdate(){
 	//Squad loops
 	for (int i = 0; i < zealotSquads.size(); i++){
 		idleMovement(&zealotSquads.at(i), ownChoke);
+
+		//Zealot Rush
 		if (zealotCount > ZEALOT_RUSH_COUNT){
 			attackMovement(&zealotSquads.at(i));
 		}
+	}
+	for (int i = 0; i < dragoonSquads.size(); i++){
+
 	}
 }
 
