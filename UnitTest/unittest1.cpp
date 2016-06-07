@@ -185,7 +185,7 @@ namespace UnitTest {
 			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			//Fake(Method(Unit_Mock, move));
+			When(Method(Unit_Mock, getPosition)).AlwaysReturn(Position(ownSpawn));
 			
 			Unit u = &Unit_Mock.get();
 
