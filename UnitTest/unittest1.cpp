@@ -173,6 +173,7 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 			
 			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)) ).AlwaysReturn(true);
+			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)).Using(enemySpawn3.x, enemySpawn3.y)).Return(false).Return(true);
 			
 			Game &broodwar = Broodwar_Mock.get();
 
@@ -184,12 +185,12 @@ namespace UnitTest {
 			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			Fake(Method(Unit_Mock, move));
+			When(Method(Unit_Mock, getPosition)).AlwaysReturn(Position(ownSpawn));
 			
 			Unit u = &Unit_Mock.get();
 
 			scoutUnits.addUnit(u);
-			scoutMan.beginScouting(&scoutUnits);
+			Assert::IsTrue(scoutMan.beginScouting(&scoutUnits));
 
 			// Fetch has scout on the spawns
 			std::vector<bool> hasScouts = scoutMan.getSpawnHasScouts();
@@ -198,17 +199,22 @@ namespace UnitTest {
 
 			scoutMan.updateScoutManager();
 
+
+
+			scoutMan.updateScoutManager();
+
 		}
 
 		TEST_METHOD(Mining_Probes_Test){
 			UnitHandler handler;
 			Mock<UnitInterface> UnitInt_Mock;
-
+			
 			When(Method(UnitInt_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
 			When(Method(UnitInt_Mock, getID)).AlwaysReturn(12); 
-			UnitInterface &unit = UnitInt_Mock.get();
 
-			handler.addUnit(&unit);
+			Unit unit = &UnitInt_Mock.get();
+
+			handler.addUnit(unit);
 			Unitset* mineProbes = handler.getProbeUnits()->getMiningUnits();
 			Unitset::iterator it = mineProbes->begin();
 			Unit u = *it;

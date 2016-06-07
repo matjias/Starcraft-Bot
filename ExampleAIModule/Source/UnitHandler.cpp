@@ -68,4 +68,9 @@ int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 
 void UnitHandler::update() {
 	scoutUnits.updateScouts();
+	probeUnits.update();
+}
+
+void UnitHandler::setAnalyzed(bool analyzed){
+	probeUnits.setAnalyzed(analyzed);
 }

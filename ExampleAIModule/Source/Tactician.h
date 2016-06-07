@@ -20,6 +20,8 @@ public:
 	bool recordNewUnit(BWAPI::Unit u);
 	bool recordDeadUnit(BWAPI::Unit u);
 
+	void setAnalyzed(bool analyzed);
+
 private:
 	StrategyName lastKnownStrategy;
 	GameStage currentStage;

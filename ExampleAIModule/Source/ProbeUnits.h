@@ -6,6 +6,8 @@
 
 #pragma once
 #include "BWAPI.h"
+#include "BWTA.h"
+
 
 
 class DLL_SPECIFIER ProbeUnits {
@@ -25,8 +27,11 @@ public:
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
 
+	void setAnalyzed(bool analyzed);
+
 private:
 	int miningCount;
+	bool mapAnalyzed;
 
 	// Currently functioning as default unitset for probes.
 	BWAPI::Unitset miningProbes;
@@ -37,4 +42,6 @@ private:
 	void mineGas(BWAPI::Unitset uSet);
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
+	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);
+	bool checkMargin(BWAPI::UnitType type, BWAPI::TilePosition basePos);
 };
