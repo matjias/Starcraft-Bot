@@ -4,9 +4,7 @@
 using namespace BWAPI;
 using namespace Filter;
 
-// BWTA variables, need to be here
-bool analyzed;
-bool analysis_just_finished;
+
 
 
 void ExampleAIModule::onStart() {
@@ -19,8 +17,8 @@ void ExampleAIModule::onStart() {
 	analyzed = false;
 	analysis_just_finished = false;
 
-	Broodwar << "Analyzing map... this may take a minute" << std::endl;;
-	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
+	Broodwar->sendText("Analyzing map... this may take a minute");
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, this, 0, NULL);
 
 	// Other onStart stuff
 	scoutManager = ScoutManager(BroodwarPtr);
@@ -41,7 +39,7 @@ void ExampleAIModule::onFrame() {
 		return;
 
 	if (analysis_just_finished) {
-		Broodwar << "Finished analyzing map." << std::endl;;
+		Broodwar->sendText("Finished analyzing map");
 		analysis_just_finished = false;
 	}
 
@@ -119,11 +117,12 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 
 
 // BWTA2 functions
-DWORD WINAPI AnalyzeThread() {
+DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
 	BWTA::analyze();
 
-	analyzed = true;
-	analysis_just_finished = true;
+	
+	para->analyzed = true;
+	para->analysis_just_finished = true;
 
 	// Tell any classes here that BWTA has finished
 

@@ -108,8 +108,6 @@ void ScoutManager::updateScoutManager() {
 	if (!foundEnemySpawn) {
 		findEnemySpawn();
 	}
-
-	scoutUnits->updateScouts();
 }
 
 void ScoutManager::findEnemySpawn() {

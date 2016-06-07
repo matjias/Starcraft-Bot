@@ -173,6 +173,7 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 			
 			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)) ).AlwaysReturn(true);
+			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)).Using(enemySpawn3.x, enemySpawn3.y)).Return(false).Return(true);
 			
 			Game &broodwar = Broodwar_Mock.get();
 
@@ -184,17 +185,21 @@ namespace UnitTest {
 			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			Fake(Method(Unit_Mock, move));
+			//Fake(Method(Unit_Mock, move));
 			
 			Unit u = &Unit_Mock.get();
 
 			scoutUnits.addUnit(u);
-			scoutMan.beginScouting(&scoutUnits);
+			Assert::IsTrue(scoutMan.beginScouting(&scoutUnits));
 
 			// Fetch has scout on the spawns
 			std::vector<bool> hasScouts = scoutMan.getSpawnHasScouts();
 			Assert::IsTrue(hasScouts.at(0));
 			Assert::IsFalse(hasScouts.at(1));
+
+			scoutMan.updateScoutManager();
+
+
 
 			scoutMan.updateScoutManager();
 
