@@ -4,7 +4,7 @@
 #include "fakeit.hpp"
 
 #include "..\ExampleAIModule\Source\ScoutManager.h"
-#include "..\ExampleAIModule\Source\UnitHandler.h"
+#include "..\ExampleAIModule\Source\Tactician.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BWAPI;
@@ -172,27 +172,31 @@ namespace UnitTest {
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 			
-
 			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)) ).AlwaysReturn(true);
 			
-
 			Game &broodwar = Broodwar_Mock.get();
-			
 
 			ScoutManager scoutMan = ScoutManager(&broodwar);
+			scoutMan._init();
+
 			ScoutUnits scoutUnits;
 
 			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
-			//When(Method(Unit_Mock, move)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
+			Fake(Method(Unit_Mock, move));
 			
 			Unit u = &Unit_Mock.get();
 
 			scoutUnits.addUnit(u);
-			//scoutMan.beginScouting(&scoutUnits);
+			scoutMan.beginScouting(&scoutUnits);
 
-			Assert::IsTrue(true);
+			// Fetch has scout on the spawns
+			std::vector<bool> hasScouts = scoutMan.getSpawnHasScouts();
+			Assert::IsTrue(hasScouts.at(0));
+			Assert::IsFalse(hasScouts.at(1));
+
+			scoutMan.updateScoutManager();
 
 		}
 
@@ -211,13 +215,10 @@ namespace UnitTest {
 
 			Assert::AreEqual(u->getID(), 12);
 		}
-<<<<<<< HEAD
 
 		TEST_METHOD(BuildingUnits_Test_Init1) {
-			Tactician tactician;
+			//Tactician tactician;
 
 		}
-=======
->>>>>>> bd8d3a9905043276609bf9da9d0e69a6559092c7
 	};
 }

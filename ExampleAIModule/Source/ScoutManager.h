@@ -58,6 +58,7 @@ public:
 	// Debug functions
 	BWAPI::TilePosition::list getSpawns();
 	std::vector<bool> getSpawnBools();
+	std::vector<bool> getSpawnHasScouts();
 	std::vector<ScoutAndGoalStruct*> getScouts();
 	bool hasScouts();
 	bool isScouting = false;

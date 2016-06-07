@@ -126,7 +126,7 @@ void ScoutManager::findEnemySpawn() {
 
 		int sightRadius = scoutAndGoal->scout->getType().sightRange();
 		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
-		if (broodwar->isVisible(goalPosition.x, goalPosition.y)) {
+		if (broodwar->isVisible(goalPosition)) {
 
 			for (auto &spawn : spawns) {
 				if (goalPosition == spawn->location) {
@@ -188,7 +188,7 @@ void ScoutManager::findEnemySpawn() {
 	//}
 
 	for (auto &scoutAndGoal : scouts) {
-		scoutAndGoal->scout->move(scoutAndGoal->goal);
+		//scoutAndGoal->scout->move(scoutAndGoal->goal);
 	}
 
 }
@@ -260,6 +260,14 @@ std::vector<bool> ScoutManager::getSpawnBools() {
 	std::vector<bool> returnBools;
 	for (auto &b : spawns) {
 		returnBools.push_back(b->scouted);
+	}
+	return returnBools;
+}
+
+std::vector<bool> ScoutManager::getSpawnHasScouts() {
+	std::vector<bool> returnBools;
+	for (auto &b : spawns) {
+		returnBools.push_back(b->hasScout);
 	}
 	return returnBools;
 }

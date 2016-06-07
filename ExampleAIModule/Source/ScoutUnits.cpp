@@ -62,8 +62,6 @@ void ScoutUnits::updateScouts() {
 		//			example from UnitHandler / Interface
 		scout->move(goal);
 	}
-	//Broodwar->sendText("Slut med at sende");
-
 }
 
 std::vector<ScoutAndGoalStruct*> ScoutUnits::getScouts() {
