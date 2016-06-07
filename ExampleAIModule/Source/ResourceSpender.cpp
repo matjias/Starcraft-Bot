@@ -19,52 +19,48 @@ bool ResourceSpender::_init(UnitHandler* unitHandler, BuildingUnits* buildingUni
 	return true;
 }
 
-UnitOrUpgrade::UnitOrUpgrade(BWAPI::UnitType unitType) {
-	// @TODO
+UnitOrUpgrade::UnitOrUpgrade(BWAPI::UnitType investment) {
+	unitType = investment;
 }
 
-UnitOrUpgrade::UnitOrUpgrade(BWAPI::UpgradeType upgradeType) {
-	// @TODO
+UnitOrUpgrade::UnitOrUpgrade(BWAPI::UpgradeType investment) {
+	upgradeType = investment;
 }
 
 UnitOrUpgrade::~UnitOrUpgrade() { }
 
-void UnitOrUpgrade::operator= (const BWAPI::UpgradeType &unitType) {
-	// @TODO
+bool UnitOrUpgrade::operator== (const UnitOrUpgrade &investment) const {
+	if (unitType != NULL && investment.isUnitType()) {
+		if (unitType == investment.getUnitType()) {
+			return true;
+		}
+	}
+	if (upgradeType != NULL && investment.isUpgradeType()) {
+		if (unitType == investment.getUnitType()) {
+			return true;
+		}
+	}
+	return false;
 }
 
-bool UnitOrUpgrade::operator== (const BWAPI::UnitType &unitType) const {
-	// @TODO
+bool UnitOrUpgrade::operator!= (const UnitOrUpgrade &investment) const {
+	return UnitOrUpgrade::operator== (investment);
 }
 
-bool UnitOrUpgrade::operator== (const BWAPI::UpgradeType &upgradeType) const {
-	// @TODO
-}
-
-bool UnitOrUpgrade::operator!= (const BWAPI::UpgradeType &unitType) const {
-	// @TODO
-}
-
-BWAPI::UnitType UnitOrUpgrade::getUnitType() {
+BWAPI::UnitType UnitOrUpgrade::getUnitType() const {
 	return unitType;
 }
 
-BWAPI::UpgradeType UnitOrUpgrade::getUpgradeType() {
+BWAPI::UpgradeType UnitOrUpgrade::getUpgradeType() const {
 	return upgradeType;
 }
 
 bool UnitOrUpgrade::isUnitType() const {
-	if (unitType != NULL) {
-		return true;
-	}
-	return false;
+	return unitType != NULL;
 }
 
 bool UnitOrUpgrade::isUpgradeType() const {
-	if (upgradeType != NULL) {
-		return true;
-	}
-	return false;
+	return upgradeType != NULL;
 }
 
 int UnitOrUpgrade::gasPrice() {
@@ -76,8 +72,9 @@ int UnitOrUpgrade::gasPrice() {
 	}
 }
 
-void ResourceSpender::addUnitInvestment(BWAPI::UnitType unitType, bool urgent) {
-	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(unitType);
+
+void ResourceSpender::addUnitInvestment(BWAPI::UnitType investment, bool urgent) {
+	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(investment);
 	if (urgent) {
 		investments.insert(investments.begin(), unitOrUpgrade);
 	}
@@ -86,8 +83,8 @@ void ResourceSpender::addUnitInvestment(BWAPI::UnitType unitType, bool urgent) {
 	}
 }
 
-void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType upgradeType, bool urgent) {
-	UnitOrUpgrade unitOrUpgrade = upgradeType;
+void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType investment, bool urgent) {
+	UnitOrUpgrade unitOrUpgrade = investment;
 	if (urgent) {
 		investments.insert(investments.begin(), unitOrUpgrade);
 	}
@@ -96,13 +93,13 @@ void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType upgradeType, bool 
 	}
 }
 
-void ResourceSpender::addUnitInvestment(BWAPI::UnitType unitType, int position) {
-	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(unitType);
+void ResourceSpender::addUnitInvestment(BWAPI::UnitType investment, int position) {
+	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(investment);
 	investments.insert(investments.begin() + position, unitOrUpgrade);
 }
 
-void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType upgradeType, int position) {
-	UnitOrUpgrade unitOrUpgrade = upgradeType;
+void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType investment, int position) {
+	UnitOrUpgrade unitOrUpgrade = investment;
 	investments.insert(investments.begin() + position, unitOrUpgrade);
 }
 
@@ -110,13 +107,13 @@ void ResourceSpender::addRequirements(int number) {
 	if (investments.size() >= 1) {
 
 		// Add required buildings and upgrades
-		for (int i = 0; i < investments[number].getUnitType().requiredUnits().size(); i++) {
+		/*for (int i = 0; i < investments[number].getUnitType().requiredUnits().size(); i++) {
 			if (buildingUnitsPtr->getBuildingCount(investments[number].getUnitType().requiredUnits().at(i)) < 1 &&
-				!unitInvestmentExists(investments[number].getUnitType().requiredUnits().at(i))) {
+				!investmentExists(investments[number].getUnitType().requiredUnits().at(i))) {
 				addUnitInvestment(investments[number].getUnitType().requiredUnits().at(i), number);
 				addRequirements(number);
 			}
-		}
+		}*/
 
 		// Add Assimilators
 		if (!investmentExists(investments[BWAPI::UnitTypes::Protoss_Assimilator])
@@ -136,20 +133,7 @@ void ResourceSpender::addRequirements(int number) {
 }
 
 bool ResourceSpender::investmentExists(UnitOrUpgrade investment) {
-	return false;
-	// @TODO:
-	//return (std::find(investments.begin(), investments.end(), investment) != investments.end());
-}
-
-bool ResourceSpender::unitInvestmentExists(UnitType investment) {
-	return false;
-	// @TODO:
-	//return (std::find(investments.begin(), investments.end(), investment) != investments.end());
-}
-
-bool ResourceSpender::upgradeInvestmentExists(UpgradeType investment) {
-	return false;
-	//return (std::find(investments.begin(), investments.end(), investment) != investments.end());
+	return std::find(investments.begin(), investments.end(), investment) != investments.end();
 }
 
 bool ResourceSpender::workerNeeded() {
