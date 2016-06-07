@@ -10,8 +10,14 @@ ProbeUnits::~ProbeUnits() { }
 using namespace BWAPI;
 
 void ProbeUnits::update(){
-	mineMinerals(miningProbes);
-	mineGas(gasProbes);
+	Broodwar->sendText("bibibi");
+	if (mapAnalyzed){
+		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, TilePosition(miningProbes.getPosition()));
+		Broodwar->drawCircleMap(Position(pos), 64, Colors::Green);
+		Broodwar->sendText("Dis is da pos sis tions: %i, %i", pos.x, pos.y);
+	}
+	//mineMinerals(miningProbes);
+	//mineGas(gasProbes);
 }
 
 void ProbeUnits::addUnit(Unit u){
@@ -45,16 +51,40 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	}
 }
 
-bool ProbeUnits::newBuilding(UnitType type){
-	//fack
+
+bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
+	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+	u->build(type, getOptimalBuildPlacement(type, basePos));
 	return true;
 }
 
-bool ProbeUnits::newBuilding(UnitType type, TilePosition pos){
-	Unit u = Broodwar->getClosestUnit(Position(pos), Filter::GetType == UnitTypes::Protoss_Zealot);
-	u->build(type, pos);
-	return true;
+TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
+	TilePosition curPos = basePos;
+	//while (!checkMargin(type, curPos)){
+	//	curPos = Broodwar->getBuildLocation(type, basePos);
+	//}
+	
+	if (checkMargin(type, basePos)){
+		return curPos;
+	}
+
+
+	return curPos;
 }
+
+bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
+	/*
+	for (int i = -1; i <= 1; i++){
+		for (int j = -1; j <= 1; j++){
+			if (!Broodwar->canBuildHere(TilePosition(basePos.x + i, basePos.y + j), type)){
+				return false;
+			}
+
+		}
+	}*/
+	return Broodwar->isBuildable(basePos, true);
+}
+
 
 // Mining Units
 //
@@ -90,4 +120,8 @@ void ProbeUnits::decreaseGasMiners(int amount){
 void ProbeUnits::mineGas(Unitset uSet) {
 	// Insert logic for distribution of probes
 	uSet.gather(uSet.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Assimilator), true);
+}
+
+void ProbeUnits::setAnalyzed(bool analyzed){
+	mapAnalyzed = analyzed;
 }

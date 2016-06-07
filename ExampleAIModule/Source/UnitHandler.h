@@ -29,12 +29,13 @@ public:
 	ProbeUnits* getProbeUnits();
 	ScoutUnits* getScoutUnits();
 
+	void setAnalyzed(bool analyzed);
+
 private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
 	BuildingUnits buildingUnits;
 	ScoutUnits scoutUnits;
-
 
 	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 

@@ -5,8 +5,6 @@ using namespace BWAPI;
 using namespace Filter;
 
 
-
-
 void ExampleAIModule::onStart() {
 	// Bot Setup
 	Broodwar->enableFlag(Flag::UserInput); // Remove when bot is ready
@@ -125,7 +123,7 @@ DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
 	para->analysis_just_finished = true;
 
 	// Tell any classes here that BWTA has finished
-
+	para->tactician.setAnalyzed(para->analyzed);
 	
 	return 0;
 }

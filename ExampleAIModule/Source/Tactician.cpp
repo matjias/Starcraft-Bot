@@ -79,8 +79,11 @@ void Tactician::updateTacticianStart() {
 
 	}
 
-	// UnitHandler.mineMinerals()
 	
 	unitHandler.update();
 
+}
+
+void Tactician::setAnalyzed(bool analyzed){
+	unitHandler.setAnalyzed(analyzed);
 }
