@@ -1,19 +1,23 @@
+#ifdef SCOUTMANAGER_EXPORTS
+#	define DLL_SPECIFIER _declspec(dllexport)
+#else
+#	define DLL_SPECIFIER _declspec(dllimport)
+#endif
+
 #pragma once
 #include "BWAPI.h"
+#include "Constants.h"
 
-class ScoutUnits {
+class DLL_SPECIFIER ScoutUnits {
 public:
 	ScoutUnits();
 	~ScoutUnits();
 	
 	bool addUnit(BWAPI::Unit unit);
 	int getAmountOfScouts();
-	// std::vector<BWAPI::Unit> getScouts();
+	bool hasScouts();
 	
-	struct ScoutAndGoalStruct {
-		BWAPI::Unit scout;
-		BWAPI::Position goal = BWAPI::Position(0, 0);
-	};
+	std::vector<ScoutAndGoalStruct*> getScouts();
 
 	bool assignGoal(BWAPI::Position goal);
 

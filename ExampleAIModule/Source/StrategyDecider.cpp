@@ -25,6 +25,7 @@ void StrategyDecider::update() {
 	}
 
 	tacticianPtr->updateTactician(currentStrategy);
+	scoutManagerPtr->updateScoutManager();
 
 }
 

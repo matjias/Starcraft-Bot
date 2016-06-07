@@ -10,12 +10,14 @@
 
 // Now actual program begins
 #pragma once
-#include <BWAPI.h>
 #include <Windows.h>
 #include <vector>
 #include <unordered_map>
 
+#include "BWAPI.h"
+#include "Constants.h"
 #include "ScoutUnits.h"
+
 
 class DLL_SPECIFIER ScoutManager {
 public:
@@ -51,14 +53,25 @@ public:
 
 	// Regular scouting functions
 	bool beginScouting(ScoutUnits* scoutUnitsPtr);
+	bool foundEnemyBase(BWAPI::TilePosition position);
 
 	// Debug functions
 	BWAPI::TilePosition::list getSpawns();
 	std::vector<bool> getSpawnBools();
+	std::vector<bool> getSpawnHasScouts();
+	std::vector<ScoutAndGoalStruct*> getScouts();
+	bool hasScouts();
+	bool isScouting = false;
 
 private:
 	BWAPI::Game* broodwar;
 	ScoutUnits* scoutUnits;
+
+	// Private functions
+	bool foundEnemySpawn = false;
+	BWAPI::TilePosition enemySpawn;
+	void findEnemySpawn();
+	void updateSpawnList();
 
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the

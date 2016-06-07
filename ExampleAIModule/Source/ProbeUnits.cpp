@@ -22,12 +22,16 @@ void ProbeUnits::addUnit(Unit u){
 
 Unit ProbeUnits::extractUnit(){
 	Unit tempProbe;
+	int i = 0;
 	for (auto& probe : miningProbes){
+		Broodwar->sendText("Skete der noget: %i", i);
 		if (!probe->isCarryingMinerals()){
+			Broodwar->sendText("Fandt en lile lort");
 			tempProbe = probe;
 			break;
 		}
 		tempProbe = probe;
+		i++;
 	}
 	miningProbes.erase(tempProbe);
 	return tempProbe;
@@ -96,6 +100,10 @@ Unitset* ProbeUnits::getMiningUnits(){
 void ProbeUnits::increaseGasMiners(int amount){
 	moveUnits(&miningProbes, &gasProbes, amount);
 	update();
+}
+
+int ProbeUnits::getWorkerCount() {
+	return miningProbes.size();
 }
 
 void ProbeUnits::decreaseGasMiners(int amount){

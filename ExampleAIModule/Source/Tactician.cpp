@@ -7,7 +7,7 @@ Tactician::Tactician() {
 	currentStage = Start;
 
 	unitHandler._init();
-	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits());
+	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
 }
 
 Tactician::~Tactician() { }
@@ -80,7 +80,7 @@ void Tactician::updateTacticianStart() {
 	}
 
 	// UnitHandler.mineMinerals()
-
+	
 	unitHandler.update();
 
 }

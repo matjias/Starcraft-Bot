@@ -1,4 +1,5 @@
 #pragma once
+#include "BWAPI.h"
 
 enum StrategyName {
 	// Default has no direct goal in mind, but just works towards
@@ -14,14 +15,19 @@ enum GameStage {
 	Mid, MidLate, Late
 };
 
-
+struct ScoutAndGoalStruct {
+	BWAPI::Unit scout;
+	BWAPI::Position goal = BWAPI::Position(0, 0);
+	bool reachedGoal = false;
+};
 
 // Le olde code grandos suckus
 // Economy
 const int MAX_SUPPLY = 200;
 const int MAX_WORKERS = 100;
-const int WORKERS_PER_MINERAL_LINE = 9 * 2;
+const int WORKERS_PER_MINERAL_LINE = 9 * 2; // 9 Mineral Fields, 2 workers per Mineral Field
 const int WORKERS_PER_GEYSER = 3;
+const int MAX_WORKER_SURPLUS = WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER;
 const int MINERAL_SURPLUS_LIMIT = 600;
 const int GAS_SURPLUS_LIMIT = 400;
 

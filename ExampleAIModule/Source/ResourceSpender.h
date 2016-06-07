@@ -2,7 +2,7 @@
 
 #include "UnitHandler.h"
 #include "BuildingUnits.h"
-
+#include "Constants.h"
 #include <BWAPI.h>
 
 class UnitOrUpgrade {
@@ -20,11 +20,17 @@ public:
 	UnitOrUpgrade type();
 
 	int gasPrice();
-	UnitOrUpgrade UnitOrUpgrade::neededTech();
 
-	UnitOrUpgrade & operator=(BWAPI::UnitType unitType);
-	UnitOrUpgrade & operator=(BWAPI::UpgradeType upgradeType);
+	//UnitOrUpgrade & operator=(BWAPI::UpgradeType upgradeType);
+	void operator= (const BWAPI::UnitType &unitType);
+	void operator= (const BWAPI::UpgradeType &upgradeType);
 	
+	bool operator== (const BWAPI::UnitType &unitType) const;
+	bool operator== (const BWAPI::UpgradeType &upgradeType) const;
+
+	bool operator!= (const BWAPI::UnitType &unitType) const;
+	bool operator!= (const BWAPI::UpgradeType &upgradeType) const;
+
 private:
 	BWAPI::UnitType unitType;
 	BWAPI::UpgradeType upgradeType;
@@ -34,14 +40,19 @@ class ResourceSpender {
 public:
 	ResourceSpender();
 	~ResourceSpender();
-	bool _init(UnitHandler* UnitHandler, BuildingUnits* buildingUnits);
-	void setAllIn(bool buildWorkers);
+	bool _init(UnitHandler* UnitHandler, BuildingUnits* buildingUnits, ProbeUnits* probeUnits);
+	void setAllIn(bool status);
+	void setDefend(bool status);
 
 private:
-	void addInvestment(BWAPI::UnitType unitType, bool urgent);
-	void addInvestment(BWAPI::UpgradeType unitType, bool urgent);
+	void addUnitInvestment(BWAPI::UnitType unitType, bool urgent);
+	void addUpgradeInvestment(BWAPI::UpgradeType unitType, bool urgent);
+	void addUnitInvestment(BWAPI::UnitType unitType, int position);
+	void addUpgradeInvestment(BWAPI::UpgradeType unitType, int position);
 	void addRequirements(int priority);
 	bool investmentExists(UnitOrUpgrade investment);
+	bool unitInvestmentExists(BWAPI::UnitType investment);
+	bool upgradeInvestmentExists(BWAPI::UpgradeType investment);
 	bool workerNeeded();
 	bool supplyNeeded();
 	int unitsInProgress(BWAPI::UnitType unitType);
@@ -53,7 +64,9 @@ private:
 	std::vector<BWAPI::UpgradeType> upgradesInProgress;
 
 	bool allIn;
+	bool defend;
 
 	UnitHandler* unitHandlerPtr;
 	BuildingUnits* buildingUnitsPtr;
+	ProbeUnits* probeUnitsPtr;
 };
