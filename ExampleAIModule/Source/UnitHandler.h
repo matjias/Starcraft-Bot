@@ -35,7 +35,6 @@ private:
 	BuildingUnits buildingUnits;
 	ScoutUnits scoutUnits;
 
-
 	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 
 	bool isCombatUnit(BWAPI::Unit u);
