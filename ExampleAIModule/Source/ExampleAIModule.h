@@ -7,8 +7,8 @@
 #include "Tactician.h"
 #include "ScoutManager.h"
 
-// BWTA Thread Function
-DWORD WINAPI AnalyzeThread();
+
+
 
 // Remember not to use "Broodwar" in any global class constructor!
 
@@ -42,9 +42,17 @@ public:
 	void drawData();
 
 	// Our global variables
+	// BWTA variables, need to be here
+	bool analyzed;
+	bool analysis_just_finished;
 	
 	// The classes that the AI Module holds
 	StrategyDecider strategyDecider;
+	Tactician tactician;
 	ScoutManager scoutManager;
 	
 };
+
+
+// BWTA Thread Function
+DWORD WINAPI AnalyzeThread(ExampleAIModule *para);

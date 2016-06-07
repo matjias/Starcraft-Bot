@@ -59,11 +59,14 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 }
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
-	TilePosition curPos = Broodwar->getBuildLocation(type, basePos, 2);
+	TilePosition curPos = basePos;
 	//while (!checkMargin(type, curPos)){
 	//	curPos = Broodwar->getBuildLocation(type, basePos);
 	//}
 	
+	if (checkMargin(type, basePos)){
+		return curPos;
+	}
 
 
 	return curPos;
