@@ -29,7 +29,6 @@ void StrategyDecider::update() {
 
 }
 
-
 void StrategyDecider::decideStrategy() {
 	if (needsToUpdateStrategy) {
 		currentStrategy = Default;
