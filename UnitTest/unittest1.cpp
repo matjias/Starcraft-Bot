@@ -14,6 +14,10 @@ using namespace fakeit;
 namespace Microsoft {
 	namespace VisualStudio {
 		namespace CppUnitTestFramework {
+			template<> static std::wstring ToString<Position>(const Position & p) {
+				return L"" + std::to_wstring(p.x) + L"," + std::to_wstring(p.y);
+			}
+
 			template<> static std::wstring ToString<TilePosition>(const TilePosition & p) {
 				return L"" + std::to_wstring(p.x) + L"," + std::to_wstring(p.y);
 			}
@@ -27,6 +31,8 @@ namespace Microsoft {
 				
 				return returnStr;
 			}
+
+
 		}
 	}
 }
@@ -172,8 +178,18 @@ namespace UnitTest {
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 			
-			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)) ).AlwaysReturn(true);
-			When(ConstOverloadedMethod(Broodwar_Mock, isVisible, bool(int, int)).Using(enemySpawn3.x, enemySpawn3.y)).Return(false).Return(true);
+			When(ConstOverloadedMethod(
+				Broodwar_Mock, 
+				isVisible, 
+				bool(int, int)) 
+			).AlwaysReturn(false);
+
+			When(ConstOverloadedMethod(
+				Broodwar_Mock,
+				isVisible,
+				bool(int, int)
+				).Using(enemySpawn3.x, enemySpawn3.y)
+			).Return(false, false, true);
 			
 			Game &broodwar = Broodwar_Mock.get();
 
@@ -185,7 +201,15 @@ namespace UnitTest {
 			When(Method(Unit_Mock, exists)).AlwaysReturn(true);
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			When(Method(Unit_Mock, getPosition)).AlwaysReturn(Position(ownSpawn));
+			
+			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, enemySpawn3.y);
+			When(Method(Unit_Mock, getPosition))
+				.Return(Position(ownSpawn), Position(ownSpawn),
+						Position(closeEnemySpawn3), Position(closeEnemySpawn3), 
+						Position(enemySpawn3), Position(enemySpawn3));
+				//.AlwaysReturn(Position(enemySpawn3));
+
+			
 			
 			Unit u = &Unit_Mock.get();
 
@@ -197,11 +221,33 @@ namespace UnitTest {
 			Assert::IsTrue(hasScouts.at(0));
 			Assert::IsFalse(hasScouts.at(1));
 
-			scoutMan.updateScoutManager();
-
-
+			
 
 			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+			scoutMan.updateScoutManager();
+
+			// Den burde altså crashe på det her... Aner ikke hvad der foregår længere...
+			// fuck det her..... *ragequit*
+
+			////Assert::IsTrue(hasScouts.at(0));
+			////Assert::IsFalse(hasScouts.at(1));
+
+			//scoutMan.updateScoutManager();
+			//scoutMan.updateScoutManager();
+			//scoutMan.updateScoutManager();
+			//scoutMan.updateScoutManager();
+
+			//Assert::IsTrue(hasScouts.at(0));
+			//Assert::IsFalse(hasScouts.at(1));
+
+
 
 		}
 

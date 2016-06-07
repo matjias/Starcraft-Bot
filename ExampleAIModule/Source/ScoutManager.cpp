@@ -121,8 +121,6 @@ void ScoutManager::findEnemySpawn() {
 			continue;
 		}
 
-
-		int sightRadius = scoutAndGoal->scout->getType().sightRange();
 		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
 		if (broodwar->isVisible(goalPosition)) {
 
