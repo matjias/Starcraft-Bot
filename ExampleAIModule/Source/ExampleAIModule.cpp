@@ -8,6 +8,8 @@ using namespace Filter;
 bool analyzed;
 bool analysis_just_finished;
 
+Tactician tactician;
+
 
 void ExampleAIModule::onStart() {
 	// Bot Setup
@@ -120,13 +122,14 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 
 // BWTA2 functions
 DWORD WINAPI AnalyzeThread() {
+
 	BWTA::analyze();
 
 	analyzed = true;
 	analysis_just_finished = true;
 
 	// Tell any classes here that BWTA has finished
-
+	tactician.setAnalyzed(analyzed);
 	
 	return 0;
 }

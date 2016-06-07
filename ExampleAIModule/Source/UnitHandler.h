@@ -29,6 +29,8 @@ public:
 	ProbeUnits* getProbeUnits();
 	ScoutUnits* getScoutUnits();
 
+	void setAnalyzed(bool analyzed);
+
 private:
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;

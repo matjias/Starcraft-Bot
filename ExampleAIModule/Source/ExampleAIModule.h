@@ -45,7 +45,6 @@ public:
 	
 	// The classes that the AI Module holds
 	StrategyDecider strategyDecider;
-	Tactician tactician;
 	ScoutManager scoutManager;
 	
 };

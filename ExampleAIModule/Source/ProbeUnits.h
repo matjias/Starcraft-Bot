@@ -27,8 +27,11 @@ public:
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
 
+	void setAnalyzed(bool analyzed);
+
 private:
 	int miningCount;
+	bool mapAnalyzed;
 
 	// Currently functioning as default unitset for probes.
 	BWAPI::Unitset miningProbes;

@@ -10,14 +10,19 @@ ProbeUnits::~ProbeUnits() { }
 using namespace BWAPI;
 
 void ProbeUnits::update(){
-	mineMinerals(miningProbes);
-	mineGas(gasProbes);
+	Broodwar->sendText("bibibi");
+	if (mapAnalyzed){
+		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, TilePosition(miningProbes.getPosition()));
+		Broodwar->drawCircleMap(Position(pos), 64, Colors::Green);
+		Broodwar->sendText("Dis is da pos sis tions: %i, %i", pos.x, pos.y);
+	}
+	//mineMinerals(miningProbes);
+	//mineGas(gasProbes);
 }
 
 void ProbeUnits::addUnit(Unit u){
-	//mineMinerals(u);
+	mineMinerals(u);
 	miningProbes.insert(u);
-	//getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
 }
 
 Unit ProbeUnits::extractUnit(){
@@ -54,20 +59,18 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 }
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
-	bool ableToBuild = false;
-	TilePosition curPos = basePos;
-	while (!ableToBuild){
-		ableToBuild = checkMargin(type, curPos);
-		if (!ableToBuild){
-			int radius = BWTA::getRegion(curPos)->getPolygon().getNearestPoint(Position(curPos)).getDistance(Point<int,1>(curPos.x,curPos.y));
-			curPos = TilePosition(curPos.x + (std::rand() % (radius + radius + 1) - radius), curPos.y + (std::rand() % (radius + radius + 1) - radius));
-			Broodwar->sendText("le pos dos buildz: %i, %i", curPos.x, curPos.y);
-		}
-	}
+	TilePosition curPos = Broodwar->getBuildLocation(type, basePos, 2);
+	//while (!checkMargin(type, curPos)){
+	//	curPos = Broodwar->getBuildLocation(type, basePos);
+	//}
+	
+
+
 	return curPos;
 }
 
 bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
+	/*
 	for (int i = -1; i <= 1; i++){
 		for (int j = -1; j <= 1; j++){
 			if (!Broodwar->canBuildHere(TilePosition(basePos.x + i, basePos.y + j), type)){
@@ -75,8 +78,8 @@ bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
 			}
 
 		}
-	}
-	return true;
+	}*/
+	return Broodwar->isBuildable(basePos, true);
 }
 
 
@@ -114,4 +117,8 @@ void ProbeUnits::decreaseGasMiners(int amount){
 void ProbeUnits::mineGas(Unitset uSet) {
 	// Insert logic for distribution of probes
 	uSet.gather(uSet.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Assimilator), true);
+}
+
+void ProbeUnits::setAnalyzed(bool analyzed){
+	mapAnalyzed = analyzed;
 }
