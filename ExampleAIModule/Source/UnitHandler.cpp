@@ -71,6 +71,6 @@ void UnitHandler::update() {
 	probeUnits.update();
 }
 
-void UnitHandler::setAnalyzed(bool analyzed){
-	probeUnits.setAnalyzed(analyzed);
+void UnitHandler::setAnalyzed(){
+	probeUnits.setAnalyzed();
 }

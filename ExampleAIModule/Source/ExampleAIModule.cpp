@@ -123,7 +123,7 @@ DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
 	para->analysis_just_finished = true;
 
 	// Tell any classes here that BWTA has finished
-	para->tactician.setAnalyzed(para->analyzed);
+	para->tactician.setAnalyzed();
 	
 	return 0;
 }

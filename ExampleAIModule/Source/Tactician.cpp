@@ -86,8 +86,8 @@ void Tactician::updateTacticianStart() {
 
 }
 
-void Tactician::setAnalyzed(bool analyzed){
-	unitHandler.setAnalyzed(analyzed);
+void Tactician::setAnalyzed(){
+	unitHandler.setAnalyzed();
 }
 
 void Tactician::invest() {
