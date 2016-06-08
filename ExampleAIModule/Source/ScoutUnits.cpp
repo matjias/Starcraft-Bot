@@ -1,5 +1,6 @@
 #pragma once
 #include "ScoutUnits.h"
+#include "UnitHandler.h" // Avoiding circular dependency
 
 // Most of our data types are either ScoutManager or BWAPI
 using namespace BWAPI;
@@ -7,6 +8,10 @@ using namespace BWAPI;
 ScoutUnits::ScoutUnits() { }
 
 ScoutUnits::~ScoutUnits() { }
+
+void ScoutUnits::setUnitHandler(UnitHandler* unitHandler) {
+	unitHandlerPtr = unitHandler;
+}
 
 bool ScoutUnits::addUnit(Unit unit) {
 	if (!unit->exists() || !unit->isCompleted()) {
@@ -18,6 +23,27 @@ bool ScoutUnits::addUnit(Unit unit) {
 	scouts.push_back(newScout);
 
 	return true;
+}
+
+bool ScoutUnits::removeUnit(Unit unit) {
+	bool foundUnitInScouts = false;
+
+	int scoutPosInVector = 0;
+	for (auto &scoutAndGoal : scouts) {
+		if (scoutAndGoal->scout == unit) {
+			foundUnitInScouts = true;
+			break;
+		}
+		scoutPosInVector++;
+	}
+
+	if (!foundUnitInScouts) {
+		return false;
+	}
+
+	scouts.erase(scouts.begin() + scoutPosInVector);
+	unitHandlerPtr->addUnit(unit);
+
 }
 
 int ScoutUnits::getAmountOfScouts() {

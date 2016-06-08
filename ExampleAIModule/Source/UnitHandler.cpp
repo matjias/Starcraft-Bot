@@ -4,7 +4,9 @@
 using namespace BWAPI;
 
 
-UnitHandler::UnitHandler() { }
+UnitHandler::UnitHandler() {
+	scoutUnits.setUnitHandler(this);
+}
 
 UnitHandler::~UnitHandler() { }
 

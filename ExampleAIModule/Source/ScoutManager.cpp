@@ -117,7 +117,8 @@ void ScoutManager::updateScoutManager() {
 		std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
 
 		for (auto &scoutAndGoal : scouts) {
-			scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+			//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+			scoutUnits->removeUnit(scoutAndGoal->scout);
 		}
 	}
 }
@@ -169,10 +170,12 @@ void ScoutManager::findEnemySpawn() {
 			
 			if (!gaveNewGoal){
 				broodwar->sendText("Scout could not get new scouting location");
+				broodwar->sendText("Returning scout to unithandler");
 
+				scoutUnits->removeUnit(scoutAndGoal->scout);
 				// Send back to base and back to probeUnits for now
-				scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
-				scoutAndGoal->reachedGoal = false;
+				//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+				//scoutAndGoal->reachedGoal = false;
 			}
 		}
 		else {

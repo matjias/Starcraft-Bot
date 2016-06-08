@@ -11,6 +11,8 @@
 #include "BuildingUnits.h"
 #include "ScoutUnits.h"
 
+//class ScoutUnits;
+
 class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
