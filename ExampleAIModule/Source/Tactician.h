@@ -22,6 +22,8 @@ public:
 
 	void setAnalyzed();
 
+	void addAllScouts();
+
 private:
 	StrategyName lastKnownStrategy;
 	GameStage currentStage;
@@ -35,6 +37,8 @@ private:
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
 	void initArmyComposition();
+
+	
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

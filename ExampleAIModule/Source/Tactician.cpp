@@ -50,6 +50,12 @@ void Tactician::scout() {
 	
 }
 
+void Tactician::addAllScouts() {
+	while (scoutManagerPtr->canAddAnotherScout()) {
+		unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+	}
+}
+
 void Tactician::updateTactician(StrategyName currentStategy) {
 	if (lastKnownStrategy != currentStategy) {
 		// Some switching logic?
