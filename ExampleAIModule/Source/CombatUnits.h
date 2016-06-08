@@ -19,6 +19,7 @@ private:
 
 	int zealotCount;
 	bool mapAnalyzed;
+	bool attacking;
 
 	BWAPI::Position ownChoke;
 	BWAPI::Position enemyChoke;
@@ -27,11 +28,14 @@ private:
 	std::vector<Squad> zealotSquads;
 	std::vector<Squad> dragoonSquads;
 
+	void dragoonMicro(Squad squad);
 	void idleMovement(Squad *squad, BWAPI::Position idleLoc);
 	void attackMovement(Squad *squad);
 	void saveUnitToSquad(BWAPI::Unit u, std::vector<Squad> *squads);
 	bool unitAtPos(BWAPI::Unit u, BWAPI::TilePosition pos);
 	bool squadAtPos(Squad uSet, BWAPI::TilePosition pos);
+
+	BWAPI::Unit getOptimalTarget(BWAPI::Unit unit);
 
 	void debugDraw(std::vector<Squad> squads);
 

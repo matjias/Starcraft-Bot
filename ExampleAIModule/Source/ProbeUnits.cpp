@@ -2,7 +2,6 @@
 #include "ProbeUnits.h"
 
 ProbeUnits::ProbeUnits() { 
-	miningCount = 1000;
 }
 
 ProbeUnits::~ProbeUnits() { }
@@ -21,24 +20,36 @@ void ProbeUnits::update(){
 }
 
 void ProbeUnits::addUnit(Unit u){
-	mineMinerals(u);
-	miningProbes.insert(u);
+	Unit field;
+	int nexusId = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus)->getID();
+	if (workerCount < 1){
+		miningProbes.insert(std::pair<int, Unitset>(nexusId, Unitset()));
+		field = u->getClosestUnit(Filter::IsMineralField && !Filter::IsBeingGathered);
+}
+	else{
+		field = u->getClosestUnit(Filter::IsMineralField);
+		field = Broodwar->getClosestUnit(Position(field->getPosition().x, field->getPosition().y - 32/*Magisk tal*/ * (workerCount % 3)), Filter::IsMineralField && !Filter::IsBeingGathered);
+		if (field == NULL){
+			field = u->getClosestUnit(Filter::IsMineralField);
+		}
+	}
+	miningProbes[nexusId].insert(u);
+	u->gather(field, true);
+	workerCount++;
 }
 
 Unit ProbeUnits::extractUnit(){
 	Unit tempProbe;
-	int i = 0;
-	for (auto& probe : miningProbes){
-		Broodwar->sendText("Skete der noget: %i", i);
+	Unitset *uSet = &miningProbes.begin()->second;
+	for (auto& probe : *uSet){
 		if (!probe->isCarryingMinerals()){
 			Broodwar->sendText("Fandt en lile lort");
 			tempProbe = probe;
 			break;
 		}
 		tempProbe = probe;
-		i++;
 	}
-	miningProbes.erase(tempProbe);
+	uSet->erase(tempProbe);
 	return tempProbe;
 }
 
@@ -108,40 +119,35 @@ bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
 
 // Mining Units
 //
-void ProbeUnits::mineMinerals(Unitset uSet) {
-	uSet.gather(uSet.getClosestUnit(Filter::IsMineralField));
-}
 
-void ProbeUnits::mineMinerals(Unit u) {
-	u->gather(u->getClosestUnit(Filter::IsMineralField));
+void ProbeUnits::mineNewBase(Unit base) {
+	Unitset newSet = Unitset();
+	for (auto& uPair : miningProbes){
+		moveUnits(&uPair.second, &newSet, WORKERS_PER_MINERAL_LINE / miningProbes.size());
+}
+	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
+	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
 }
 
 Unitset* ProbeUnits::getMiningUnits(){
-	return &miningProbes;
+	return &miningProbes.begin()->second;
 }
-
+int ProbeUnits::getWorkerCount() {
+	return workerCount;
+}
 
 // Gas Units
 //
-void ProbeUnits::increaseGasMiners(int amount){
-	moveUnits(&miningProbes, &gasProbes, amount);
-	update();
+
+void ProbeUnits::mineGas(Unit base) {
+	Unitset newSet = Unitset();
+	for (auto& uPair : miningProbes){
+		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
+}
+	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
+	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
 }
 
-int ProbeUnits::getWorkerCount() {
-	return miningProbes.size();
-}
-
-void ProbeUnits::decreaseGasMiners(int amount){
-	moveUnits(&gasProbes, &miningProbes, amount);
-	update();
-}
-
-void ProbeUnits::mineGas(Unitset uSet) {
-	// Insert logic for distribution of probes
-	uSet.gather(uSet.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Assimilator), true);
-}
-
-void ProbeUnits::setAnalyzed(bool analyzed){
-	mapAnalyzed = analyzed;
+void ProbeUnits::setAnalyzed(){
+	mapAnalyzed = true;
 }

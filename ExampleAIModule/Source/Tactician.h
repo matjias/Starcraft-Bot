@@ -20,7 +20,7 @@ public:
 	bool recordNewUnit(BWAPI::Unit u);
 	bool recordDeadUnit(BWAPI::Unit u);
 
-	void setAnalyzed(bool analyzed);
+	void setAnalyzed();
 
 	void addAllScouts();
 

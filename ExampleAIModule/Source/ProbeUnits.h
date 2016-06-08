@@ -7,6 +7,7 @@
 #pragma once
 #include "BWAPI.h"
 #include "BWTA.h"
+#include "Constants.h"
 
 
 
@@ -27,19 +28,20 @@ public:
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
 
-	void setAnalyzed(bool analyzed);
+	void setAnalyzed();
 
 private:
-	int miningCount;
+
+	int workerCount;
 	bool mapAnalyzed;
 
 	// Currently functioning as default unitset for probes.
-	BWAPI::Unitset miningProbes;
-	BWAPI::Unitset gasProbes;
+	std::map<int, BWAPI::Unitset> miningProbes;
+	std::map<int, BWAPI::Unitset> gasProbes;
 
-	void mineMinerals(BWAPI::Unitset uSet);
-	void mineMinerals(BWAPI::Unit u);
-	void mineGas(BWAPI::Unitset uSet);
+	void mineMinerals();
+	void mineNewBase(BWAPI::Unit mineralField);
+	void mineGas(BWAPI::Unit base);
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);

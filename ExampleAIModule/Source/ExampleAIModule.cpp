@@ -12,7 +12,7 @@ DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
 	Broodwar->sendText("Finished analyzing map");
 
 	// Tell any classes here that BWTA has finished
-	para->tactician.setAnalyzed(para->analyzed);
+	para->tactician.setAnalyzed();
 
 	return 0;
 }
@@ -59,9 +59,9 @@ void ExampleAIModule::onSendText(std::string text) {
 		tactician.addAllScouts();
 	}
 	else {
-		Broodwar->sendText("%s", text.c_str());
-	}
-	
+	Broodwar->sendText("%s", text.c_str());
+}
+
 }
 
 void ExampleAIModule::onReceiveText(BWAPI::Player player, std::string text) {
@@ -127,7 +127,7 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 // END OF CALLBACKS
 
 
-
+	
 
 void ExampleAIModule::drawTerrainData() {
 	//we will iterate through all the base locations, and draw their outlines.
@@ -217,7 +217,7 @@ void ExampleAIModule::drawData() {
 				);
 		}
 	}
-
+	
 	TilePosition pos = scoutManager.getEnemySpawn();
 	Broodwar->drawTextScreen(20, 10, "Enemy spawn: (%i, %i)", pos.x, pos.y);
 	

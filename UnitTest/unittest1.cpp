@@ -272,5 +272,13 @@ namespace UnitTest {
 			//Tactician tactician;
 
 		}
+
+		TEST_METHOD(Probe_organization){
+			
+
+
+
+
+		}
 	};
 }
