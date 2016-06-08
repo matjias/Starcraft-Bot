@@ -12,9 +12,11 @@ using namespace BWAPI;
 void ProbeUnits::update(){
 	Broodwar->sendText("bibibi");
 	if (mapAnalyzed){
-		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, TilePosition(miningProbes.getPosition()));
-		Broodwar->drawCircleMap(Position(pos), 64, Colors::Green);
+		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
+		Broodwar->drawCircleMap(Position(pos), 32, Colors::Green);
 		Broodwar->sendText("Dis is da pos sis tions: %i, %i", pos.x, pos.y);
+		TilePosition pos1 = Broodwar->getBuildLocation(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
+		Broodwar->sendText("std::Loc  %i, %i", pos1.x, pos1.y);
 	}
 	//mineMinerals(miningProbes);
 	//mineGas(gasProbes);
@@ -52,6 +54,8 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 }
 
 
+// Build logic
+//
 bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	u->build(type, getOptimalBuildPlacement(type, basePos));
@@ -59,30 +63,48 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 }
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
-	TilePosition curPos = basePos;
-	//while (!checkMargin(type, curPos)){
-	//	curPos = Broodwar->getBuildLocation(type, basePos);
-	//}
-	
-	if (checkMargin(type, basePos)){
+	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
+	int radius = 1;
+	if (checkMargin(type, curPos)){
 		return curPos;
 	}
+	// Maybe replace this with calling getBuildLocation again until a proper placement is found
+	return recPlacement(type, basePos, radius);
+}
 
-
-	return curPos;
+TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
+	TilePosition curPos = basePos;
+	for (int i = -depth; i <= depth; i++){
+		if (i == -depth || i == depth){
+			for (int j = -depth; j <= depth; j++){
+				curPos = TilePosition(basePos.x + i, basePos.y + j);
+				if (checkMargin(type, curPos)){
+					return curPos;
+				}
+			}
+		}
+		curPos = TilePosition(basePos.x + i, basePos.y);
+		if (checkMargin(type, curPos)){
+			return curPos;
+		}
+		curPos = TilePosition(basePos.x, basePos.y + i);
+		if (checkMargin(type, curPos)){
+			return curPos;
+		}
+	}
+	return recPlacement(type, basePos, depth + 1);
 }
 
 bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
-	/*
-	for (int i = -1; i <= 1; i++){
-		for (int j = -1; j <= 1; j++){
-			if (!Broodwar->canBuildHere(TilePosition(basePos.x + i, basePos.y + j), type)){
+	for (int i = -(type.dimensionLeft()/32) - 1; i <= type.dimensionRight()/32 + 1; i++){
+		for (int j = -(type.dimensionUp()/32) - 1; j <= type.dimensionDown()/32 + 1; j++){
+			if (!Broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type)){
 				return false;
 			}
-
 		}
-	}*/
-	return Broodwar->isBuildable(basePos, true);
+	}
+	// Fucker lucker det her ma friend
+	return basePos.x <= 150 && basePos.y <= 150;
 }
 
 

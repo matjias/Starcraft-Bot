@@ -43,5 +43,6 @@ private:
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);
+	BWAPI::TilePosition recPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos, int depth);
 	bool checkMargin(BWAPI::UnitType type, BWAPI::TilePosition basePos);
 };
