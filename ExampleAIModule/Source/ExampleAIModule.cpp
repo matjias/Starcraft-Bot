@@ -12,7 +12,7 @@ DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
 	Broodwar->sendText("Finished analyzing map");
 
 	// Tell any classes here that BWTA has finished
-	para->tactician.setAnalyzed(para->analyzed);
+	para->tactician.setAnalyzed();
 
 	return 0;
 }
