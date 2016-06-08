@@ -256,7 +256,6 @@ namespace UnitTest {
 			Mock<UnitInterface> UnitInt_Mock;
 			
 			When(Method(UnitInt_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			When(Method(UitInt_Mock, getClosestUnit)).Using(Filter::IsMineralField && Filter::IsBeingGathered).Return()l
 			When(Method(UnitInt_Mock, getID)).AlwaysReturn(12); 
 
 			Unit unit = &UnitInt_Mock.get();
