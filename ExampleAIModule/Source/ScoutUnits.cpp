@@ -10,7 +10,7 @@ ScoutUnits::~ScoutUnits() { }
 
 bool ScoutUnits::addUnit(Unit unit) {
 	if (!unit->exists() || !unit->isCompleted()) {
-		//return false;
+		return false;
 	}
 
 	ScoutAndGoalStruct *newScout = new ScoutAndGoalStruct();

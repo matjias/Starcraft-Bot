@@ -205,8 +205,8 @@ namespace UnitTest {
 			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, enemySpawn3.y);
 			When(Method(Unit_Mock, getPosition))
 				.Return(Position(ownSpawn), Position(ownSpawn),
-						Position(closeEnemySpawn3), Position(closeEnemySpawn3), 
-						Position(enemySpawn3), Position(enemySpawn3));
+						Position(closeEnemySpawn3),
+						Position(enemySpawn3));
 				//.AlwaysReturn(Position(enemySpawn3));
 
 			

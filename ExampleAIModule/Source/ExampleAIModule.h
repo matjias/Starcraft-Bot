@@ -44,7 +44,6 @@ public:
 	// Our global variables
 	// BWTA variables, need to be here
 	bool analyzed;
-	bool analysis_just_finished;
 	
 	// The classes that the AI Module holds
 	StrategyDecider strategyDecider;

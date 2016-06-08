@@ -4,6 +4,8 @@
 #	define DLL_SPECIFIER _declspec(dllimport)
 #endif
 
+#pragma warning(disable : 4251)
+
 #pragma once
 #include "BWAPI.h"
 #include "Constants.h"
