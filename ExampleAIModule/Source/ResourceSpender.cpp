@@ -89,21 +89,31 @@ void ResourceSpender::update() {
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, true);
 	}
 
-	//addAllRequirements();
+	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();
 	purchase();
 
 	// Draw/print
-	Broodwar->drawTextScreen(200, 5, "Reserved minerals: %i", reservedMinerals);
-	Broodwar->drawTextScreen(200, 15, "Reserved gas: %i", reservedGas);
+	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
+	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
-			Broodwar->drawTextScreen(200, 35 + i * 10, "%i: %s, %d", i, investments[i].getUnitType().c_str(), investments[i].pending);
+			if (investments[i].pending) {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
+			}
+			else {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+			}
 		}
 		else {
-			Broodwar->drawTextScreen(200, 35 + i * 10, "%i: %s, %d", i, investments[i].getUpgradeType().c_str(), investments[i].pending);
+			if (investments[i].pending) {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s (Pending)", i, investments[i].getUpgradeType().c_str());
+			}
+			else {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
+			}
 		}
 	}
 }
@@ -302,11 +312,13 @@ void ResourceSpender::addAllRequirements() {
 
 void ResourceSpender::addRequirements(int number) {
 	
-	// Add required buildings and upgrades
+	// Add required buildings
 	auto requiredUnits = investments[number].getUnitType().requiredUnits();
 
 	for (auto& unitType : requiredUnits){
-		if (buildingUnitsPtr->getBuildingCount(unitType.first) < 1) {
+		if (unitType.first.isBuilding() &&
+			buildingUnitsPtr->getBuildingCount(unitType.first) < 1) {
+
 			addUnitInvestment(unitType.first, number);
 		}
 	}
@@ -316,7 +328,6 @@ void ResourceSpender::addRequirements(int number) {
 		investments[number].getUnitType().requiresPsi()) {
 
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, number);
-		removeDublicates(number);
 	}
 
 	// Add Assimilator
@@ -329,7 +340,6 @@ void ResourceSpender::addRequirements(int number) {
 		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus)))) {
 		
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Assimilator, number);
-		removeDublicates(number);
 	}
 
 	// Remove repeating elements in investment list
@@ -374,7 +384,6 @@ bool ResourceSpender::workerNeeded() {
 }
 
 bool ResourceSpender::supplyNeeded() {
-	
 	return Broodwar->self()->supplyUsed() / 2 +
 		getMaxSupplyOutput() >= 
 		(Broodwar->self()->supplyTotal() + 
