@@ -29,6 +29,11 @@ bool ScoutManager::_init() {
 		}
 	}
 
+	// Edge case of it being a 1v1 map
+	if (unsortedSpawns.size() == 1) {
+		foundEnemyBase(unsortedSpawns.at(0));
+	}
+
 	// Presorts the start locations so the shortest spawn
 	// to our spawn is first in the list, and our spawn is
 	// Uses insertion sort, but the size of spawn locations
@@ -270,7 +275,6 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
-			broodwar->sendText("Scout got assigned a closer goal");
 		}
 	}
 }
