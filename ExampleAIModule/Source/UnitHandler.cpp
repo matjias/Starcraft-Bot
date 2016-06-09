@@ -54,6 +54,10 @@ BuildingUnits* UnitHandler::getBuildingUnits() {
 	return &buildingUnits;
 }
 
+CombatUnits* UnitHandler::getCombatUnits() {
+	return &combatUnits;
+}
+
 ProbeUnits* UnitHandler::getProbeUnits() {
 	return &probeUnits;
 }
@@ -73,4 +77,26 @@ void UnitHandler::update() {
 
 void UnitHandler::setAnalyzed(bool analyzed){
 	probeUnits.setAnalyzed(analyzed);
+}
+
+bool UnitHandler::purchase(UnitType unitType) {
+	
+	// Purchase units
+	if (unitType.isBuilding()) {
+		if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
+			return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
+		}
+	}
+	
+	// Purchase buildings
+	else {
+		// @TODO
+	}
+
+	return false;
+}
+
+bool UnitHandler::purchase(UpgradeType upgradeType) {
+	// @TODO
+	return false;
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include "BWAPI.h"
 #include "Constants.h"
 #include "ResourceSpender.h"
@@ -34,7 +33,10 @@ private:
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
-	void initArmyComposition();
+	bool mineralSurplus();
+	bool gasSurplus();
+	void initArmyCompositions();
+	void computeArmyComposition();
 
 	// Classes it holds
 	ResourceSpender resourceSpender;
@@ -45,19 +47,20 @@ private:
 
 	bool assigned = false;
 
-	// Army compositions
-	// VS Protoss
-	std::pair<BWAPI::UnitType, float> protossEarly[2];
-	std::pair<BWAPI::UnitType, float> protossMidGasLight[2];
-	std::pair<BWAPI::UnitType, float> protossMidGasHeavy[1];
+	// Army compositions vs Protoss, Terran, and Zerg
+	std::vector<std::pair<BWAPI::UnitType, float>> armyComposition;
 
-	// VS Terran
-	std::pair<BWAPI::UnitType, float> terranEarly[2];
-	std::pair<BWAPI::UnitType, float> terranMidGasLight[2];
-	std::pair<BWAPI::UnitType, float> terranMidGasHeavy[1];
+	std::vector<std::pair<BWAPI::UnitType, float>> initialArmyComposition;
 
-	// VS Zerg
-	std::pair<BWAPI::UnitType, float> zergEarly[3];
-	std::pair<BWAPI::UnitType, float> zergMidGasLight[4];
-	std::pair<BWAPI::UnitType, float> zergMidGasHeavy[4];
+	std::vector<std::pair<BWAPI::UnitType, float>> protossEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> protossMidGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> protossMidGasHeavy;
+
+	std::vector<std::pair<BWAPI::UnitType, float>> terranEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> terranMidGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> terranMidGasHeavy;
+
+	std::vector<std::pair<BWAPI::UnitType, float>> zergEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasHeavy;
 };

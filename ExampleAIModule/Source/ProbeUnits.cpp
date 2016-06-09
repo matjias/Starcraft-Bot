@@ -12,10 +12,10 @@ using namespace BWAPI;
 void ProbeUnits::update(){
 	Broodwar->sendText("bibibi");
 	if (mapAnalyzed){
-		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
+		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation());
 		Broodwar->drawCircleMap(Position(pos), 32, Colors::Green);
 		Broodwar->sendText("Dis is da pos sis tions: %i, %i", pos.x, pos.y);
-		TilePosition pos1 = Broodwar->getBuildLocation(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
+		TilePosition pos1 = Broodwar->getBuildLocation(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation());
 		Broodwar->sendText("std::Loc  %i, %i", pos1.x, pos1.y);
 	}
 	//mineMinerals(miningProbes);
