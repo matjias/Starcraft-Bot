@@ -96,7 +96,7 @@ void UnitHandler::setAnalyzed(){
 bool UnitHandler::purchase(UnitType unitType) {
 	
 	// Purchase units
-	if (unitType.isBuilding()) {
+	if (!unitType.isBuilding()) {
 		if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
 			return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
 		}

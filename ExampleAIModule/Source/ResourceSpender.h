@@ -46,9 +46,17 @@ public:
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, int position);
+	void removeInvestment(int position);
+	bool removeInvestments(BWAPI::UnitType investment);
+	bool removeInvestments(BWAPI::UpgradeType investment);
+	void removeAllDublicates();
+	bool removeDublicates(int number);
+	void addAllRequirements();
 	void addRequirements(int priority);
+	void setPendingInvestments();
 	void purchase();
 	void calculateReservedResources();
+	void clearReservedResources();
 	bool investmentExists(BWAPI::UnitType unitType);
 	bool investmentExists(BWAPI::UpgradeType upgradeType);
 	bool canBuildUnit(BWAPI::UnitType unitType);
