@@ -3,19 +3,21 @@
 
 using namespace BWAPI;
 
-Tactician::Tactician() {
+Tactician::Tactician() { }
+
+Tactician::~Tactician() { }
+
+bool Tactician::_init(Game* broodwarPtr, ScoutManager* scoutMan) {
 	currentStage = Start;
 
 	initArmyCompositions();
 	armyComposition = initialArmyComposition;
 
-	unitHandler._init();
+	unitHandler._init(broodwarPtr);
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
-}
 
-Tactician::~Tactician() { }
 
-bool Tactician::_init(ScoutManager* scoutMan) {
+
 	if (scoutMan == NULL) {
 		return false;
 	}
@@ -55,6 +57,7 @@ bool Tactician::recordDeadUnit(Unit u) {
 
 
 	// return unitHandler.removeUnit(u);
+	return unitHandler.deleteUnit(u);
 	return false;
 }
 
@@ -126,7 +129,7 @@ void Tactician::invest() {
 	}
 	else if (expansionNeeded()) {
 		resourceSpender.addUnitInvestment(BWAPI::UnitTypes::Protoss_Nexus, false);
-	}
+}
 	else if (neededUpgrade() != NULL) {
 		resourceSpender.addUpgradeInvestment(neededUpgrade(), false);
 	}
@@ -268,7 +271,7 @@ void Tactician::initArmyCompositions() {
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
-	
+
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));

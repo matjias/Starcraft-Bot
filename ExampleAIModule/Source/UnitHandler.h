@@ -17,14 +17,15 @@ class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
 	~UnitHandler();
-	void _init();
+	void _init(BWAPI::Game* broodwarPtr);
+
 	void addUnit(BWAPI::Unit u);
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
 	bool purchase(BWAPI::UnitType unitType);
 	bool purchase(BWAPI::UpgradeType upgradeType);
-	void deleteUnit(BWAPI::Unit);
+	bool deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);
 

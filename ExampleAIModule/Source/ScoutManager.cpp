@@ -6,13 +6,11 @@ using namespace BWAPI;
 
 ScoutManager::ScoutManager() { }
 
-ScoutManager::ScoutManager(Game *gamePtr) {
-	broodwar = gamePtr;
-}
-
 ScoutManager::~ScoutManager() { }
 
-bool ScoutManager::_init() {
+bool ScoutManager::_init(Game* broodwarPtr) {
+	broodwar = broodwarPtr;
+
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -27,6 +25,11 @@ bool ScoutManager::_init() {
 		if (location != ownSpawn) {
 			unsortedSpawns.push_back(location);
 		}
+	}
+
+	// Edge case of it being a 1v1 map
+	if (unsortedSpawns.size() == 1) {
+		foundEnemyBase(unsortedSpawns.at(0));
 	}
 
 	// Presorts the start locations so the shortest spawn
@@ -270,7 +273,7 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
-			broodwar->sendText("Scout got assigned a closer goal");
+			broodwar->sendText("Scout got assigned a better goal");
 		}
 	}
 }

@@ -11,6 +11,8 @@ void CombatUnits::_init(){
 
 }
 
+
+
 void CombatUnits::idleUpdate(){
 	
 	//Squad loops

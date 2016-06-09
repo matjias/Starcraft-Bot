@@ -10,7 +10,7 @@ public:
 	Tactician();
 	~Tactician();
 	
-	bool _init(ScoutManager* scoutMan);
+	bool _init(BWAPI::Game* broodwarPtr, ScoutManager* scoutMan);
 
 	void updateTactician(StrategyName currentStrategy);
 	void scout();
