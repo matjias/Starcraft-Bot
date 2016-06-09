@@ -36,7 +36,7 @@ bool Tactician::recordNewUnit(Unit u) {
 }
 
 bool Tactician::recordDeadUnit(Unit u) {
-	// return unitHandler.removeUnit(u);
+	return unitHandler.deleteUnit(u);
 	return false;
 }
 

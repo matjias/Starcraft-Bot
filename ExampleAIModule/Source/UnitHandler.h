@@ -22,7 +22,7 @@ public:
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
-	void deleteUnit(BWAPI::Unit);
+	bool deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);
 

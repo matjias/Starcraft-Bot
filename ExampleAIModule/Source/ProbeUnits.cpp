@@ -10,10 +10,8 @@ using namespace BWAPI;
 
 void ProbeUnits::update(){
 	if (mapAnalyzed){
-		TilePosition pos = getOptimalBuildPlacement(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
-		Broodwar->drawCircleMap(Position(pos), 32, Colors::Green);
-		TilePosition pos1 = Broodwar->getBuildLocation(UnitTypes::Protoss_Gateway, Broodwar->self()->getStartLocation());
-		
+		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
+		Broodwar->drawBoxMap(Position(pos.x - 64, pos.y - 32), Position(pos.x + 64, pos.y + 64), Colors::Green);
 	}
 	//mineMinerals(miningProbes);
 	//mineGas(gasProbes);
@@ -43,22 +41,32 @@ Unit ProbeUnits::extractUnit(){
 	Unitset *uSet = &miningProbes.begin()->second;
 	for (auto& probe : *uSet){
 		if (!probe->isCarryingMinerals()){
-			Broodwar->sendText("Fandt en lile lort");
 			tempProbe = probe;
 			break;
 		}
 		tempProbe = probe;
 	}
 	uSet->erase(tempProbe);
+	workerCount--;
 	return tempProbe;
 }
 
-void ProbeUnits::deleteUnit(Unit u){
+bool ProbeUnits::deleteUnit(Unit u){
 	for (auto& probePair : miningProbes){
 		if (probePair.second.contains(u)){
 			probePair.second.erase(u);
+			workerCount--;
+			return true;
 		}
 	}
+	for (auto& probePair : gasProbes){
+		if (probePair.second.contains(u)){
+			probePair.second.erase(u);
+			workerCount--;
+			return true;
+		}
+	}
+	return false;
 }
 
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
@@ -81,6 +89,10 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
 	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
+	while (!checkMargin(type, curPos)){
+		curPos = Broodwar->getBuildLocation(type, basePos);
+	}
+	return curPos;
 	int radius = 1;
 	if (checkMargin(type, curPos)){
 		return curPos;
@@ -90,6 +102,7 @@ TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition ba
 }
 
 TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
+	Broodwar->sendText("custom Recursive placement in use");
 	TilePosition curPos = basePos;
 	for (int i = -depth; i <= depth; i++){
 		if (i == -depth || i == depth){
@@ -113,29 +126,31 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 }
 
 bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
-	for (int i = -(type.dimensionLeft()/32) - 1; i <= type.dimensionRight()/32 + 1; i++){
-		for (int j = -(type.dimensionUp()/32) - 1; j <= type.dimensionDown()/32 + 1; j++){
-			if (!Broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type)){
-				return false;
+	bool isBuildable = basePos.x <= 150 && basePos.y <= 150;
+	if (isBuildable){
+		for (int i = -(ceil(type.dimensionLeft()/32.0)) - 1; i <= ceil(type.dimensionRight()/32.0) + 1; i++){
+			for (int j = -(ceil(type.dimensionUp()/32.0)) - 1; j <= ceil(type.dimensionDown()/32.0) + 1; j++){
+				if (!Broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type) || unitBlocking(TilePosition(basePos.x + i, basePos.y + j))){
+					return false;
+				}
 			}
 		}
 	}
 	// Fucker lucker det her ma friend
-	return basePos.x <= 150 && basePos.y <= 150;
+	return isBuildable;
 }
 
 
 // Mining Units
 //
-
 void ProbeUnits::mineNewBase(Unit base) {
 	Unitset newSet = Unitset();
 	for (auto& uPair : miningProbes){
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_MINERAL_LINE / miningProbes.size());
-}
-	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
-	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
-}
+	}
+		newSet.gather(base->getClosestUnit(Filter::IsMineralField));
+		miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
+	}
 
 Unitset* ProbeUnits::getMiningUnits(){
 	return &miningProbes.begin()->second;
@@ -146,16 +161,23 @@ int ProbeUnits::getWorkerCount() {
 
 // Gas Units
 //
-
 void ProbeUnits::mineGas(Unit base) {
 	Unitset newSet = Unitset();
 	for (auto& uPair : miningProbes){
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
-}
+	}
 	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
 	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
 }
 
 void ProbeUnits::setAnalyzed(){
 	mapAnalyzed = true;
+}
+
+bool ProbeUnits::unitBlocking(TilePosition basePos){
+	return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
+		);
 }

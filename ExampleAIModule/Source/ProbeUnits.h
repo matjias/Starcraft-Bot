@@ -21,6 +21,7 @@ public:
 	void increaseGasMiners(int amount);
 	void decreaseGasMiners(int amount);
 	void update();
+	bool deleteUnit(BWAPI::Unit u);
 
 	bool newBuilding(BWAPI::UnitType type);
 	bool newBuilding(BWAPI::UnitType type, BWAPI::TilePosition pos);
@@ -32,7 +33,7 @@ public:
 
 private:
 
-	int workerCount;
+	int workerCount = 0;
 	bool mapAnalyzed;
 
 	// Currently functioning as default unitset for probes.
@@ -42,7 +43,7 @@ private:
 	void mineMinerals();
 	void mineNewBase(BWAPI::Unit mineralField);
 	void mineGas(BWAPI::Unit base);
-	void deleteUnit(BWAPI::Unit u);
+	bool unitBlocking(BWAPI::TilePosition basePos);
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);
