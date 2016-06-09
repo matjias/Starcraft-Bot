@@ -24,3 +24,19 @@ void BuildingUnits::removeBuilding(BWAPI::Unit unit) {
 int BuildingUnits::getBuildingCount(BWAPI::UnitType unitType) {
 	return buildings.count(unitType);
 }
+
+BWAPI::Unit BuildingUnits::getIdleBuilding(BWAPI::UnitType unitType) {
+	int idleBuildings = 0;
+
+	while (buildingsIterator != buildings.end()) {
+		if (buildingsIterator->first == unitType &&
+			buildingsIterator->second->isCompleted() &&
+			!buildingsIterator->second->isTraining() &&
+			!buildingsIterator->second->isResearching()) {
+
+			return buildingsIterator->second;
+		}
+	}
+
+	return NULL;
+}

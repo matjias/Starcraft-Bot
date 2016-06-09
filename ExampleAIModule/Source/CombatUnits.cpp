@@ -60,6 +60,8 @@ void CombatUnits::attackMovement(Squad *squad){
 }
 
 void CombatUnits::addUnit(Unit u){
+	units.push_back(u);
+	
 	if (u->getType() == UnitTypes::Protoss_Zealot && u->getPlayer() == Broodwar->self()){
 		zealotCount++;
 		saveUnitToSquad(u, &zealotSquads);
@@ -101,7 +103,6 @@ bool CombatUnits::unitAtPos(Unit u, TilePosition pos){
 		&& u->getTilePosition().y < pos.y + POS_RADIUS;
 }
 
-
 void CombatUnits::debugDraw(std::vector<Squad> squads){
 	if (squads.size() > 0){
 		for (int i = 0; i < squads.size(); i++){
@@ -127,7 +128,6 @@ void CombatUnits::debugDraw(std::vector<Squad> squads){
 	}
 }
 
-
 Position CombatUnits::escapePos(Unit unit){
 	Unit enemy = unit->getClosestUnit(Filter::IsEnemy && Filter::CanAttack, unit->getType().sightRange());
 	if (enemy != NULL){
@@ -136,4 +136,16 @@ Position CombatUnits::escapePos(Unit unit){
 		return Position(x, y);
 	}
 	return unit->getPosition();
+}
+
+int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
+	int number = 0;
+	
+	for (int i; i < units.size(); i++) {
+		if (units[i]->getType() == unitType) {
+			number++;
+		}
+	}
+
+	return number;
 }

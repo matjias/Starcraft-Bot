@@ -22,6 +22,8 @@ public:
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
+	bool purchase(BWAPI::UnitType unitType);
+	bool purchase(BWAPI::UpgradeType upgradeType);
 	void deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);
@@ -29,6 +31,7 @@ public:
 	void update();
 
 	BuildingUnits* getBuildingUnits();
+	CombatUnits* getCombatUnits();
 	ProbeUnits* getProbeUnits();
 	ScoutUnits* getScoutUnits();
 
