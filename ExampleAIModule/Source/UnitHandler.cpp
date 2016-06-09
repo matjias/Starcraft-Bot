@@ -24,6 +24,9 @@ void UnitHandler::removeWarpingUnit(Unit u){
 
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
+	if (units[u->getID()] != NULL){
+		units.erase(u->getID());
+	}
 	removeWarpingUnit(u);
 	if (isCombatUnit(u)){
 		combatUnits.addUnit(u);
@@ -93,6 +96,24 @@ void UnitHandler::setAnalyzed(){
 	probeUnits.setAnalyzed();
 }
 
+bool UnitHandler::deleteUnit(Unit u){
+	UnitPlacement enMum = units[u->getID()];
+	bool isDeleted = false;
+	switch (enMum){
+		case probe :
+			isDeleted = probeUnits.deleteUnit(u);
+			break;
+		case combat:
+			// combatUnits.deleteUnit(u);
+			break;
+		case scout:
+			// scoutUnits.deleteUnit(u);
+			break;
+		case building:
+			// buildUnits.deleteUnit(u);
+			break;
+	}	
+	return isDeleted;
 bool UnitHandler::purchase(UnitType unitType) {
 	
 	// Purchase units
