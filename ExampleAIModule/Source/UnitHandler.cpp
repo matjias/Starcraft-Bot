@@ -27,15 +27,23 @@ void UnitHandler::addUnit(Unit u){
 	removeWarpingUnit(u);
 	if (isCombatUnit(u)){
 		combatUnits.addUnit(u);
+		units.insert(std::pair<int, UnitPlacement>(u->getID(), combat));
 	}
 	else if (isProbeUnit(u)){
 		probeUnits.addUnit(u);
+		units.insert(std::pair<int, UnitPlacement>(u->getID(), probe));
+	}
+	else if (isBuilding(u)){
+		buildingUnits.addBuilding(u);
+		units.insert(std::pair<int, UnitPlacement>(u->getID(), building));
 	}
 }
 
 void UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
-		scoutUnits.addUnit(probeUnits.extractUnit());
+		Unit u = probeUnits.extractUnit();
+		units[u->getID()] = scout;
+		scoutUnits.addUnit(u);
 	}
 }
 
@@ -50,6 +58,10 @@ bool UnitHandler::isCombatUnit(Unit u){
 bool UnitHandler::isProbeUnit(Unit u){
 	//Add probes
 	return u->getType() == UnitTypes::Protoss_Probe;
+}
+
+bool UnitHandler::isBuilding(Unit u){
+	return u->getType().isBuilding();
 }
 
 BuildingUnits* UnitHandler::getBuildingUnits() {
@@ -101,4 +113,8 @@ bool UnitHandler::purchase(UnitType unitType) {
 bool UnitHandler::purchase(UpgradeType upgradeType) {
 	// @TODO
 	return false;
+}
+
+void UnitHandler::deleteUnit(Unit u){
+	
 }

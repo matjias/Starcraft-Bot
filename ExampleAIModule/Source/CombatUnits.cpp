@@ -29,6 +29,10 @@ void CombatUnits::idleUpdate(){
 	}
 }
 
+void CombatUnits::attackUpdate(){
+	// Someding
+}
+
 void CombatUnits::dragoonMicro(Squad squad){
 	for (auto& unit : squad){
 		if (unit->isUnderAttack()){

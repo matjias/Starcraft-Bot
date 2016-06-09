@@ -54,6 +54,14 @@ Unit ProbeUnits::extractUnit(){
 	return tempProbe;
 }
 
+void ProbeUnits::deleteUnit(Unit u){
+	for (auto& probePair : miningProbes){
+		if (probePair.second.contains(u)){
+			probePair.second.erase(u);
+		}
+	}
+}
+
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	int counter = 0;
 	for (Unitset::iterator i = setFrom->begin(); counter < amount; i++) {
