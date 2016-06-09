@@ -275,6 +275,7 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
+			broodwar->sendText("Scout got assigned a better goal");
 		}
 	}
 }

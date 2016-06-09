@@ -182,6 +182,7 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
+			Fake(Method(Broodwar_Mock, vSendTextEx));
 
 			When(ConstOverloadedMethod(
 				Broodwar_Mock,
@@ -264,7 +265,7 @@ namespace UnitTest {
 			Assert::AreEqual(enemySpawn3, recordedSpawns.at(2));
 		}
 
-		TEST_METHOD(Mining_Probes_Test){
+		TEST_METHOD(Mining_Probes_Test) {
 			UnitHandler handler;
 			Mock<UnitInterface> UnitInt_Mock;
 			
