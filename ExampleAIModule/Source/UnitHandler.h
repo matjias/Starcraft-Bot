@@ -22,6 +22,7 @@ public:
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
+	void deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);
 
@@ -34,6 +35,15 @@ public:
 	void setAnalyzed();
 
 private:
+	
+	enum UnitPlacement{
+		combat,
+		probe,
+		scout,
+		building
+	};
+	
+	std::map<int, UnitPlacement> units;
 	CombatUnits combatUnits;
 	ProbeUnits probeUnits;
 	BuildingUnits buildingUnits;
@@ -43,4 +53,5 @@ private:
 
 	bool isCombatUnit(BWAPI::Unit u);
 	bool isProbeUnit(BWAPI::Unit u);
+	bool isBuilding(BWAPI::Unit u);
 };

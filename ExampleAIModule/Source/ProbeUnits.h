@@ -42,6 +42,7 @@ private:
 	void mineMinerals();
 	void mineNewBase(BWAPI::Unit mineralField);
 	void mineGas(BWAPI::Unit base);
+	void deleteUnit(BWAPI::Unit u);
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);

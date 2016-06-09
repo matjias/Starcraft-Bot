@@ -34,6 +34,7 @@ private:
 	void saveUnitToSquad(BWAPI::Unit u, std::vector<Squad> *squads);
 	bool unitAtPos(BWAPI::Unit u, BWAPI::TilePosition pos);
 	bool squadAtPos(Squad uSet, BWAPI::TilePosition pos);
+	void attackUpdate();
 
 	BWAPI::Unit getOptimalTarget(BWAPI::Unit unit);
 
