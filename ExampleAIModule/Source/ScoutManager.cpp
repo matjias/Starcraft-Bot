@@ -51,8 +51,6 @@ bool ScoutManager::_init() {
 		spawns.push_back(locStruct);
 	}
 
-	// Edge case for 1v1 map, because we'd know where the enemy is
-
 	return true;
 }
 
@@ -86,7 +84,7 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	// we did not have a record of
 	if (elementsRemoved == 0) {
 		// TODO: Currently just tells the player about it,
-		// but this should be covered in a unit test
+		// but this should be covered somewhere
 		broodwar->sendText("A unit was destroyed which was not recorded");
 	}
 
@@ -116,14 +114,44 @@ void ScoutManager::updateScoutManager() {
 	else {
 		std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
 
-		for (auto &scoutAndGoal : scouts) {
-			//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
-			scoutUnits->removeUnit(scoutAndGoal->scout);
+		// Find the closest unit to the enemy base
+		int pos = 0;
+		Position enemySpawnPos = Position(enemySpawn);
+		for (u_int i = 1; i < scouts.size(); i++) {
+			Position scoutPos = scouts.at(i)->scout->getPosition();
+			Position curScoutPos = scouts.at(pos)->scout->getPosition();
+			if (scoutPos.getApproxDistance(enemySpawnPos) <
+				curScoutPos.getApproxDistance(enemySpawnPos)) {
+
+				pos = i;
+			}
 		}
+
+		// Remove all but the closest unit
+		for (u_int i = 0; i < scouts.size(); i++) {
+			if (i != pos) {
+				scoutUnits->removeUnit(scouts.at(i)->scout);
+			}
+		}
+
+
+		scouts = scoutUnits->getScouts();
+		
+		for (auto &scoutAndGoal : scouts) {
+			// Move the unit to the enemy base
+			scoutAndGoal->goal = enemySpawnPos;
+		}
+
+		
+
+
 	}
 }
 
 void ScoutManager::findEnemySpawn() {
+	// @TODO:	Should probably break this one up into smaller functions..
+	//			rather big as it is right now
+
 	std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
 	bool hasToUpdateList = false;
 
@@ -145,7 +173,6 @@ void ScoutManager::findEnemySpawn() {
 					hasToUpdateList = true;
 					break;
 				}
-
 			}
 		}
 	}
@@ -169,7 +196,6 @@ void ScoutManager::findEnemySpawn() {
 			}
 			
 			if (!gaveNewGoal){
-				broodwar->sendText("Scout could not get new scouting location");
 				broodwar->sendText("Returning scout to unithandler");
 
 				scoutUnits->removeUnit(scoutAndGoal->scout);
@@ -215,10 +241,6 @@ void ScoutManager::findEnemySpawn() {
 
 void ScoutManager::updateSpawnList() {
 	// Do we know for certain where the enemy is now?
-	/*if (spawns.size() > 1 && spawns.at(1)->scouted) {
-		foundEnemyBase(spawns.at(1)->location);
-	}*/
-
 	int unScoutedSpawns = 0;
 	int unScoutedPos = 0;
 
@@ -248,7 +270,7 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
-			broodwar->sendText("Swapped hasScout shit");
+			broodwar->sendText("Scout got assigned a closer goal");
 		}
 	}
 }
@@ -281,13 +303,6 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
 }
 
 bool ScoutManager::canAddAnotherScout() {
-	/*for (auto &spawn : spawns) {
-		if (!spawn->hasScout) {
-			return true;
-		}
-	}
-	return false;*/
-
 	return scoutUnits->getAmountOfScouts() < spawns.size();
 }
 

@@ -55,7 +55,8 @@ public:
 	bool beginScouting(ScoutUnits* scoutUnitsPtr);
 	bool foundEnemyBase(BWAPI::TilePosition position);
 
-	// Idk
+	// Tell the tactician that it can add another scout
+	// if tactician deems it a good idea
 	bool canAddAnotherScout();
 
 	// Debug functions
