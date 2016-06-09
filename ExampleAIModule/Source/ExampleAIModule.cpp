@@ -4,6 +4,19 @@
 using namespace BWAPI;
 using namespace Filter;
 
+// BWTA2 function for threading the analysis
+DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
+	BWTA::analyze();
+
+	para->analyzed = true;
+	Broodwar->sendText("Finished analyzing map");
+
+	// Tell any classes here that BWTA has finished
+	para->tactician.setAnalyzed();
+
+	return 0;
+}
+
 
 void ExampleAIModule::onStart() {
 	// Bot Setup
@@ -13,7 +26,6 @@ void ExampleAIModule::onStart() {
 	// BWTA2 stuffs
 	BWTA::readMap();
 	analyzed = false;
-	analysis_just_finished = false;
 
 	Broodwar->sendText("Analyzing map... this may take a minute");
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, this, 0, NULL);
@@ -36,11 +48,6 @@ void ExampleAIModule::onFrame() {
 	if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self())
 		return;
 
-	if (analysis_just_finished) {
-		Broodwar->sendText("Finished analyzing map");
-		analysis_just_finished = false;
-	}
-
 	// Call our game logic
 	strategyDecider.update();
 
@@ -48,7 +55,13 @@ void ExampleAIModule::onFrame() {
 
 void ExampleAIModule::onSendText(std::string text) {
 	// Send the text to the game if it is not being processed.
+	if (text == "/scoutall") {
+		tactician.addAllScouts();
+	}
+	else {
 	Broodwar->sendText("%s", text.c_str());
+}
+
 }
 
 void ExampleAIModule::onReceiveText(BWAPI::Player player, std::string text) {
@@ -114,19 +127,7 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 // END OF CALLBACKS
 
 
-// BWTA2 functions
-DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
-	BWTA::analyze();
-
 	
-	para->analyzed = true;
-	para->analysis_just_finished = true;
-
-	// Tell any classes here that BWTA has finished
-	para->tactician.setAnalyzed(para->analyzed);
-	
-	return 0;
-}
 
 void ExampleAIModule::drawTerrainData() {
 	//we will iterate through all the base locations, and draw their outlines.
@@ -188,7 +189,7 @@ void ExampleAIModule::drawData() {
 		TilePosition::list scoutSpawns = scoutManager.getSpawns();
 		std::vector<bool> scoutSpawnBools = scoutManager.getSpawnBools();
 		std::vector<ScoutAndGoalStruct*> scouters = scoutManager.getScouts();
-		for (unsigned int i = 0; i < scoutSpawns.size(); i++) {
+		for (u_int i = 0; i < scoutSpawns.size(); i++) {
 			bool draw = scoutSpawnBools.at(i) ? 1 : 0;
 
 			Position pos = Position(Broodwar->self()->getStartLocation());
@@ -216,6 +217,9 @@ void ExampleAIModule::drawData() {
 				);
 		}
 	}
+	
+	TilePosition pos = scoutManager.getEnemySpawn();
+	Broodwar->drawTextScreen(20, 10, "Enemy spawn: (%i, %i)", pos.x, pos.y);
 	
 
 }

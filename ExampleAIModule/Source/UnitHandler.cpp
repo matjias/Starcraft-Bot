@@ -4,7 +4,9 @@
 using namespace BWAPI;
 
 
-UnitHandler::UnitHandler() { }
+UnitHandler::UnitHandler() {
+	scoutUnits.setUnitHandler(this);
+}
 
 UnitHandler::~UnitHandler() { }
 
@@ -75,8 +77,8 @@ void UnitHandler::update() {
 	probeUnits.update();
 }
 
-void UnitHandler::setAnalyzed(bool analyzed){
-	probeUnits.setAnalyzed(analyzed);
+void UnitHandler::setAnalyzed(){
+	probeUnits.setAnalyzed();
 }
 
 bool UnitHandler::purchase(UnitType unitType) {

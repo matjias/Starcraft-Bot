@@ -51,6 +51,12 @@ void Tactician::scout() {
 	
 }
 
+void Tactician::addAllScouts() {
+	while (scoutManagerPtr->canAddAnotherScout()) {
+		unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+	}
+}
+
 void Tactician::updateTactician(StrategyName currentStategy) {
 	if (lastKnownStrategy != currentStategy) {
 		// Some switching logic?
@@ -89,8 +95,8 @@ void Tactician::updateTacticianStart() {
 
 }
 
-void Tactician::setAnalyzed(bool analyzed){
-	unitHandler.setAnalyzed(analyzed);
+void Tactician::setAnalyzed(){
+	unitHandler.setAnalyzed();
 }
 
 void Tactician::invest() {

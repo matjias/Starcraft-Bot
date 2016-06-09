@@ -55,11 +55,15 @@ public:
 	bool beginScouting(ScoutUnits* scoutUnitsPtr);
 	bool foundEnemyBase(BWAPI::TilePosition position);
 
+	// Idk
+	bool canAddAnotherScout();
+
 	// Debug functions
 	BWAPI::TilePosition::list getSpawns();
 	std::vector<bool> getSpawnBools();
 	std::vector<bool> getSpawnHasScouts();
 	std::vector<ScoutAndGoalStruct*> getScouts();
+	BWAPI::TilePosition getEnemySpawn();
 	bool hasScouts();
 	bool isScouting = false;
 
@@ -72,6 +76,13 @@ private:
 	BWAPI::TilePosition enemySpawn;
 	void findEnemySpawn();
 	void updateSpawnList();
+
+	/*bool scoutHasGoal(ScoutAndGoalStruct* scoutAndGoal);
+	LocationStruct* getScoutGoalInSpawns(BWAPI::TilePosition goal);
+	bool haveAnyScoutsReachedGoal(std::vector<ScoutAndGoalStruct*> scoutsAndGoals);
+	bool updateGoals(std::vector<ScoutAndGoalStruct*> scoutsAndGoals);
+	void assignAGoal(ScoutAndGoalStruct* scoutAndGoal);
+	bool hasACloserGoal(ScoutAndGoalStruct* scoutAndGoal);*/
 
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the

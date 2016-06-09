@@ -23,8 +23,26 @@ void CombatUnits::idleUpdate(){
 		}
 	}
 	for (int i = 0; i < dragoonSquads.size(); i++){
-
+		if (attacking){
+			dragoonMicro(dragoonSquads.at(i));
+		}
 	}
+}
+
+void CombatUnits::dragoonMicro(Squad squad){
+	for (auto& unit : squad){
+		if (unit->isUnderAttack()){
+			unit->move(escapePos(unit));
+		}
+		else {
+			unit->attack(getOptimalTarget(unit));
+		}
+	}
+}
+
+Unit CombatUnits::getOptimalTarget(Unit unit){
+	// implement the ultimate logic for attacking the right oppponent
+	return unit->getClosestUnit(Filter::IsEnemy);
 }
 
 void CombatUnits::idleMovement(Squad *squad, Position idleLoc){

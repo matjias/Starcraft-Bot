@@ -70,7 +70,12 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		uStruct->lastKnownPosition = u->getPosition();
 		uStruct->lastScouted = broodwar->getFrameCount();
 
-		enemyUnits.insert(std::pair<int, UnitStruct*>(u->getID(), uStruct));
+		enemyUnits.insert(std::make_pair(u->getID(), uStruct));
+	}
+
+	// Was it the enemy nexus?
+	if (u->getType().isResourceDepot() && !foundEnemySpawn) {
+		foundEnemyBase(TilePosition(u->getPosition()));
 	}
 }
 
@@ -108,6 +113,14 @@ void ScoutManager::updateScoutManager() {
 	if (!foundEnemySpawn) {
 		findEnemySpawn();
 	}
+	else {
+		std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
+
+		for (auto &scoutAndGoal : scouts) {
+			//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+			scoutUnits->removeUnit(scoutAndGoal->scout);
+		}
+	}
 }
 
 void ScoutManager::findEnemySpawn() {
@@ -128,7 +141,9 @@ void ScoutManager::findEnemySpawn() {
 				if (goalPosition == spawn->location) {
 					spawn->scouted = true;
 					scoutAndGoal->reachedGoal = true;
+
 					hasToUpdateList = true;
+					break;
 				}
 
 			}
@@ -140,59 +155,82 @@ void ScoutManager::findEnemySpawn() {
 		// Do we have a scout that has not been assigned a goal yet?
 		if (scoutAndGoal->goal == Position(0, 0) ||
 			scoutAndGoal->reachedGoal) {
-			// Find next spawn that has not been scouted 
-			// yet, and that does not have a scout
+
+			bool gaveNewGoal = false;
+
 			for (auto &spawn : spawns) {
 				if (!spawn->hasScout && !spawn->scouted) {
 					scoutAndGoal->goal = Position(spawn->location);
+					scoutAndGoal->reachedGoal = false;
 					spawn->hasScout = true;
+					gaveNewGoal = true;
 					break;
 				}
 			}
 			
-			if (scoutAndGoal->goal == Position(0, 0)) {
+			if (!gaveNewGoal){
 				broodwar->sendText("Scout could not get new scouting location");
+				broodwar->sendText("Returning scout to unithandler");
+
+				scoutUnits->removeUnit(scoutAndGoal->scout);
+				// Send back to base and back to probeUnits for now
+				//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+				//scoutAndGoal->reachedGoal = false;
 			}
 		}
 		else {
 			// Check to see if any better spawns are closer to the
 			// scout now
 			for (auto &spawn : spawns) {
-				if (!spawn->hasScout && !spawn->scouted) {
-					Position scoutPosition = scoutAndGoal->scout->getPosition();
-					if (scoutPosition.getApproxDistance(scoutAndGoal->goal) >
-						scoutPosition.getApproxDistance(Position(spawn->location))) {
-
-						for (auto &spawn2 : spawns) {
-							if (Position(spawn2->location) = scoutAndGoal->goal) {
-								spawn2->hasScout = false;
-							}
-						}
-
-						spawn->hasScout = true;
-						scoutAndGoal->goal = Position(spawn->location);
-						hasToUpdateList = true;
-					}
+				if (spawn->hasScout || spawn->scouted) {
+					continue;
 				}
+				
+				Position scoutPosition = scoutAndGoal->scout->getPosition();
+				if (scoutPosition.getApproxDistance(scoutAndGoal->goal) >
+					scoutPosition.getApproxDistance(Position(spawn->location))) {
+
+
+					for (auto &spawn2 : spawns) {
+						if (scoutAndGoal->goal == Position(spawn2->location)) {
+							spawn2->hasScout = false;
+						}
+					}
+
+					spawn->hasScout = true;
+					scoutAndGoal->goal = Position(spawn->location);
+					hasToUpdateList = true;
+				}
+				
 				
 			}
 		}
 	}
 
-	//if (hasToUpdateList) {
+	if (hasToUpdateList) {
 		updateSpawnList();
-	//}
-
-	for (auto &scoutAndGoal : scouts) {
-		//scoutAndGoal->scout->move(scoutAndGoal->goal);
 	}
 
 }
 
 void ScoutManager::updateSpawnList() {
 	// Do we know for certain where the enemy is now?
-	if (spawns.size() > 1 && spawns.at(1)->scouted) {
+	/*if (spawns.size() > 1 && spawns.at(1)->scouted) {
 		foundEnemyBase(spawns.at(1)->location);
+	}*/
+
+	int unScoutedSpawns = 0;
+	int unScoutedPos = 0;
+
+	for (u_int i = 0; i < spawns.size(); i++) {
+		if (!spawns.at(i)->scouted) {
+			unScoutedSpawns++;
+			unScoutedPos = i;
+		}
+	}
+
+	if (unScoutedSpawns == 1) {
+		foundEnemyBase(spawns.at(unScoutedPos)->location);
 	}
 
 	// Pushes scouted spawns back in the list
@@ -242,6 +280,17 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
 	return true;
 }
 
+bool ScoutManager::canAddAnotherScout() {
+	/*for (auto &spawn : spawns) {
+		if (!spawn->hasScout) {
+			return true;
+		}
+	}
+	return false;*/
+
+	return scoutUnits->getAmountOfScouts() < spawns.size();
+}
+
 
 // Debug functions
 TilePosition::list ScoutManager::getSpawns() {
@@ -270,6 +319,10 @@ std::vector<bool> ScoutManager::getSpawnHasScouts() {
 
 std::vector<ScoutAndGoalStruct*> ScoutManager::getScouts() {
 	return scoutUnits->getScouts();
+}
+
+TilePosition ScoutManager::getEnemySpawn() {
+	return enemySpawn;
 }
 
 bool ScoutManager::hasScouts() {

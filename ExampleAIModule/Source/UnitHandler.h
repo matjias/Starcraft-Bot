@@ -11,6 +11,8 @@
 #include "BuildingUnits.h"
 #include "ScoutUnits.h"
 
+//class ScoutUnits;
+
 class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
@@ -32,7 +34,7 @@ public:
 	ProbeUnits* getProbeUnits();
 	ScoutUnits* getScoutUnits();
 
-	void setAnalyzed(bool analyzed);
+	void setAnalyzed();
 
 private:
 	CombatUnits combatUnits;

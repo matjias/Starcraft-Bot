@@ -19,7 +19,9 @@ public:
 	bool recordNewUnit(BWAPI::Unit u);
 	bool recordDeadUnit(BWAPI::Unit u);
 
-	void setAnalyzed(bool analyzed);
+	void setAnalyzed();
+
+	void addAllScouts();
 
 private:
 	StrategyName lastKnownStrategy;
@@ -37,6 +39,8 @@ private:
 	bool gasSurplus();
 	void initArmyCompositions();
 	void computeArmyComposition();
+
+	
 
 	// Classes it holds
 	ResourceSpender resourceSpender;
