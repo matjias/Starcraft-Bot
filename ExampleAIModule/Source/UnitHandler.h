@@ -24,7 +24,6 @@ public:
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
 	bool purchase(BWAPI::UnitType unitType);
 	bool purchase(BWAPI::UpgradeType upgradeType);
-	void deleteUnit(BWAPI::Unit);
 	bool deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);

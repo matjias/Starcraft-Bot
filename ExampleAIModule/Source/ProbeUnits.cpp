@@ -23,7 +23,7 @@ void ProbeUnits::addUnit(Unit u){
 	if (workerCount < 1){
 		miningProbes.insert(std::pair<int, Unitset>(nexusId, Unitset()));
 		field = u->getClosestUnit(Filter::IsMineralField && !Filter::IsBeingGathered);
-}
+	}
 	else{
 		field = u->getClosestUnit(Filter::IsMineralField);
 		field = Broodwar->getClosestUnit(Position(field->getPosition().x, field->getPosition().y - 32/*Magisk tal*/ * (workerCount % 3)), Filter::IsMineralField && !Filter::IsBeingGathered);
@@ -34,7 +34,7 @@ void ProbeUnits::addUnit(Unit u){
 	miningProbes[nexusId].insert(u);
 	u->gather(field, true);
 	workerCount++;
-}
+	}
 
 Unit ProbeUnits::extractUnit(){
 	Unit tempProbe;
@@ -175,6 +175,7 @@ void ProbeUnits::setAnalyzed(){
 }
 
 bool ProbeUnits::unitBlocking(TilePosition basePos){
+	// getUnitsinRectalngle instead mby
 	return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
 			Broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
 			Broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&

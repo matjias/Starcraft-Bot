@@ -100,20 +100,21 @@ bool UnitHandler::deleteUnit(Unit u){
 	UnitPlacement enMum = units[u->getID()];
 	bool isDeleted = false;
 	switch (enMum){
-		case probe :
-			isDeleted = probeUnits.deleteUnit(u);
-			break;
-		case combat:
-			// combatUnits.deleteUnit(u);
-			break;
-		case scout:
-			// scoutUnits.deleteUnit(u);
-			break;
-		case building:
-			// buildUnits.deleteUnit(u);
-			break;
-	}	
+	case probe:
+		isDeleted = probeUnits.deleteUnit(u);
+		break;
+	case combat:
+		// combatUnits.deleteUnit(u);
+		break;
+	case scout:
+		// scoutUnits.deleteUnit(u);
+		break;
+	case building:
+		// buildUnits.deleteUnit(u);
+		break;
+	}
 	return isDeleted;
+}
 bool UnitHandler::purchase(UnitType unitType) {
 	
 	// Purchase units
@@ -134,8 +135,4 @@ bool UnitHandler::purchase(UnitType unitType) {
 bool UnitHandler::purchase(UpgradeType upgradeType) {
 	// @TODO
 	return false;
-}
-
-void UnitHandler::deleteUnit(Unit u){
-	
 }
