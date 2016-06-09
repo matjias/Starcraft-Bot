@@ -12,6 +12,7 @@ public:
 	void _init();
 	void idleUpdate();
 	void addUnit(BWAPI::Unit u);
+	int getUnitCount(BWAPI::UnitType unitType);
 
 private:
 	const int SQUAD_SIZE = 4;
@@ -26,6 +27,7 @@ private:
 	BWAPI::Position enemyChoke;
 	BWAPI::Position attackLoc;
 
+	std::vector<BWAPI::Unit> units;
 	std::vector<Squad> zealotSquads;
 	std::vector<Squad> dragoonSquads;
 

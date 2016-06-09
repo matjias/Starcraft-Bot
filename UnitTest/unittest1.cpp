@@ -40,9 +40,9 @@ namespace Microsoft {
 namespace UnitTest {
 	TEST_CLASS(UnitTest1) {
 	public:
-		// The ScoutManager_Test_Init tests concerns the _init function in ScoutManager
-		// This is the function that takes all of the spawns and
-		// saves and sorts the potential enemy spawn locations
+		// The first test here is used for testing the use of
+		// mocking the Broodwar game pointer, along with a player
+		// and ensuring that they return something we can test
 		TEST_METHOD(Broodwar_Mock_Test1) {
 			Mock<Game> Broodwar_Mock;
 			Mock<PlayerInterface> Self_Mock;
@@ -53,28 +53,34 @@ namespace UnitTest {
 			allSpawns.push_back(ownSpawn);
 			allSpawns.push_back(enemySpawn);
 
+			// Here we mock the methods to return what we want
 			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 
-			Assert::AreEqual(self.getStartLocation(), ownSpawn);
+			// Finally test if they are returning
+			// what we mocked them to
+			Assert::AreEqual(ownSpawn, self.getStartLocation());
 
-			Game &broodwar = Broodwar_Mock.get();
+			Game* broodwar = &Broodwar_Mock.get();
 
-			Assert::AreEqual(broodwar.self()->getStartLocation(), ownSpawn);
-			Assert::AreEqual(broodwar.getStartLocations(), allSpawns);
-
-			ScoutManager scoutMan = ScoutManager(&broodwar);
-			scoutMan._init();
-
-			TilePosition::list recordedSpawns = scoutMan.getSpawns();
-			Assert::AreEqual(recordedSpawns.at(0), enemySpawn);
+			Assert::AreEqual(ownSpawn, broodwar->self()->getStartLocation());
+			Assert::AreEqual(allSpawns, broodwar->getStartLocations());
 		}
 
+		// The ScoutManager_Test_Init tests concerns the _init 
+		// function in ScoutManager
+		// This is the function that takes all of the spawns and
+		// saves and sorts the potential enemy spawn locations
+
+		// The following two tests concern the behaviour
+		// of ScoutManager's _init() function
 		TEST_METHOD(ScoutManager_Init1) {
-			// This first example is a 1v1 map, so _init should only really
-			// have one way of doing this, disregarding any sorting here
+			// This first example is a 1v1 map, so the _init
+			// behaviour should be that there is only one spawn
+			// in it's list of potential spawns, and that it should
+			// know where the enemy is
 			Mock<Game> Broodwar_Mock;
 			Mock<PlayerInterface> Self_Mock;
 
@@ -90,19 +96,20 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
-			Game &broodwar = Broodwar_Mock.get();
+			Game* broodwar = &Broodwar_Mock.get();
 
-			ScoutManager scoutMan = ScoutManager(&broodwar);
+			ScoutManager scoutMan = ScoutManager(broodwar);
 
 			// Ensure spawns is empty because _init has not been called
-			Assert::AreEqual((int) scoutMan.getSpawns().size(), 0);
+			Assert::AreEqual(0, (int) scoutMan.getSpawns().size());
 
 			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Tests to make sure only the enemy's spawn is saved
-			Assert::AreEqual((int) recordedSpawns.size(), 1);
-			Assert::AreEqual(recordedSpawns.at(0), enemySpawn);
+			Assert::AreEqual(1, (int) recordedSpawns.size());
+			Assert::AreEqual(enemySpawn, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn, scoutMan.getEnemySpawn());
 		}
 
 		TEST_METHOD(ScoutManager_Init2) {
@@ -134,25 +141,24 @@ namespace UnitTest {
 			Game &broodwar = Broodwar_Mock.get();
 
 			ScoutManager scoutMan = ScoutManager(&broodwar);
-
-			Assert::AreEqual((int)scoutMan.getSpawns().size(), 0);
-
 			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Now for the actual sorting tests
-			Assert::AreEqual((int)recordedSpawns.size(), 3);
+			Assert::AreEqual(3, (int) recordedSpawns.size());
 			
-			//From actual data from starcraft, we know for certain
-			//that the following sort is correct because we can do
-			//a simple Euclidean check, but Starcraft might not
-			//always return a straight forward distance like that
+			//The following sort is the correct one based on data
+			//directly from Starcraft and if we did a euclidean
+			//check, we would find this to be true as well.
+			//A little note however is that it uses a
+			//getApproxDistance function which we don't know
+			//the exact behaviour of
 			//	  enemySpawn3
 			//	  enemySpawn1
 			//	  enemySpawn2
-			Assert::AreEqual(recordedSpawns.at(0), enemySpawn3);
-			Assert::AreEqual(recordedSpawns.at(1), enemySpawn1);
-			Assert::AreEqual(recordedSpawns.at(2), enemySpawn2);
+			Assert::AreEqual(enemySpawn3, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn1, recordedSpawns.at(1));
+			Assert::AreEqual(enemySpawn2, recordedSpawns.at(2));
 		}
 
 		TEST_METHOD(ScoutManager_UpdateList1) {
@@ -170,18 +176,25 @@ namespace UnitTest {
 			allSpawns.push_back(enemySpawn1);
 			allSpawns.push_back(enemySpawn2);
 			allSpawns.push_back(enemySpawn3);
-
 			
 
 			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
-			
+
 			When(ConstOverloadedMethod(
-				Broodwar_Mock, 
-				isVisible, 
-				bool(int, int)) 
+				Broodwar_Mock,
+				isVisible,
+				bool(int, int)
+				).Using(enemySpawn1.x, enemySpawn1.y)
+			).AlwaysReturn(false);
+
+			When(ConstOverloadedMethod(
+				Broodwar_Mock,
+				isVisible,
+				bool(int, int)
+				).Using(enemySpawn2.x, enemySpawn2.y)
 			).AlwaysReturn(false);
 
 			When(ConstOverloadedMethod(
@@ -189,7 +202,9 @@ namespace UnitTest {
 				isVisible,
 				bool(int, int)
 				).Using(enemySpawn3.x, enemySpawn3.y)
-			).Return(false, false, true);
+			).Return(false, true);
+
+
 			
 			Game &broodwar = Broodwar_Mock.get();
 
@@ -205,9 +220,8 @@ namespace UnitTest {
 			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, enemySpawn3.y);
 			When(Method(Unit_Mock, getPosition))
 				.Return(Position(ownSpawn), Position(ownSpawn),
-						Position(closeEnemySpawn3),
-						Position(enemySpawn3));
-				//.AlwaysReturn(Position(enemySpawn3));
+						Position(closeEnemySpawn3), Position(closeEnemySpawn3),
+						Position(enemySpawn3), Position(enemySpawn3));
 
 			
 			
@@ -221,34 +235,33 @@ namespace UnitTest {
 			Assert::IsTrue(hasScouts.at(0));
 			Assert::IsFalse(hasScouts.at(1));
 
+			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 			
+			
+			// Scout is in own spawn now
+			scoutMan.updateScoutManager(); 
+			// Scout is now in closeEnemySpawn3
 
+			// Scout is now in closeEnemySpawn3
 			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
-			scoutMan.updateScoutManager();
+			// Scout is now in enemySpawn3
+			
+			// Now we should have scouted the enemySpawn3 and the enemy was not there
+			// so now it should update the list to move enemySpawn3 all the way back
+			recordedSpawns = scoutMan.getSpawns();
+			Assert::AreEqual(enemySpawn1, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn2, recordedSpawns.at(1));
+			Assert::AreEqual(enemySpawn3, recordedSpawns.at(2));
+
+			// However, when it updates again, the scout manager should
+			// determine that enemySpawn2 is actually closer to the current
+			// scout, and update the goal
 			scoutMan.updateScoutManager();
 
-			// Den burde altså crashe på det her... Aner ikke hvad der foregår længere...
-			// fuck det her..... *ragequit*
-
-			////Assert::IsTrue(hasScouts.at(0));
-			////Assert::IsFalse(hasScouts.at(1));
-
-			//scoutMan.updateScoutManager();
-			//scoutMan.updateScoutManager();
-			//scoutMan.updateScoutManager();
-			//scoutMan.updateScoutManager();
-
-			//Assert::IsTrue(hasScouts.at(0));
-			//Assert::IsFalse(hasScouts.at(1));
-
-
-
+			recordedSpawns = scoutMan.getSpawns();
+			Assert::AreEqual(enemySpawn2, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn1, recordedSpawns.at(1));
+			Assert::AreEqual(enemySpawn3, recordedSpawns.at(2));
 		}
 
 		TEST_METHOD(Mining_Probes_Test){
