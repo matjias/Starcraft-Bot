@@ -10,8 +10,9 @@ UnitHandler::UnitHandler() {
 
 UnitHandler::~UnitHandler() { }
 
-void UnitHandler::_init(){
+void UnitHandler::_init(Game* broodwarPtr){
 	combatUnits._init();
+	probeUnits._init(broodwarPtr);
 }
 
 void UnitHandler::addWarpingUnit(Unit u){

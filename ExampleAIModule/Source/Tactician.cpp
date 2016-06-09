@@ -3,19 +3,21 @@
 
 using namespace BWAPI;
 
-Tactician::Tactician() {
+Tactician::Tactician() { }
+
+Tactician::~Tactician() { }
+
+bool Tactician::_init(Game* broodwarPtr, ScoutManager* scoutMan) {
 	currentStage = Start;
 
 	initArmyCompositions();
 	armyComposition = initialArmyComposition;
 
-	unitHandler._init();
+	unitHandler._init(broodwarPtr);
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
-}
 
-Tactician::~Tactician() { }
 
-bool Tactician::_init(ScoutManager* scoutMan) {
+
 	if (scoutMan == NULL) {
 		return false;
 	}

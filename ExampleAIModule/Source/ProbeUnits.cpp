@@ -1,17 +1,22 @@
 #pragma once
 #include "ProbeUnits.h"
 
-ProbeUnits::ProbeUnits() { 
-}
+using namespace BWAPI;
+
+ProbeUnits::ProbeUnits() { }
 
 ProbeUnits::~ProbeUnits() { }
 
-using namespace BWAPI;
+void ProbeUnits::_init(Game* broodwarPtr) {
+	broodwar = broodwarPtr;
+}
+
+
 
 void ProbeUnits::update(){
 	if (mapAnalyzed){
-		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
-		Broodwar->drawBoxMap(Position(pos.x - 64, pos.y - 32), Position(pos.x + 64, pos.y + 64), Colors::Green);
+		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, broodwar->self()->getStartLocation()));
+		broodwar->drawBoxMap(Position(pos.x - 64, pos.y - 32), Position(pos.x + 64, pos.y + 64), Colors::Green);
 	}
 	//mineMinerals(miningProbes);
 	//mineGas(gasProbes);
@@ -21,20 +26,23 @@ void ProbeUnits::addUnit(Unit u){
 	Unit field;
 	int nexusId = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus)->getID();
 	if (workerCount < 1){
-		miningProbes.insert(std::pair<int, Unitset>(nexusId, Unitset()));
-		field = u->getClosestUnit(Filter::IsMineralField && !Filter::IsBeingGathered);
+		miningProbes.insert(std::make_pair(nexusId, Unitset()));
+		field = u->getClosestUnit(Filter::IsMineralField);
 	}
 	else{
 		field = u->getClosestUnit(Filter::IsMineralField);
-		field = Broodwar->getClosestUnit(Position(field->getPosition().x, field->getPosition().y - 32/*Magisk tal*/ * (workerCount % 3)), Filter::IsMineralField && !Filter::IsBeingGathered);
+		field = broodwar->getClosestUnit(Position(field->getPosition().x, 
+			field->getPosition().y - TILE_SIZE * (workerCount % 3)), 
+			Filter::IsMineralField && !Filter::IsBeingGathered);
+
 		if (field == NULL){
 			field = u->getClosestUnit(Filter::IsMineralField);
 		}
 	}
 	miningProbes[nexusId].insert(u);
-	u->gather(field, true);
+	u->gather(field);
 	workerCount++;
-	}
+}
 
 Unit ProbeUnits::extractUnit(){
 	Unit tempProbe;
@@ -82,16 +90,16 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 // Build logic
 //
 bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
-	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+	Unit u = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	u->build(type, getOptimalBuildPlacement(type, basePos));
 	return true;
 }
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
-	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
-	while (!checkMargin(type, curPos)){
-		curPos = Broodwar->getBuildLocation(type, basePos);
-	}
+	TilePosition curPos = broodwar->getBuildLocation(type, basePos);
+	/*while (!checkMargin(type, curPos)){
+		curPos = broodwar->getBuildLocation(type, basePos);
+	}*/
 	return curPos;
 	int radius = 1;
 	if (checkMargin(type, curPos)){
@@ -102,7 +110,7 @@ TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition ba
 }
 
 TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
-	Broodwar->sendText("custom Recursive placement in use");
+	broodwar->sendText("custom Recursive placement in use");
 	TilePosition curPos = basePos;
 	for (int i = -depth; i <= depth; i++){
 		if (i == -depth || i == depth){
@@ -130,7 +138,7 @@ bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
 	if (isBuildable){
 		for (int i = -(ceil(type.dimensionLeft()/32.0)) - 1; i <= ceil(type.dimensionRight()/32.0) + 1; i++){
 			for (int j = -(ceil(type.dimensionUp()/32.0)) - 1; j <= ceil(type.dimensionDown()/32.0) + 1; j++){
-				if (!Broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type) || unitBlocking(TilePosition(basePos.x + i, basePos.y + j))){
+				if (!broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type) || unitBlocking(TilePosition(basePos.x + i, basePos.y + j))){
 				return false;
 			}
 		}
@@ -176,9 +184,9 @@ void ProbeUnits::setAnalyzed(){
 
 bool ProbeUnits::unitBlocking(TilePosition basePos){
 	// getUnitsinRectalngle instead mby
-	return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
-			Broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
-			Broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
-			Broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
+	return (broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
+			broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
+			broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
+			broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
 		);
 }

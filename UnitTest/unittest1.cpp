@@ -98,12 +98,12 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
 			Game* broodwar = &Broodwar_Mock.get();
 
-			ScoutManager scoutMan = ScoutManager(broodwar);
+			ScoutManager scoutMan;
 
 			// Ensure spawns is empty because _init has not been called
 			Assert::AreEqual(0, (int) scoutMan.getSpawns().size());
 
-			scoutMan._init();
+			scoutMan._init(broodwar);
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Tests to make sure only the enemy's spawn is saved
@@ -138,10 +138,10 @@ namespace UnitTest {
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
 			PlayerInterface &self = Self_Mock.get();
 			When(Method(Broodwar_Mock, self)).AlwaysReturn(&self);
-			Game &broodwar = Broodwar_Mock.get();
+			Game* broodwar = &Broodwar_Mock.get();
 
-			ScoutManager scoutMan = ScoutManager(&broodwar);
-			scoutMan._init();
+			ScoutManager scoutMan;
+			scoutMan._init(broodwar);
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Now for the actual sorting tests
@@ -207,10 +207,10 @@ namespace UnitTest {
 
 
 			
-			Game &broodwar = Broodwar_Mock.get();
+			Game* broodwar = &Broodwar_Mock.get();
 
-			ScoutManager scoutMan = ScoutManager(&broodwar);
-			scoutMan._init();
+			ScoutManager scoutMan;
+			scoutMan._init(broodwar);
 
 			ScoutUnits scoutUnits;
 
@@ -267,19 +267,66 @@ namespace UnitTest {
 
 		TEST_METHOD(Mining_Probes_Test) {
 			UnitHandler handler;
-			Mock<UnitInterface> UnitInt_Mock;
+			Mock<Game> Broodwar_Mock;
+
+			Mock<UnitInterface> Probe_Mock;
+			Mock<UnitInterface> Nexus_Mock;
+			Mock<UnitInterface> MineralField_Mock;
+
+			int probeID = 15;
+			int nexusID = 7;
+			int mineralFieldID = 3;
+
+			Position probePos = Position(15, 15);
+			Position nexusPos = Position(17, 17);
+			Position fieldPos = Position(23, 23);
 			
-			When(Method(UnitInt_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
-			When(Method(UnitInt_Mock, getID)).AlwaysReturn(12); 
+			When(Method(Probe_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
+			When(Method(Probe_Mock, getID)).AlwaysReturn(probeID);
+			Fake(Method(Probe_Mock, issueCommand));
+			When(Method(Probe_Mock, getPosition)).AlwaysReturn(probePos);
 
-			Unit unit = &UnitInt_Mock.get();
+			When(Method(Nexus_Mock, getID)).AlwaysReturn(nexusID);
+			When(Method(Nexus_Mock, getPosition)).AlwaysReturn(nexusPos);
+			When(Method(MineralField_Mock, getID)).AlwaysReturn(mineralFieldID);
+			When(Method(MineralField_Mock, getPosition)).AlwaysReturn(fieldPos);
 
+			Unit nexus = &Nexus_Mock.get();
+			Unitset nexusSet = Unitset();
+			nexusSet.insert(nexus);
+
+			Unit mineralField = &MineralField_Mock.get();
+			Unitset mineralFieldSet;
+			mineralFieldSet.insert(mineralField);
+
+			When(ConstOverloadedMethod(
+				Broodwar_Mock, 
+				getClosestUnitInRectangle,
+				Unit(Position, const UnitFilter&, int, int, int, int)
+					)//.Using(Filter::GetType == UnitTypes::Protoss_Nexus)
+			).AlwaysReturn(nexus);
+
+
+			/*When(ConstOverloadedMethod(
+				Broodwar_Mock,
+				getUnitsInRectangle,
+				Unitset(int, int, int, int, const UnitFilter&)
+					).Using(Filter::IsMineralField)
+			).AlwaysReturn(mineralFieldSet);*/
+
+			Game* broodwar = &Broodwar_Mock.get();
+
+			handler._init(broodwar);
+
+			Unit unit = &Probe_Mock.get();
 			handler.addUnit(unit);
+
 			Unitset* mineProbes = handler.getProbeUnits()->getMiningUnits();
 			Unitset::iterator it = mineProbes->begin();
 			Unit u = *it;
 
-			Assert::AreEqual(u->getID(), 12);
+			Assert::AreEqual(probeID, u->getID());
+		
 		}
 
 		TEST_METHOD(BuildingUnits_Test_Init1) {
@@ -289,7 +336,7 @@ namespace UnitTest {
 
 		TEST_METHOD(Probe_Deletion){
 			
-			UnitHandler 
+			//UnitHandler 
 
 
 

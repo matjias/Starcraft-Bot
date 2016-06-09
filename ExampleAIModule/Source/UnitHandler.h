@@ -17,7 +17,8 @@ class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
 	~UnitHandler();
-	void _init();
+	void _init(BWAPI::Game* broodwarPtr);
+
 	void addUnit(BWAPI::Unit u);
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);

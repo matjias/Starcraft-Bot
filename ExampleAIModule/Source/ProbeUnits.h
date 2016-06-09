@@ -16,6 +16,8 @@ public:
 	ProbeUnits();
 	~ProbeUnits();
 
+	void _init(BWAPI::Game* broodwarPtr);
+
 	void addUnit(BWAPI::Unit u);
 	int getWorkerCount();
 	void increaseGasMiners(int amount);
@@ -32,6 +34,8 @@ public:
 	void setAnalyzed();
 
 private:
+	BWAPI::Game* broodwar;
+
 
 	int workerCount = 0;
 	bool mapAnalyzed;
