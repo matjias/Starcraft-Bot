@@ -27,7 +27,7 @@ void ExampleAIModule::onStart() {
 	BWTA::readMap();
 	analyzed = false;
 
-	Broodwar->sendText("Analyzing map... this may take a minute");
+	Broodwar->sendText("Analyzing map, slow if map has not loaded yet");
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, this, 0, NULL);
 
 	// Other onStart stuff
@@ -59,8 +59,8 @@ void ExampleAIModule::onSendText(std::string text) {
 		tactician.addAllScouts();
 	}
 	else {
-	Broodwar->sendText("%s", text.c_str());
-}
+		Broodwar->sendText("%s", text.c_str());
+	}
 
 }
 
@@ -119,14 +119,13 @@ void ExampleAIModule::onSaveGame(std::string gameName) { }
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.recordNewUnit(unit);
-
-		//Broodwar->sendText("Own unit completed: %s", unit->getType().c_str());
 	}
 }
 
 // END OF CALLBACKS
 
-
+// Now debug functions begin for drawing data
+// on the map / screen
 	
 
 void ExampleAIModule::drawTerrainData() {

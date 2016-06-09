@@ -44,7 +44,6 @@ Unit ProbeUnits::extractUnit(){
 	Unitset *uSet = &miningProbes.begin()->second;
 	for (auto& probe : *uSet){
 		if (!probe->isCarryingMinerals()){
-			Broodwar->sendText("Fandt en lile lort");
 			tempProbe = probe;
 			break;
 		}

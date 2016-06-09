@@ -37,6 +37,23 @@ bool Tactician::recordNewUnit(Unit u) {
 }
 
 bool Tactician::recordDeadUnit(Unit u) {
+
+	/*bool moveBol = u->move(Position(Broodwar->self()->getStartLocation()));
+	Unit uu = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus);
+
+
+	Broodwar->sendText("Move: %i", moveBol ? 1 : 0);
+	Broodwar->sendText("Unit was: %s", u->getType().c_str());
+	Broodwar->sendText("Pos: %i, %i", u->getPosition().x, u->getPosition().y);
+
+	if (uu == NULL) {
+		Broodwar->sendText("Closest unit was null");
+	}
+	else {
+		Broodwar->sendText("Closest unit was: %s", uu->getType().c_str());
+	}*/
+
+
 	// return unitHandler.removeUnit(u);
 	return false;
 }
