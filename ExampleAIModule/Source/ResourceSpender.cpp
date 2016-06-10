@@ -276,7 +276,7 @@ bool ResourceSpender::canBuildUnit(UnitType unitType) {
 	auto requiredUnits = unitType.requiredUnits();
 
 	for (auto& unitType : requiredUnits) {
-		if (buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
+		if (buildingUnitsPtr->getBuildingCount(unitType.first) == 0 &&
 			!investmentExists(unitType.first)) {
 
 			return false;
@@ -296,18 +296,18 @@ bool ResourceSpender::canBuildUnit(UnitType unitType) {
 bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 
 	// Is the unit/building affordable?
-	if (buildingType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
+	/*if (buildingType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
 		buildingType.gasPrice() > Broodwar->self()->gas() - reservedGas) {
 
 		return false;
-	}
+	}*/
 
 	// Are the required buildings owned?
 	auto requiredUnits = buildingType.requiredUnits();
 
 	for (auto& unitType : requiredUnits) {
 		if (unitType.first.isBuilding() &&
-			buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
+			buildingUnitsPtr->getBuildingCount(unitType.first) == 0 &&
 			!investmentExists(unitType.first)) {
 
 			return false;
@@ -315,7 +315,7 @@ bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 	}
 
 	// Are there any workers
-	if (probeUnitsPtr->getWorkerCount() > 0) {
+	if (probeUnitsPtr->getWorkerCount() == 0) {
 
 		return false;
 	}
@@ -333,8 +333,8 @@ bool ResourceSpender::canUpgrade(UpgradeType upgradeType) {
 	}
 
 	// Are the required buildings owned?
-	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) < 1 &&
-		buildingUnitsPtr->getBuildingCount(upgradeType.whatsRequired()) < 1) {
+	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) == 0 &&
+		buildingUnitsPtr->getBuildingCount(upgradeType.whatsRequired()) == 0) {
 
 		return false;
 	}

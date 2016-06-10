@@ -112,16 +112,15 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	/*if (builder != u) {
 		if (builder != NULL) {
-			builder->stop(); // @TODO: Replace stop by: Mine minerals at assigned base
+			builder->stop(); // Replace stop by: Mine minerals at assigned base
 		}
 		builder = u;
 	}*/
 
-	// @TODO 6-10: Make this work: Move to build location, build when u can, return true when building is placed
 	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
 		u->build(type, getOptimalBuildPlacement(type, basePos));
 		builder = NULL;
-		builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+		builder->stop(); // Replace stop by: Mine minerals at assigned base
 		return true;
 	}
 	else {
@@ -129,7 +128,6 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 		return false;
 	}*/
 
-	// @TODO 6-10: Remove the following
 	if (building != NULL && builder != NULL) {
 		return builder->build(building, getOptimalBuildPlacement(building, basePos));
 	}
