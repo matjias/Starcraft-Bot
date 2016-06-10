@@ -97,10 +97,6 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	// @TODO 6-10: Don't take the scout and the gas miners!?
 	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	
-	// @TODO 6-10: Remove this part
-	if (builder == NULL) {
-		builder = u;
-	}
 
 	// @TODO 6-10: Make this work
 	/*if (builder != u) {
@@ -143,7 +139,7 @@ TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition ba
 }
 
 TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
-	Broodwar->sendText("custom Recursive placement in use");
+	//Broodwar->sendText("custom Recursive placement in use");
 	TilePosition curPos = basePos;
 	for (int i = -depth; i <= depth; i++){
 		if (i == -depth || i == depth){
@@ -154,7 +150,7 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 				}
 			}
 		}
-		curPos = TilePosition(basePos.x + i, basePos.y);
+		curPos = TilePosition(basePos.x, basePos.y - i);
 		if (checkMargin(type, curPos)){
 			return curPos;
 		}

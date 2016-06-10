@@ -36,7 +36,6 @@ BWAPI::Unit BuildingUnits::getIdleBuilding(BWAPI::UnitType unitType) {
 		if (buildingsIterator->first == unitType &&
 			!buildingsIterator->second->isTraining() &&
 			!buildingsIterator->second->isResearching()) {
-
 			return buildingsIterator->second;
 		}
 		buildingsIterator++;

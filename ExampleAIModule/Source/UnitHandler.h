@@ -47,7 +47,8 @@ private:
 		combat,
 		probe,
 		scout,
-		building
+		building,
+		null
 	};
 	
 	std::map<int, UnitPlacement> units;

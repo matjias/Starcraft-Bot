@@ -85,6 +85,7 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
+		Broodwar->sendText("Main - Unit Discovered %i", unit->getID());
 		tactician.addWarpingUnit(unit);
 
 		//Broodwar->sendText("Own unit discovered: %s\n", unit->getType().c_str());
@@ -127,6 +128,7 @@ void ExampleAIModule::onSaveGame(std::string gameName) { }
 
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
+		Broodwar->sendText("Main - Unit Complete %i", unit->getID());
 		tactician.recordNewUnit(unit);
 	}
 }
