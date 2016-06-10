@@ -124,7 +124,7 @@ bool UnitHandler::purchaseUnit(UnitType unitType) {
 }
 
 bool UnitHandler::purchaseBuilding(UnitType unitType) {
-	// @TODO: Change location
+	// @TODO 6-10: Change location?
 	return probeUnits.newBuilding(unitType, Broodwar->self()->getStartLocation());
 }
 

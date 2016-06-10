@@ -9,8 +9,6 @@
 #include "BWTA.h"
 #include "Constants.h"
 
-
-
 class DLL_SPECIFIER ProbeUnits {
 public:
 	ProbeUnits();
@@ -36,13 +34,13 @@ public:
 private:
 	BWAPI::Game* broodwar;
 
-
 	int workerCount = 0;
 	bool mapAnalyzed;
 
 	// Currently functioning as default unitset for probes.
 	std::map<int, BWAPI::Unitset> miningProbes;
 	std::map<int, BWAPI::Unitset> gasProbes;
+	BWAPI::Unit builder;
 
 	void mineMinerals();
 	void mineNewBase(BWAPI::Unit mineralField);

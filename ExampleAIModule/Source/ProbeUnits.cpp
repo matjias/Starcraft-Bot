@@ -3,7 +3,9 @@
 
 using namespace BWAPI;
 
-ProbeUnits::ProbeUnits() { }
+ProbeUnits::ProbeUnits() {
+	builder = NULL;
+}
 
 ProbeUnits::~ProbeUnits() { }
 
@@ -90,11 +92,34 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 // Build logic
 //
 bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
+	// @TODO 6-10: Don't take the scout and the gas miners!?
 	Unit u = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+	
+	if (builder != u) {
+		if (builder != NULL) {
+			builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+		}
+		builder = u;
+	}
+
+	// @TODO 6-10: Make this work: Move to build location, build when u can, return true when building is placed
+	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
+		u->build(type, getOptimalBuildPlacement(type, basePos));
+		builder = NULL;
+		builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+		return true;
+	}
+	else {
+		u->move(getOptimalBuildPlacement(type, basePos), false);
+		return false;
+	}*/
+
+	// @TODO 6-10: Remove the following
 	u->build(type, getOptimalBuildPlacement(type, basePos));
 	return true;
 }
 
+// @TODO 6-10: It should ignore the builder when looking for a build loc
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
 	TilePosition curPos = broodwar->getBuildLocation(type, basePos);
 	/*while (!checkMargin(type, curPos)){

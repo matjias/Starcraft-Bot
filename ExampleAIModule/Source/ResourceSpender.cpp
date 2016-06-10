@@ -337,7 +337,9 @@ void ResourceSpender::addRequirements(int number) {
 
 	// Add Pylon
 	if (investments[number].isUnitType() &&
-		investments[number].getUnitType().requiresPsi()) {
+		investments[number].getUnitType().requiresPsi() &&
+		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Pylon) +
+		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Pylon) < 1) {
 
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, number);
 	}
