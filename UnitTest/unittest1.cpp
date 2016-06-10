@@ -69,6 +69,28 @@ namespace UnitTest {
 			Assert::AreEqual(allSpawns, broodwar->getStartLocations());
 		}
 
+		// This test covers the use of the Broodwar keyword in the classes
+		// that we wish to override in the unit tests.
+		TEST_METHOD(Broodwar_Mock_Test2) {
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Player_Mock;
+
+			When(Method(Player_Mock, minerals)).AlwaysReturn(50);
+			Player p = &Player_Mock.get();
+
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(p);
+			BroodwarPtr = &Broodwar_Mock.get();
+
+			ScoutManager scoutMan;
+			scoutMan.setBroodwarMock(BroodwarPtr);
+
+			Player pp = scoutMan.testBroodwar();
+			int p1 = p->minerals();
+			int p2 = pp->minerals();
+
+			Assert::AreEqual(p1, p2);
+		}
+
 		// The ScoutManager_Test_Init tests concerns the _init 
 		// function in ScoutManager
 		// This is the function that takes all of the spawns and
@@ -178,7 +200,6 @@ namespace UnitTest {
 			allSpawns.push_back(enemySpawn1);
 			allSpawns.push_back(enemySpawn2);
 			allSpawns.push_back(enemySpawn3);
-			
 
 			When(Method(Self_Mock, getStartLocation)).AlwaysReturn(ownSpawn);
 			When(Method(Broodwar_Mock, getStartLocations)).AlwaysReturn(allSpawns);
@@ -187,27 +208,25 @@ namespace UnitTest {
 			Fake(Method(Broodwar_Mock, vSendTextEx));
 
 			When(ConstOverloadedMethod(
-				Broodwar_Mock,
-				isVisible,
-				bool(int, int)
+					Broodwar_Mock,
+					isVisible,
+					bool(int, int)
 				).Using(enemySpawn1.x, enemySpawn1.y)
 			).AlwaysReturn(false);
 
 			When(ConstOverloadedMethod(
-				Broodwar_Mock,
-				isVisible,
-				bool(int, int)
+					Broodwar_Mock,
+					isVisible,
+					bool(int, int)
 				).Using(enemySpawn2.x, enemySpawn2.y)
 			).AlwaysReturn(false);
 
 			When(ConstOverloadedMethod(
-				Broodwar_Mock,
-				isVisible,
-				bool(int, int)
+					Broodwar_Mock,
+					isVisible,
+					bool(int, int)
 				).Using(enemySpawn3.x, enemySpawn3.y)
 			).Return(false, true);
-
-
 			
 			Game* broodwar = &Broodwar_Mock.get();
 
@@ -221,51 +240,62 @@ namespace UnitTest {
 			When(Method(Unit_Mock, isCompleted)).AlwaysReturn(true);
 			When(Method(Unit_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
 			
-			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, enemySpawn3.y);
+			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, 
+														 enemySpawn3.y);
 			When(Method(Unit_Mock, getPosition))
-				.Return(Position(ownSpawn), Position(ownSpawn),
-						Position(closeEnemySpawn3), Position(closeEnemySpawn3),
-						Position(enemySpawn3), Position(enemySpawn3));
-
-			
+				.Return(Position(ownSpawn),
+						Position(closeEnemySpawn3),
+						Position(enemySpawn3));
 			
 			Unit u = &Unit_Mock.get();
 
 			scoutUnits.addUnit(u);
 			Assert::IsTrue(scoutMan.beginScouting(&scoutUnits));
 
-			// Fetch has scout on the spawns
-			std::vector<bool> hasScouts = scoutMan.getSpawnHasScouts();
-			Assert::IsTrue(hasScouts.at(0));
-			Assert::IsFalse(hasScouts.at(1));
-
+			// The list should be the same as earlier tests
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
-			
-			
-			// Scout is in own spawn now
-			scoutMan.updateScoutManager(); 
-			// Scout is now in closeEnemySpawn3
+			Assert::AreEqual(enemySpawn3, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn1, recordedSpawns.at(1));
+			Assert::AreEqual(enemySpawn2, recordedSpawns.at(2));
 
-			// Scout is now in closeEnemySpawn3
-			scoutMan.updateScoutManager();
-			// Scout is now in enemySpawn3
-			
-			// Now we should have scouted the enemySpawn3 and the enemy was not there
-			// so now it should update the list to move enemySpawn3 all the way back
+			scoutMan.updateScoutManager(); 
 			recordedSpawns = scoutMan.getSpawns();
+
+			// Scout is now in closeEnemySpawn3, nothing should change
+			Assert::AreEqual(enemySpawn3, recordedSpawns.at(0));
+			Assert::AreEqual(enemySpawn1, recordedSpawns.at(1));
+			Assert::AreEqual(enemySpawn2, recordedSpawns.at(2));
+
+			// Scout is now in enemySpawn3
+			scoutMan.updateScoutManager();
+			recordedSpawns = scoutMan.getSpawns();
+
+			// Scout is now in enemySpawn3, so it should be scouted now
+			// The enemy was not in enemySpawn3, so we push it to the back
 			Assert::AreEqual(enemySpawn1, recordedSpawns.at(0));
 			Assert::AreEqual(enemySpawn2, recordedSpawns.at(1));
 			Assert::AreEqual(enemySpawn3, recordedSpawns.at(2));
 
-			// However, when it updates again, the scout manager should
-			// determine that enemySpawn2 is actually closer to the current
-			// scout, and update the goal
 			scoutMan.updateScoutManager();
-
 			recordedSpawns = scoutMan.getSpawns();
+
+			// Scout show now be closer to enemySpawn2 than enemySpawn1
+			// so the scout should be reassigned to there, and the list
+			// updated because any spawns that have a scout are pushed to
+			// the front of the list
 			Assert::AreEqual(enemySpawn2, recordedSpawns.at(0));
 			Assert::AreEqual(enemySpawn1, recordedSpawns.at(1));
 			Assert::AreEqual(enemySpawn3, recordedSpawns.at(2));
+
+			/*s1 = std::to_wstring(recordedSpawns.at(0).x) + L", " +
+			std::to_wstring(recordedSpawns.at(0).y);
+			s2 = std::to_wstring(recordedSpawns.at(1).x) + L", " +
+			std::to_wstring(recordedSpawns.at(1).y);
+			s3 = std::to_wstring(recordedSpawns.at(2).x) + L", " +
+			std::to_wstring(recordedSpawns.at(2).y);
+			Logger::WriteMessage(s1.c_str());
+			Logger::WriteMessage(s2.c_str());
+			Logger::WriteMessage(s3.c_str());*/
 		}
 
 		TEST_METHOD(Mining_Probes_Test) {
@@ -280,13 +310,14 @@ namespace UnitTest {
 			int nexusID = 7;
 			int mineralFieldID = 3;
 
-			Position probePos = Position(15, 15);
-			Position nexusPos = Position(17, 17);
-			Position fieldPos = Position(23, 23);
+			Position probePos = Position(224, 288);
+			Position nexusPos = Position(224, 224);
+			Position fieldPos = Position(128, 224);
 			
 			When(Method(Probe_Mock, getType)).AlwaysReturn(UnitTypes::Protoss_Probe);
 			When(Method(Probe_Mock, getID)).AlwaysReturn(probeID);
 			Fake(Method(Probe_Mock, issueCommand));
+			When(Method(Probe_Mock, exists)).AlwaysReturn(true);
 			When(Method(Probe_Mock, getPosition)).AlwaysReturn(probePos);
 
 			When(Method(Nexus_Mock, getID)).AlwaysReturn(nexusID);
@@ -295,29 +326,16 @@ namespace UnitTest {
 			When(Method(MineralField_Mock, getPosition)).AlwaysReturn(fieldPos);
 
 			Unit nexus = &Nexus_Mock.get();
-			Unitset nexusSet = Unitset();
-			nexusSet.insert(nexus);
-
 			Unit mineralField = &MineralField_Mock.get();
-			Unitset mineralFieldSet;
-			mineralFieldSet.insert(mineralField);
 
 			When(ConstOverloadedMethod(
-				Broodwar_Mock, 
-				getClosestUnitInRectangle,
-				Unit(Position, const UnitFilter&, int, int, int, int)
-					)//.Using(Filter::GetType == UnitTypes::Protoss_Nexus)
-			).AlwaysReturn(nexus);
-
-
-			/*When(ConstOverloadedMethod(
-				Broodwar_Mock,
-				getUnitsInRectangle,
-				Unitset(int, int, int, int, const UnitFilter&)
-					).Using(Filter::IsMineralField)
-			).AlwaysReturn(mineralFieldSet);*/
-
-			//Game* broodwar = &Broodwar_Mock.get();
+					Broodwar_Mock, 
+					getClosestUnitInRectangle,
+					Unit(Position, const UnitFilter&, int, int, int, int)
+				)/*.Using(probePos, 
+						Filter::GetType == UnitTypes::Protoss_Nexus, 
+						)*/
+			).Return(nexus, mineralField);
 
 			Game* broodwar = &Broodwar_Mock.get();
 
@@ -335,45 +353,20 @@ namespace UnitTest {
 		
 		}
 
-		TEST_METHOD(BuildingUnits_Test_Init1) {
-			//Tactician tactician;
+		//TEST_METHOD(BuildingUnits_Test_Init1) {
+		//	//Tactician tactician;
 
-		}
+		//}
 
-		TEST_METHOD(Probe_Deletion){
-			
-			//UnitHandler 
-
-
+		//TEST_METHOD(Probe_Deletion){
+		//	
+		//	//UnitHandler 
 
 
-		}
-
-		TEST_METHOD(BroodwarPtr_Test) {
-			ScoutManager scoutMan;
-
-			Mock<Game> Broodwar_Mock;
-			Mock<PlayerInterface> Player_Mock;
-
-			When(Method(Player_Mock, minerals)).AlwaysReturn(50);
-
-			Player p = &Player_Mock.get();
-
-			When(Method(Broodwar_Mock, self)).AlwaysReturn(p);
-
-			BroodwarPtr = &Broodwar_Mock.get();
-
-			scoutMan.setBroodwarMock(BroodwarPtr);
-
-			/*Game* bw = &Broodwar_Mock.get();
-			scoutMan.setBroodwar(bw);*/
-			Player pp = scoutMan.test();
 
 
-			int p1 = p->minerals();
-			int p2 = pp->minerals();
+		//}
 
-			Assert::AreEqual(p1, p2);
-		}
+		
 	};
 }

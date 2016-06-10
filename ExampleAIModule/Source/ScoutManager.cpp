@@ -8,18 +8,19 @@ ScoutManager::ScoutManager() { }
 
 ScoutManager::~ScoutManager() { }
 
-Player ScoutManager::test() {
-	//return broodwar->self();
-	return Broodwar->self();
-	//return Broodwar->self();
-}
-
+// Following function should ONLY ever 
+// be called from the Unit Tests
 void ScoutManager::setBroodwarMock(Game* broodwarPtr) {
 	BroodwarPtr = broodwarPtr;
 }
 
-bool ScoutManager::_init() {
+// Quick testing function for testing override of the
+// Broodwar keyword (previous function has already been called)
+Player ScoutManager::testBroodwar() {
+	return Broodwar->self();
+}
 
+bool ScoutManager::_init() {
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -38,7 +39,7 @@ bool ScoutManager::_init() {
 
 	// Edge case of it being a 1v1 map
 	if (unsortedSpawns.size() == 1) {
-		foundEnemyBase(unsortedSpawns.at(0));
+		foundEnemyBaseInit(unsortedSpawns.at(0));
 	}
 
 	// Presorts the start locations so the shortest spawn
@@ -124,39 +125,7 @@ void ScoutManager::updateScoutManager() {
 		findEnemySpawn();
 	}
 	else {
-		std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
-
-		// Find the closest unit to the enemy base
-		int pos = 0;
-		Position enemySpawnPos = Position(enemySpawn);
-		for (u_int i = 1; i < scouts.size(); i++) {
-			Position scoutPos = scouts.at(i)->scout->getPosition();
-			Position curScoutPos = scouts.at(pos)->scout->getPosition();
-			if (scoutPos.getApproxDistance(enemySpawnPos) <
-				curScoutPos.getApproxDistance(enemySpawnPos)) {
-
-				pos = i;
-			}
-		}
-
-		// Remove all but the closest unit
-		for (u_int i = 0; i < scouts.size(); i++) {
-			if (i != pos) {
-				scoutUnits->removeUnit(scouts.at(i)->scout);
-			}
-		}
-
-
-		scouts = scoutUnits->getScouts();
 		
-		for (auto &scoutAndGoal : scouts) {
-			// Move the unit to the enemy base
-			scoutAndGoal->goal = enemySpawnPos;
-		}
-
-		
-
-
 	}
 }
 
@@ -174,11 +143,19 @@ void ScoutManager::findEnemySpawn() {
 			continue;
 		}
 
-		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
-		if (Broodwar->isVisible(goalPosition)) {
+		Position goalPos = scoutAndGoal->goal;
+		TilePosition goalTilePos = TilePosition(goalPos);
+		/*Position scoutPos = scoutAndGoal->scout->getPosition();
+
+		int radius = scoutAndGoal->scout->getType().sightRange();
+		int xDif = goalPos.x - scoutPos.x;
+		int yDif = goalPos.y - scoutPos.y;*/
+
+		if (/*xDif * xDif + yDif * yDif < radius * radius &&*/
+			Broodwar->isVisible(goalTilePos)) {
 
 			for (auto &spawn : spawns) {
-				if (goalPosition == spawn->location) {
+				if (goalTilePos == spawn->location) {
 					spawn->scouted = true;
 					scoutAndGoal->reachedGoal = true;
 
@@ -288,6 +265,17 @@ void ScoutManager::updateSpawnList() {
 }
 
 bool ScoutManager::foundEnemyBase(TilePosition position) {
+	bool returnBol = foundEnemyBaseInit(position);
+
+	if (returnBol) {
+		// Remove any excess scouts
+		clearUnusedScouts();
+	}
+
+	return returnBol;
+}
+
+bool ScoutManager::foundEnemyBaseInit(TilePosition position) {
 	// Did we already know where the enemy was
 	if (foundEnemySpawn) {
 		return false;
@@ -295,12 +283,17 @@ bool ScoutManager::foundEnemyBase(TilePosition position) {
 
 	foundEnemySpawn = true;
 	enemySpawn = position;
-	
+
 	return true;
 }
 
 bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
-	if (scoutUnits != NULL || scoutUnitsPtr == NULL) {
+	if (scoutUnits != NULL){
+		Broodwar->sendText("scoutunitzz alreadu is");
+		return false;
+	}
+	if (scoutUnitsPtr == NULL) {
+		Broodwar->sendText("POINTER NOOOOOT");
 		return false;
 	}
 	
@@ -312,6 +305,40 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
 	spawns.at(0)->hasScout = true;
 
 	return true;
+}
+
+bool ScoutManager::clearUnusedScouts() {
+	std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
+
+	// Find the closest unit to the enemy base
+	int pos = 0;
+	Position enemySpawnPos = Position(enemySpawn);
+	for (u_int i = 1; i < scouts.size(); i++) {
+		Position scoutPos = scouts.at(i)->scout->getPosition();
+		Position curScoutPos = scouts.at(pos)->scout->getPosition();
+		if (scoutPos.getApproxDistance(enemySpawnPos) <
+			curScoutPos.getApproxDistance(enemySpawnPos)) {
+
+			pos = i;
+		}
+	}
+
+	// Remove all but the closest unit
+	for (u_int i = 0; i < scouts.size(); i++) {
+		if (i != pos) {
+			scoutUnits->removeUnit(scouts.at(i)->scout);
+		}
+	}
+
+
+	scouts = scoutUnits->getScouts();
+
+	for (auto &scoutAndGoal : scouts) {
+		// Move the unit to the enemy base
+		scoutAndGoal->goal = enemySpawnPos;
+	}
+
+	return scoutUnits->getAmountOfScouts() == 1;
 }
 
 bool ScoutManager::canAddAnotherScout() {

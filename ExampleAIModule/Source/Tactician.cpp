@@ -8,6 +8,7 @@ Tactician::Tactician() { }
 Tactician::~Tactician() { }
 
 bool Tactician::_init(ScoutManager* scoutMan) {
+
 	currentStage = Start;
 
 	initArmyCompositions();
@@ -68,9 +69,10 @@ bool Tactician::recordDeadUnit(Unit u) {
 void Tactician::scout() {
 	// Hack
 	if (!assigned) {
-		unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
-		scoutManagerPtr->beginScouting(unitHandler.getScoutUnits());
-		assigned = true;
+		assigned = unitHandler.addScout(BWAPI::UnitTypes::Protoss_Probe);
+		if (assigned){
+			scoutManagerPtr->beginScouting(unitHandler.getScoutUnits());
+		}
 	}
 	
 }
@@ -113,7 +115,6 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-
 	
 	unitHandler.update();
 
