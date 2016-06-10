@@ -26,7 +26,10 @@ public:
 
 	// Init function
 	bool _init();
+
+	// Unit Testing functions, used for unit testing
 	void setBroodwarMock(BWAPI::Game* broodwarPtr);
+	BWAPI::Player testBroodwar();
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);
@@ -36,9 +39,7 @@ public:
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();
 
-
-	// TESTING
-	BWAPI::Player test();
+	
 
 	// Unit structure, used for caching enemy units in a map
 	struct UnitStruct {
@@ -80,6 +81,10 @@ private:
 	BWAPI::TilePosition enemySpawn;
 	void findEnemySpawn();
 	void updateSpawnList();
+
+	bool clearUnusedScouts();
+
+	bool foundEnemyBaseInit(BWAPI::TilePosition position);
 
 	/*bool scoutHasGoal(ScoutAndGoalStruct* scoutAndGoal);
 	LocationStruct* getScoutGoalInSpawns(BWAPI::TilePosition goal);
