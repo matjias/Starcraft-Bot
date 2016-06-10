@@ -10,6 +10,7 @@ public:
 	~CombatUnits();
 
 	void _init();
+	void update();
 	void idleUpdate();
 	void addUnit(BWAPI::Unit u);
 	int getUnitCount(BWAPI::UnitType unitType);

@@ -20,7 +20,11 @@ void UnitHandler::addWarpingUnit(Unit u){
 }
 
 void UnitHandler::removeWarpingUnit(Unit u){
-	warpingUnits.erase(u->getID());
+	/*for (std::multimap<UnitType, Unit>::iterator i = warpingUnits.lower_bound(u->getType()); i != warpingUnits.upper_bound(u->getType()); i++) {
+		if ((*i).second == u){
+			(*i).second
+		}
+	}*/
 }
 
 // Deciding where the discovered unit belongs

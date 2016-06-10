@@ -55,7 +55,7 @@ private:
 	BuildingUnits buildingUnits;
 	ScoutUnits scoutUnits;
 
-	std::map<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
+	std::multimap<BWAPI::UnitType, BWAPI::Unit> warpingUnits;
 
 	bool isCombatUnit(BWAPI::Unit u);
 	bool isProbeUnit(BWAPI::Unit u);

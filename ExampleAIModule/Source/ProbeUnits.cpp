@@ -93,12 +93,8 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	// @TODO 6-10: Don't take the scout and the gas miners!?
-	Unit u = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+	Unit builder = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	
-	// @TODO 6-10: Remove this part
-	if (builder == NULL) {
-		builder = u;
-	}
 
 	// @TODO 6-10: Make this work
 	/*if (builder != u) {
@@ -215,9 +211,13 @@ void ProbeUnits::setAnalyzed(){
 
 bool ProbeUnits::unitBlocking(TilePosition basePos){
 	// getUnitsinRectalngle instead mby
-	return (broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
+	Unit tempUnit = broodwar->getClosestUnit(Position(basePos));
+	if (builder == tempUnit){
+		return false;
+	}
+	return (tempUnit->getPosition().x <= Position(basePos).x + 32 &&
+			tempUnit->getPosition().x >= Position(basePos).x - 32 &&
+			tempUnit->getPosition().y <= Position(basePos).y + 32 &&
+			tempUnit->getPosition().y >= Position(basePos).y - 32
 		);
 }
