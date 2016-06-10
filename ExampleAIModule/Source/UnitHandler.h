@@ -30,7 +30,7 @@ public:
 	bool purchaseUpgrade(BWAPI::UpgradeType upgradeType);
 	bool deleteUnit(BWAPI::Unit);
 
-	void addScout(BWAPI::UnitType unitType);
+	bool addScout(BWAPI::UnitType unitType);
 
 	void update();
 
@@ -48,7 +48,6 @@ private:
 		probe,
 		scout,
 		building,
-		null
 	};
 	
 	std::map<int, UnitPlacement> units;

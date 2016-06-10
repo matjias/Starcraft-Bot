@@ -44,7 +44,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
-	if (units.count(u->getID()) == 0){
+	if (units.count(u->getID()) != 0){
 		units.erase(u->getID());
 	}
 	else{
@@ -65,12 +65,16 @@ void UnitHandler::addUnit(Unit u){
 	}
 }
 
-void UnitHandler::addScout(UnitType unitType) {
+bool UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
 		Unit u = probeUnits.extractUnit();
+		if (u == NULL){
+			return false;
+		}
 		units[u->getID()] = scout;
-		scoutUnits.addUnit(u);
+		return scoutUnits.addUnit(u);
 	}
+	return false;
 }
 
 // Expand on tactical decisions. What is our current strategy 
@@ -111,8 +115,8 @@ int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 }
 
 void UnitHandler::update() {
-	scoutUnits.updateScouts();
 	probeUnits.update();
+	scoutUnits.updateScouts();
 }
 
 void UnitHandler::setAnalyzed(){

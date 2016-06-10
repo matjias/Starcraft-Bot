@@ -74,7 +74,7 @@ public:
 	bool isScouting = false;
 
 private:
-	ScoutUnits* scoutUnits;
+	ScoutUnits* scoutUnits = nullptr;
 
 	// Private functions
 	bool foundEnemySpawn = false;

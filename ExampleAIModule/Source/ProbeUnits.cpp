@@ -49,7 +49,7 @@ void ProbeUnits::addUnit(Unit u){
 }
 
 Unit ProbeUnits::extractUnit(){
-	Unit tempProbe;
+	Unit tempProbe = NULL;
 	Unitset *uSet = &miningProbes.begin()->second;
 	for (auto& probe : *uSet){
 		if (!probe->isCarryingMinerals()){
@@ -59,6 +59,7 @@ Unit ProbeUnits::extractUnit(){
 		tempProbe = probe;
 	}
 	uSet->erase(tempProbe);
+	Broodwar->sendText("Probbaaaa %i", uSet->size());
 	workerCount--;
 	return tempProbe;
 }
@@ -119,8 +120,7 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	}*/
 
 	// @TODO 6-10: Remove the following
-	builder->build(type, getOptimalBuildPlacement(type, basePos));
-	return true;
+	return builder->build(type, getOptimalBuildPlacement(type, basePos));
 }
 
 // @TODO 6-10: It should ignore the builder when looking for a build loc
