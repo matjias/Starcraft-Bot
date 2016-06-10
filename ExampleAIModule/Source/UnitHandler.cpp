@@ -63,6 +63,9 @@ void UnitHandler::addUnit(Unit u){
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), building));
 		buildingUnits.addBuilding(u);
 	}
+	if (u->getType() == UnitTypes::Protoss_Assimilator){
+		probeUnits.mineNewBase(u->getClosestUnit(Filter::IsMineralField));
+	}
 }
 
 bool UnitHandler::addScout(UnitType unitType) {

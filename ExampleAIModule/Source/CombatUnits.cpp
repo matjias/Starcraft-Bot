@@ -42,7 +42,8 @@ void CombatUnits::attackUpdate(){
 
 void CombatUnits::dragoonMicro(Squad squad){
 	for (auto& unit : squad){
-		if (unit->isUnderAttack()){
+		if (unit->getHitPoints() < (unit->getType().maxHitPoints() / 2) || enemyTooClose(unit)){
+			unit->attack(getOptimalTarget(unit));
 			unit->move(escapePos(unit));
 		}
 		else {
@@ -145,9 +146,13 @@ Position CombatUnits::escapePos(Unit unit){
 	return unit->getPosition();
 }
 
+bool CombatUnits::enemyTooClose(Unit unit){
+	Unit enemy = unit->getClosestUnit(Filter::IsEnemy);
+	return unit->getDistance(enemy) < unit->getType().groundWeapon().maxRange() * 2/*Magisk tal*/;
+}
+
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
 	int number = 0;
-	
 	for (int i; i < units.size(); i++) {
 		if (units[i]->getType() == unitType) {
 			number++;
