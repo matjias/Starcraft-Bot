@@ -95,12 +95,18 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	// @TODO 6-10: Don't take the scout and the gas miners!?
 	Unit u = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	
-	if (builder != u) {
+	// @TODO 6-10: Remove this part
+	if (builder == NULL) {
+		builder = u;
+	}
+
+	// @TODO 6-10: Make this work
+	/*if (builder != u) {
 		if (builder != NULL) {
 			builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
 		}
 		builder = u;
-	}
+	}*/
 
 	// @TODO 6-10: Make this work: Move to build location, build when u can, return true when building is placed
 	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
@@ -115,7 +121,7 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	}*/
 
 	// @TODO 6-10: Remove the following
-	u->build(type, getOptimalBuildPlacement(type, basePos));
+	builder->build(type, getOptimalBuildPlacement(type, basePos));
 	return true;
 }
 

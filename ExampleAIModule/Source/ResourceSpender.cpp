@@ -344,6 +344,7 @@ void ResourceSpender::addRequirements(int number) {
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, number);
 	}
 
+	// @TODO: gasPrice is always 0?
 	// Add Assimilator
 	if (((investments[number].gasPrice() > 0 && !allIn && !defend) ||
 		(investments[number].gasPrice() > Broodwar->self()->gas()))

@@ -243,10 +243,10 @@ bool Tactician::gasSurplus() {
 void Tactician::initArmyCompositions() {
 
 	// Army compositions vs Protoss, Terran, and Zerg
-	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 
 	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
@@ -255,7 +255,7 @@ void Tactician::initArmyCompositions() {
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
 	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
