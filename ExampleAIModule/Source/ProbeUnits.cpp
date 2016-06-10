@@ -84,7 +84,7 @@ bool ProbeUnits::deleteUnit(Unit u){
 
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	int counter = 0;
-	for (Unitset::iterator i = setFrom->begin(); counter < amount; i++) {
+	for (Unitset::iterator i = setFrom->begin(); counter < amount; i++, counter++) {
 		Unit probe = *i;
 		setTo->insert(probe);
 		setFrom->erase(probe);
@@ -210,13 +210,13 @@ int ProbeUnits::getWorkerCount() {
 
 // Gas Units
 //
-void ProbeUnits::mineGas(Unit base) {
-	Unitset newSet = Unitset();
+void ProbeUnits::mineGas(Unit base, Unit geyser) {
+	Unitset newSet;
 	for (auto& uPair : miningProbes){
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
-}
-	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
-	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
+	}
+	newSet.gather(geyser);
+	miningProbes.insert(std::make_pair(base->getID(), newSet));
 }
 
 void ProbeUnits::setAnalyzed(){

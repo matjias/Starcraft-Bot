@@ -64,7 +64,7 @@ void UnitHandler::addUnit(Unit u){
 		buildingUnits.addBuilding(u);
 	}
 	if (u->getType() == UnitTypes::Protoss_Assimilator){
-		probeUnits.mineNewBase(u->getClosestUnit(Filter::IsMineralField));
+		probeUnits.mineGas(u->getClosestUnit(Filter::IsResourceDepot), u);
 	}
 }
 
