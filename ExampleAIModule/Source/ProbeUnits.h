@@ -44,7 +44,8 @@ private:
 
 	void mineMinerals();
 	void mineGas(BWAPI::Unit base);
-	bool unitBlocking(BWAPI::TilePosition basePos);
+	bool tileAvailableFromUnits(BWAPI::UnitType type, BWAPI::TilePosition tilePos);
+	bool tileAvailableFromBuildings(BWAPI::TilePosition tilePos);
 
 	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);
