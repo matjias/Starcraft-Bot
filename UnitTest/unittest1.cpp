@@ -314,9 +314,11 @@ namespace UnitTest {
 					).Using(Filter::IsMineralField)
 			).AlwaysReturn(mineralFieldSet);*/
 
-			Game* broodwar = &Broodwar_Mock.get();
+			//Game* broodwar = &Broodwar_Mock.get();
 
-			handler._init(broodwar);
+			BroodwarPtr = &Broodwar_Mock.get();
+
+			handler._init(BroodwarPtr);
 
 			Unit unit = &Probe_Mock.get();
 			handler.addUnit(unit);
@@ -341,6 +343,33 @@ namespace UnitTest {
 
 
 
+		}
+
+		TEST_METHOD(BroodwarPtr_Test) {
+			ScoutManager scoutMan;
+
+			Mock<Game> Broodwar_Mock;
+			Mock<PlayerInterface> Player_Mock;
+
+			When(Method(Player_Mock, minerals)).AlwaysReturn(50);
+
+			Player p = &Player_Mock.get();
+
+			When(Method(Broodwar_Mock, self)).AlwaysReturn(p);
+
+			BroodwarPtr = &Broodwar_Mock.get();
+
+			scoutMan.setBroodwar(BroodwarPtr);
+
+			/*Game* bw = &Broodwar_Mock.get();
+			scoutMan.setBroodwar(bw);*/
+			Player pp = scoutMan.test();
+
+
+			int p1 = p->minerals();
+			int p2 = pp->minerals();
+
+			Assert::AreEqual(p1, p2);
 		}
 	};
 }

@@ -19,7 +19,7 @@ void BuildingUnits::removeBuilding(BWAPI::Unit unit) {
 			buildingsIterator = buildings.erase(buildingsIterator);
 		}
 		else {
-			buildingsIterator++;
+			++buildingsIterator; // NOT buildingsIterator++;
 		}
 	}
 }

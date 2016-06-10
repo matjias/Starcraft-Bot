@@ -15,16 +15,21 @@ void UnitHandler::_init(Game* broodwarPtr){
 	probeUnits._init(broodwarPtr);
 }
 
+void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
+	BroodwarPtr = mockBroodwarPtr;
+	probeUnits.setBroodwarMock(mockBroodwarPtr);
+}
+
 void UnitHandler::addWarpingUnit(Unit u){
-	warpingUnits.insert(std::pair<int, Unit>(u->getID(), u));
+	warpingUnits.insert(std::make_pair(u->getType(), u));
 }
 
 void UnitHandler::removeWarpingUnit(Unit u){
-	/*for (std::multimap<UnitType, Unit>::iterator i = warpingUnits.lower_bound(u->getType()); i != warpingUnits.upper_bound(u->getType()); i++) {
+	for (std::multimap<UnitType, Unit>::iterator i = warpingUnits.lower_bound(u->getType()); i != warpingUnits.upper_bound(u->getType()); i++) {
 		if ((*i).second == u){
-			(*i).second
+			warpingUnits.erase(i);
 		}
-	}*/
+	}
 }
 
 // Deciding where the discovered unit belongs
@@ -120,6 +125,7 @@ bool UnitHandler::deleteUnit(Unit u){
 	}
 	return isDeleted;
 }
+
 bool UnitHandler::purchaseUnit(UnitType unitType) {
 	if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
 		return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
