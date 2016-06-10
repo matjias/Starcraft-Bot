@@ -23,9 +23,10 @@ public:
 	void decreaseGasMiners(int amount);
 	void update();
 	bool deleteUnit(BWAPI::Unit u);
+	void mineNewBase(BWAPI::Unit mineralField);
 
 	bool newBuilding(BWAPI::UnitType type);
-	bool newBuilding(BWAPI::UnitType type, BWAPI::TilePosition pos);
+	bool newBuilding(BWAPI::UnitType building, BWAPI::TilePosition pos);
 
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
@@ -42,7 +43,6 @@ private:
 	BWAPI::Unit builder;
 
 	void mineMinerals();
-	void mineNewBase(BWAPI::Unit mineralField);
 	void mineGas(BWAPI::Unit base);
 	bool unitBlocking(BWAPI::TilePosition basePos);
 

@@ -33,6 +33,7 @@ void Tactician::setBroodwarMock(Game* broodwarPtr) {
 
 bool Tactician::addWarpingUnit(Unit u){
 	unitHandler.addWarpingUnit(u);
+	resourceSpender.removePlacedBuildings(u->getType());
 	return true;
 }
 

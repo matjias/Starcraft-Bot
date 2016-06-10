@@ -63,6 +63,9 @@ void UnitHandler::addUnit(Unit u){
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), building));
 		buildingUnits.addBuilding(u);
 	}
+	if (u->getType() == UnitTypes::Protoss_Assimilator){
+		probeUnits.mineNewBase(u->getClosestUnit(Filter::IsMineralField));
+	}
 }
 
 bool UnitHandler::addScout(UnitType unitType) {
@@ -153,9 +156,8 @@ bool UnitHandler::purchaseUnit(UnitType unitType) {
 	return false;
 }
 
-bool UnitHandler::purchaseBuilding(UnitType unitType) {
-	// @TODO 6-10: Change location?
-	return probeUnits.newBuilding(unitType, Broodwar->self()->getStartLocation());
+bool UnitHandler::purchaseBuilding(BWAPI::UnitType building) {
+	return probeUnits.newBuilding(building, Broodwar->self()->getStartLocation());
 }
 
 bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {

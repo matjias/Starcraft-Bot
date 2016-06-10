@@ -94,15 +94,25 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 
 // Build logic
 //
-bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
-	// @TODO 6-10: Don't take the scout and the gas miners!?
-	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
-	
 
-	// @TODO 6-10: Make this work
+bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
+	// @TODO: Don't take the scout and the gas miners!
+
+	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+
+	if (building == NULL) {
+		if (u == builder) {
+			u->gather(u->getClosestUnit()); // @TODO: mine the mineral fields from the assigned base
+			builder = NULL;
+		}
+	}
+	else if (builder == NULL) {
+		builder = u;
+	}
+
 	/*if (builder != u) {
 		if (builder != NULL) {
-			builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+			builder->stop(); // @TODO: Replace stop by: Mine minerals at assigned base
 		}
 		builder = u;
 	}*/
@@ -120,7 +130,11 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	}*/
 
 	// @TODO 6-10: Remove the following
-	return builder->build(type, getOptimalBuildPlacement(type, basePos));
+	if (building != NULL && builder != NULL) {
+		return builder->build(building, getOptimalBuildPlacement(building, basePos));
+	}
+	return true;
+	//return builder->build(type, getOptimalBuildPlacement(type, basePos));
 }
 
 // @TODO 6-10: It should ignore the builder when looking for a build loc
