@@ -21,18 +21,30 @@ public:
 	
 	bool addUnit(BWAPI::Unit unit);
 	bool removeUnit(BWAPI::Unit unit);
+
+	bool assignGoal(BWAPI::Position goal);
+
 	int getAmountOfScouts();
 	bool hasScouts();
 	
 	std::vector<ScoutAndGoalStruct*> getScouts();
 
-	bool assignGoal(BWAPI::Position goal);
+	
 
 	void updateScouts();
+	void updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u);
 
+	void setEnemySpawn(BWAPI::TilePosition pos);
+
+	// Set BWTA analyzed
+	void setAnalyzed();
 
 private:
 	std::vector<ScoutAndGoalStruct*> scouts;
 	UnitHandler* unitHandlerPtr;
+
+	BWAPI::Position enemySpawn;
+	bool mapAnalyzed = false;
+	
 
 };

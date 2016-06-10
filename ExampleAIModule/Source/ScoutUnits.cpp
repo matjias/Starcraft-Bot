@@ -84,16 +84,102 @@ void ScoutUnits::updateScouts() {
 
 		// If goal has not been set we skip it
 		if (goal == Position(0, 0)) {
-			
 			continue;
 		}
 
 		// @TODO:	Extend with smart moving, for
 		//			example from UnitHandler / Interface
-		scout->move(goal);
+		if (!unit->peekEnemyBase) {
+			scout->move(goal);
+		}
+		else {
+			updateScoutsMoveInEnemyBase(unit);
+		}
+	}
+}
+
+void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
+	Unit scout = u->scout;
+
+	if (!u->kiting && !u->underAttack) {
+		// Go to enemy spawn base
+		if (!mapAnalyzed) {
+			// BWTA2 not loaded, for now just go to the spawn position
+			u->scout->move(enemySpawn);
+
+			// BWTA2 should load before scout even gets close to their spawn
+			// otherwise something is somewhat wrong and it will cause
+			// some unintentional behaviour
+		}
+		else {
+			// Move scout to enemy's region
+			BWTA::Region* enemyRegion = BWTA::getRegion(enemySpawn);
+			BWTA::Region* scoutRegion = BWTA::getRegion(scout->getPosition());
+
+			if (scoutRegion != enemyRegion) {
+				scout->move(enemySpawn);
+			}
+			else {
+				BWTA::Polygon regionPoly = enemyRegion->getPolygon();
+				UnitCommand lastCommand = scout->getLastCommand();
+				Position lastCommandPos = lastCommand.getTargetPosition();
+
+				// Debug draw
+				Broodwar->drawCircleMap(lastCommandPos, 3, Colors::Green, true);
+
+				// Was the position inside of the polygon?
+				int polyAt = -1;
+				for (int i = 0; i < regionPoly.size(); i++) {
+					if (regionPoly.at(i) == lastCommandPos) {
+						polyAt = i;
+						break;
+					}
+				}
+
+				if (polyAt == -1) {
+					// If we did not move alongside the polygon
+					scout->move(regionPoly.at(0));
+				}
+				else {
+					if (scout->getDistance(regionPoly.at(polyAt)) >=
+						scout->getType().sightRange()) {
+						
+						// Do not update any commands, the scout is
+						// moving exactly as we want it to
+						return;
+					}
+
+					int nextPoly = (polyAt + 1) % regionPoly.size();
+					int nextPoly2 = (polyAt + 2) % regionPoly.size();
+
+					// Edge case: Is the next point on the polygon in a spike?
+					// That is, would it just be easier to move on to the next point
+					// on the polygon.
+					if (regionPoly.at(polyAt).getDistance(regionPoly.at(nextPoly2)) <
+						regionPoly.at(polyAt).getDistance(regionPoly.at(nextPoly))) {
+
+						scout->move(regionPoly.at(nextPoly2));
+					}
+					else {
+						scout->move(regionPoly.at(nextPoly));
+					}
+				}
+			}
+		}
+	}
+	else {
+		// more stoofs
 	}
 }
 
 std::vector<ScoutAndGoalStruct*> ScoutUnits::getScouts() {
 	return scouts;
+}
+
+void ScoutUnits::setAnalyzed() {
+	mapAnalyzed = true;
+}
+
+void ScoutUnits::setEnemySpawn(TilePosition pos) {
+	enemySpawn = Position(pos);
 }

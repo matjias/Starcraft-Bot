@@ -124,8 +124,15 @@ void ScoutManager::updateScoutManager() {
 	if (!foundEnemySpawn) {
 		findEnemySpawn();
 	}
+	else if (peekEnemySpawn) {
+		scoutPeekEnemySpawn();
+	}
+	else if (peekEnemyExpansions) {
+		// See if enemy is expanding anywhere
+
+	}
 	else {
-		
+		// Scout is doing nothing and should do nothing
 	}
 }
 
@@ -270,6 +277,7 @@ bool ScoutManager::foundEnemyBase(TilePosition position) {
 	if (returnBol) {
 		// Remove any excess scouts
 		clearUnusedScouts();
+		scoutUnits->setEnemySpawn(position);
 	}
 
 	return returnBol;
@@ -282,18 +290,14 @@ bool ScoutManager::foundEnemyBaseInit(TilePosition position) {
 	}
 
 	foundEnemySpawn = true;
+	peekEnemySpawn = true;
 	enemySpawn = position;
 
 	return true;
 }
 
 bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
-	if (scoutUnits != NULL){
-		Broodwar->sendText("scoutunitzz alreadu is");
-		return false;
-	}
-	if (scoutUnitsPtr == NULL) {
-		Broodwar->sendText("POINTER NOOOOOT");
+	if (scoutUnits != NULL || scoutUnitsPtr == NULL){
 		return false;
 	}
 	
@@ -303,6 +307,10 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
 	// More scoutUnits calls here
 	scoutUnits->assignGoal(Position(spawns.at(0)->location));
 	spawns.at(0)->hasScout = true;
+
+	if (foundEnemySpawn) {
+		scoutUnits->setEnemySpawn(enemySpawn);
+	}
 
 	return true;
 }
@@ -333,11 +341,12 @@ bool ScoutManager::clearUnusedScouts() {
 
 	scouts = scoutUnits->getScouts();
 
-	for (auto &scoutAndGoal : scouts) {
-		// Move the unit to the enemy base
-		scoutAndGoal->goal = enemySpawnPos;
-	}
+	// We only have one scout now
+	ScoutAndGoalStruct* scoutAndGoal = scouts.at(0);
+	scoutAndGoal->goal = enemySpawnPos;
+	scoutAndGoal->peekEnemyBase = true;
 
+	// Only return true if we have exactly one scout remaining
 	return scoutUnits->getAmountOfScouts() == 1;
 }
 
@@ -345,6 +354,21 @@ bool ScoutManager::canAddAnotherScout() {
 	return scoutUnits->getAmountOfScouts() < spawns.size();
 }
 
+void ScoutManager::scoutPeekEnemySpawn() {
+	std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
+	ScoutAndGoalStruct* scoutAssignedToPeek;
+
+	// Fetch the scout assigned to peek
+	for (auto &scoutAndGoal : scouts) {
+		if (scoutAndGoal->peekEnemyBase) {
+			scoutAssignedToPeek = scoutAndGoal;
+		}
+	}
+
+	scoutAssignedToPeek->goal = Position(enemySpawn);
+
+
+}
 
 // Debug functions
 TilePosition::list ScoutManager::getSpawns() {
@@ -375,10 +399,10 @@ std::vector<ScoutAndGoalStruct*> ScoutManager::getScouts() {
 	return scoutUnits->getScouts();
 }
 
-TilePosition ScoutManager::getEnemySpawn() {
-	return enemySpawn;
-}
-
 bool ScoutManager::hasScouts() {
 	return scoutUnits->hasScouts();
+}
+
+TilePosition ScoutManager::getEnemySpawn() {
+	return enemySpawn;
 }

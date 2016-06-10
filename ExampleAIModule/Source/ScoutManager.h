@@ -78,11 +78,16 @@ private:
 
 	// Private functions
 	bool foundEnemySpawn = false;
+	bool peekEnemySpawn = false;
+	bool peekEnemyExpansions = false;
 	BWAPI::TilePosition enemySpawn;
+
 	void findEnemySpawn();
 	void updateSpawnList();
 
 	bool clearUnusedScouts();
+
+	void scoutPeekEnemySpawn();
 
 	bool foundEnemyBaseInit(BWAPI::TilePosition position);
 
