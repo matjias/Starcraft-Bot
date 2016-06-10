@@ -44,7 +44,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
-	if (units.count(u->getID()) == 0){
+	if (units.count(u->getID()) != 0){
 		units.erase(u->getID());
 	}
 	else{

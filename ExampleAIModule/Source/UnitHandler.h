@@ -48,7 +48,6 @@ private:
 		probe,
 		scout,
 		building,
-		null
 	};
 	
 	std::map<int, UnitPlacement> units;
