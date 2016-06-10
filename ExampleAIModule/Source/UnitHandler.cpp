@@ -16,11 +16,11 @@ void UnitHandler::_init(Game* broodwarPtr){
 }
 
 void UnitHandler::addWarpingUnit(Unit u){
-	warpingUnits.insert(std::pair<int, Unit>(u->getID(), u));
+	warpingUnits.insert(std::make_pair(u->getType(), u));
 }
 
 void UnitHandler::removeWarpingUnit(Unit u){
-	warpingUnits.erase(u->getID());
+	warpingUnits.erase(u->getType());
 }
 
 // Deciding where the discovered unit belongs
@@ -116,6 +116,7 @@ bool UnitHandler::deleteUnit(Unit u){
 	}
 	return isDeleted;
 }
+
 bool UnitHandler::purchaseUnit(UnitType unitType) {
 	if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
 		return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);

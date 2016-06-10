@@ -15,5 +15,5 @@ public:
 	BWAPI::Unit getIdleBuilding(BWAPI::UnitType unitType);
 
 private:
-	std::map<BWAPI::UnitType, BWAPI::Unit> buildings;
+	std::multimap<BWAPI::UnitType, BWAPI::Unit> buildings;
 };
