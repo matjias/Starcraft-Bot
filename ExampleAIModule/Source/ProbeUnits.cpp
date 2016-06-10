@@ -93,7 +93,7 @@ bool ProbeUnits::deleteUnit(Unit u){
 
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	int counter = 0;
-	for (Unitset::iterator i = setFrom->begin(); counter < amount; i++) {
+	for (Unitset::iterator i = setFrom->begin(); counter < amount; i++, counter++) {
 		Unit probe = *i;
 		setTo->insert(probe);
 		setFrom->erase(probe);
@@ -121,16 +121,15 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	/*if (builder != u) {
 		if (builder != NULL) {
-			builder->stop(); // @TODO: Replace stop by: Mine minerals at assigned base
+			builder->stop(); // Replace stop by: Mine minerals at assigned base
 		}
 		builder = u;
 	}*/
 
-	// @TODO 6-10: Make this work: Move to build location, build when u can, return true when building is placed
 	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
 		u->build(type, getOptimalBuildPlacement(type, basePos));
 		builder = NULL;
-		builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+		builder->stop(); // Replace stop by: Mine minerals at assigned base
 		return true;
 	}
 	else {
@@ -138,7 +137,6 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 		return false;
 	}*/
 
-	// @TODO 6-10: Remove the following
 	if (building != NULL && builder != NULL) {
 		return builder->build(building, getOptimalBuildPlacement(building, basePos));
 	}
@@ -253,13 +251,13 @@ int ProbeUnits::getWorkerCount() {
 
 // Gas Units
 //
-void ProbeUnits::mineGas(Unit base) {
-	Unitset newSet = Unitset();
+void ProbeUnits::mineGas(Unit base, Unit geyser) {
+	Unitset newSet;
 	for (auto& uPair : miningProbes){
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
-}
-	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
-	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
+	}
+	newSet.gather(geyser);
+	miningProbes.insert(std::make_pair(base->getID(), newSet));
 }
 
 void ProbeUnits::setAnalyzed(){

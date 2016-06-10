@@ -264,7 +264,7 @@ bool ResourceSpender::removeDublicates(int number) {
 
 bool ResourceSpender::canBuildUnit(UnitType unitType) {
 	
-	// Is the unit/building affordable?
+	// Is the unit affordable?
 	if (unitType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
 		unitType.gasPrice() > Broodwar->self()->gas() - reservedGas ||
 		unitType.supplyRequired() / 2 > (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2) {
@@ -276,7 +276,7 @@ bool ResourceSpender::canBuildUnit(UnitType unitType) {
 	auto requiredUnits = unitType.requiredUnits();
 
 	for (auto& unitType : requiredUnits) {
-		if (buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
+		if (buildingUnitsPtr->getBuildingCount(unitType.first) == 0 &&
 			!investmentExists(unitType.first)) {
 
 			return false;
@@ -295,7 +295,7 @@ bool ResourceSpender::canBuildUnit(UnitType unitType) {
 
 bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 
-	// Is the unit/building affordable?
+	// Is the building affordable?
 	if (buildingType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
 		buildingType.gasPrice() > Broodwar->self()->gas() - reservedGas) {
 
@@ -307,7 +307,7 @@ bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 
 	for (auto& unitType : requiredUnits) {
 		if (unitType.first.isBuilding() &&
-			buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
+			buildingUnitsPtr->getBuildingCount(unitType.first) == 0 &&
 			!investmentExists(unitType.first)) {
 
 			return false;
@@ -315,7 +315,7 @@ bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 	}
 
 	// Are there any workers
-	if (probeUnitsPtr->getWorkerCount() > 0) {
+	if (probeUnitsPtr->getWorkerCount() == 0) {
 
 		return false;
 	}
@@ -333,8 +333,8 @@ bool ResourceSpender::canUpgrade(UpgradeType upgradeType) {
 	}
 
 	// Are the required buildings owned?
-	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) < 1 &&
-		buildingUnitsPtr->getBuildingCount(upgradeType.whatsRequired()) < 1) {
+	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) == 0 &&
+		buildingUnitsPtr->getBuildingCount(upgradeType.whatsRequired()) == 0) {
 
 		return false;
 	}
@@ -468,37 +468,37 @@ int ResourceSpender::getMaxSupplyOutput() {
 
 	maxSupplyOutput += UnitTypes::Protoss_Probe.supplyRequired() *
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus) *
-		(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Probe.buildTime()));
+		(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Probe.buildTime()));
 
 	maxSupplyOutput += UnitTypes::Protoss_Zealot.supplyRequired() *
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) *
-		(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Zealot.buildTime()));
+		(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Zealot.buildTime()));
 	
 	if (buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Robotics_Support_Bay) >= 1) {
 		maxSupplyOutput += UnitTypes::Protoss_Reaver.supplyRequired() *
 			buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Robotics_Facility) *
-			(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Reaver.buildTime()));
+			(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Reaver.buildTime()));
 	}
 	else {
 		maxSupplyOutput += UnitTypes::Protoss_Shuttle.supplyRequired() *
 			buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Robotics_Facility) *
-			(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Shuttle.buildTime()));
+			(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Shuttle.buildTime()));
 	}
 	
 	if (buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Fleet_Beacon) >= 1) {
 		maxSupplyOutput += UnitTypes::Protoss_Carrier.supplyRequired() *
 			buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Stargate) *
-			(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Carrier.buildTime()));
+			(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Carrier.buildTime()));
 	}
 	else if (buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Arbiter_Tribunal) >= 1) {
 		maxSupplyOutput += UnitTypes::Protoss_Arbiter.supplyRequired() *
 			buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Stargate) *
-			(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Arbiter.buildTime()));
+			(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Arbiter.buildTime()));
 	}
 	else {
 		maxSupplyOutput += UnitTypes::Protoss_Scout.supplyRequired() *
 			buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Stargate) *
-			(ceil(UnitTypes::Protoss_Pylon.buildTime() / UnitTypes::Protoss_Scout.buildTime()));
+			(ceil((float)UnitTypes::Protoss_Pylon.buildTime() / (float)UnitTypes::Protoss_Scout.buildTime()));
 	}
 	
 	return maxSupplyOutput / 2;
