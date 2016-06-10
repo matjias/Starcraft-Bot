@@ -24,7 +24,7 @@ struct ScoutAndGoalStruct {
 	bool kiting = false;
 };
 
-// Economy
+// Macro and economy
 const int MAX_SUPPLY = 200;
 const int WORKERS_PER_MINERAL_LINE = 9 * 2; // 9 Mineral Fields, 2 workers per Mineral Field
 const int WORKERS_PER_GEYSER = 3;
@@ -32,6 +32,8 @@ const int MAX_WORKERS = (WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER) * 4; // 
 const int MAX_WORKER_SURPLUS = WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER;
 const int MINERAL_SURPLUS_LIMIT = 600;
 const int GAS_SURPLUS_LIMIT = 400;
+const int EARLY_STAGE_SUPPLY = 6;
+const int MID_STAGE_SUPPLY = 20;
 
 // Units and buildings
 const int MIN_OBSERVERS = 1; // Observers needed to scout

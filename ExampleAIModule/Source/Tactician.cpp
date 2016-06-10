@@ -90,6 +90,8 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 		lastKnownStrategy = currentStategy;
 	}
 
+	setStage();
+
 	switch (currentStage) {
 	case Start:
 		updateTacticianStart();
@@ -118,6 +120,27 @@ void Tactician::updateTacticianStart() {
 	
 	unitHandler.update();
 
+}
+
+void Tactician::setStage() {
+	switch (currentStage) {
+	case Start:
+		if (Broodwar->self()->supplyTotal() / 2 >= EARLY_STAGE_SUPPLY) {
+			currentStage = Early;
+		}
+		break;
+
+	case Early:
+		if (Broodwar->self()->supplyTotal() / 2 >= MID_STAGE_SUPPLY) {
+			currentStage = Mid;
+		}
+		break;
+
+	case Mid:
+
+
+		break;
+	}
 }
 
 void Tactician::setAnalyzed(){
