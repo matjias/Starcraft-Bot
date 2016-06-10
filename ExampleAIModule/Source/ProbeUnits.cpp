@@ -95,7 +95,7 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 	// @TODO 6-10: Don't take the scout and the gas miners!?
-	Unit u = broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 	
 
 	// @TODO 6-10: Make this work
@@ -125,7 +125,7 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 
 // @TODO 6-10: It should ignore the builder when looking for a build loc
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
-	TilePosition curPos = broodwar->getBuildLocation(type, basePos);
+	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
 	/*while (!checkMargin(type, curPos)){
 		curPos = broodwar->getBuildLocation(type, basePos);
 	}*/
@@ -139,7 +139,7 @@ TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition ba
 }
 
 TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
-	Broodwar->sendText("custom Recursive placement in use");
+	//Broodwar->sendText("custom Recursive placement in use");
 	TilePosition curPos = basePos;
 	for (int i = -depth; i <= depth; i++){
 		if (i == -depth || i == depth){
@@ -213,9 +213,9 @@ void ProbeUnits::setAnalyzed(){
 
 bool ProbeUnits::unitBlocking(TilePosition basePos){
 	// getUnitsinRectalngle instead mby
-	return (broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
-			broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
+	return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
+			Broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
 		);
 }

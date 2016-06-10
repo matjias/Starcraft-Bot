@@ -152,6 +152,7 @@ void ResourceSpender::purchase() {
 				}
 				else {
 					if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
+						Broodwar->sendText("der bliver kjopt");
 						removeInvestment(i);
 					}
 				}

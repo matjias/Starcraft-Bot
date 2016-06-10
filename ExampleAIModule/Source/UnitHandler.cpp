@@ -20,34 +20,48 @@ void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
 }
 
 void UnitHandler::addWarpingUnit(Unit u){
-	warpingUnits.insert(std::make_pair(u->getType(), u));
+	if (units.count(u->getID()) == 0){
+		warpingUnits.insert(std::make_pair(u->getType(), u));
+		//Broodwar->sendText("WAapapap lappa dis %s", u->getType().c_str());
+	}
 }
 
 void UnitHandler::removeWarpingUnit(Unit u){
-	for (std::multimap<UnitType, Unit>::iterator i = warpingUnits.lower_bound(u->getType()); i != warpingUnits.upper_bound(u->getType()); i++) {
-		if ((*i).second == u){
-			warpingUnits.erase(i);
+	Broodwar->sendText("Das type Gefjernt from wapapa %s %s", u->getType().c_str(), 
+		warpingUnits.erase(u->getType()) ? "Slettet" : "NOT");
+	// @TODO: Should do something like this. For the moment the above works.
+	/*std::pair<std::multimap<UnitType, Unit>::iterator, std::multimap<UnitType, Unit>::iterator> itr = warpingUnits.equal_range(u->getType());
+	std::multimap<UnitType, Unit>::iterator it = itr.first;
+	for (; it != itr.second; ++it) {
+		if (it->second == u) {
+			Broodwar->sendText("fucker locker med remove warp");
+			warpingUnits.erase(it);
+			break;
 		}
-	}
+	}*/
 }
 
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
-	if (units[u->getID()] != NULL){
+	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
+	if (units.count(u->getID()) == 0){
 		units.erase(u->getID());
 	}
-	removeWarpingUnit(u);
+	else{
+		// If not in unit map, it must be a new unit?
+		removeWarpingUnit(u);
+	}
 	if (isCombatUnit(u)){
-		combatUnits.addUnit(u);
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), combat));
+		combatUnits.addUnit(u);
 	}
 	else if (isProbeUnit(u)){
-		probeUnits.addUnit(u);
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), probe));
+		probeUnits.addUnit(u);
 	}
 	else if (isBuilding(u)){
-		buildingUnits.addBuilding(u);
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), building));
+		buildingUnits.addBuilding(u);
 	}
 }
 
@@ -126,8 +140,10 @@ bool UnitHandler::deleteUnit(Unit u){
 }
 
 bool UnitHandler::purchaseUnit(UnitType unitType) {
-	if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
-		return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
+	Unit builderUnit = buildingUnits.getIdleBuilding(unitType.whatBuilds().first);
+	if (builderUnit != NULL) {
+		//Broodwar->sendText("%s bygger %s", builderUnit->getType(), unitType);
+		return builderUnit->train(unitType);
 	}
 	return false;
 }
