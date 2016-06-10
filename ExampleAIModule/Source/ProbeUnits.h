@@ -25,7 +25,7 @@ public:
 	bool deleteUnit(BWAPI::Unit u);
 
 	bool newBuilding(BWAPI::UnitType type);
-	bool newBuilding(BWAPI::UnitType type, BWAPI::TilePosition pos);
+	bool newBuilding(BWAPI::UnitType building, BWAPI::TilePosition pos);
 
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();

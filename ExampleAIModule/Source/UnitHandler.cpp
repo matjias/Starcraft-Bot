@@ -44,7 +44,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
-	if (units.count(u->getID()) == 0){
+	if (units.count(u->getID()) != 0){
 		units.erase(u->getID());
 	}
 	else{
@@ -148,9 +148,8 @@ bool UnitHandler::purchaseUnit(UnitType unitType) {
 	return false;
 }
 
-bool UnitHandler::purchaseBuilding(UnitType unitType) {
-	// @TODO 6-10: Change location?
-	return probeUnits.newBuilding(unitType, Broodwar->self()->getStartLocation());
+bool UnitHandler::purchaseBuilding(BWAPI::UnitType building) {
+	return probeUnits.newBuilding(building, Broodwar->self()->getStartLocation());
 }
 
 bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {

@@ -44,6 +44,7 @@ public:
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, bool urgent);
 	BWAPI::UnitType getPendingBuilding();
 	void pendingBuildingPlaced();
+	void removePlacedBuildings(BWAPI::UnitType buildingType);
 
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
@@ -61,6 +62,7 @@ private:
 	void clearReservedResources();
 	bool investmentExists(BWAPI::UnitType unitType);
 	bool investmentExists(BWAPI::UpgradeType upgradeType);
+	bool canBuildBuilding(BWAPI::UnitType buildingType);
 	bool canBuildUnit(BWAPI::UnitType unitType);
 	bool canUpgrade(BWAPI::UpgradeType upgradeType);
 	bool workerNeeded();
