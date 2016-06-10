@@ -6,6 +6,7 @@
 
 #pragma once
 #include "BWAPI.h"
+#include "BWTA.h"
 #include "CombatUnits.h"
 #include "ProbeUnits.h"
 #include "BuildingUnits.h"
@@ -17,13 +18,15 @@ class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
 	~UnitHandler();
-	void _init();
+	void _init(BWAPI::Game* broodwarPtr);
+
 	void addUnit(BWAPI::Unit u);
 	void addWarpingUnit(BWAPI::Unit u);
 	void removeWarpingUnit(BWAPI::Unit u);
 	int getWarpingUnitCount(BWAPI::UnitType unitType);
-	bool purchase(BWAPI::UnitType unitType);
-	bool purchase(BWAPI::UpgradeType upgradeType);
+	bool purchaseUnit(BWAPI::UnitType unitType);
+	bool purchaseBuilding(BWAPI::UnitType unitType);
+	bool purchaseUpgrade(BWAPI::UpgradeType upgradeType);
 	bool deleteUnit(BWAPI::Unit);
 
 	void addScout(BWAPI::UnitType unitType);

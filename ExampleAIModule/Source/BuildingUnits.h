@@ -16,5 +16,4 @@ public:
 
 private:
 	std::map<BWAPI::UnitType, BWAPI::Unit> buildings;
-	std::map<BWAPI::UnitType, BWAPI::Unit>::iterator buildingsIterator = buildings.begin();
 };

@@ -6,13 +6,11 @@ using namespace BWAPI;
 
 ScoutManager::ScoutManager() { }
 
-ScoutManager::ScoutManager(Game *gamePtr) {
-	broodwar = gamePtr;
-}
-
 ScoutManager::~ScoutManager() { }
 
-bool ScoutManager::_init() {
+bool ScoutManager::_init(Game* broodwarPtr) {
+	broodwar = broodwarPtr;
+
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -275,6 +273,7 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
+			broodwar->sendText("Scout got assigned a better goal");
 		}
 	}
 }

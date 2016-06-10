@@ -10,8 +10,9 @@ UnitHandler::UnitHandler() {
 
 UnitHandler::~UnitHandler() { }
 
-void UnitHandler::_init(){
+void UnitHandler::_init(Game* broodwarPtr){
 	combatUnits._init();
+	probeUnits._init(broodwarPtr);
 }
 
 void UnitHandler::addWarpingUnit(Unit u){
@@ -115,24 +116,19 @@ bool UnitHandler::deleteUnit(Unit u){
 	}
 	return isDeleted;
 }
-bool UnitHandler::purchase(UnitType unitType) {
-	
-	// Purchase units
-	if (unitType.isBuilding()) {
-		if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
-			return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
-		}
+bool UnitHandler::purchaseUnit(UnitType unitType) {
+	if (buildingUnits.getIdleBuilding(unitType.whatBuilds().first) != NULL) {
+		return buildingUnits.getIdleBuilding(unitType.whatBuilds().first)->train(unitType);
 	}
-	
-	// Purchase buildings
-	else {
-		// @TODO
-	}
-
 	return false;
 }
 
-bool UnitHandler::purchase(UpgradeType upgradeType) {
+bool UnitHandler::purchaseBuilding(UnitType unitType) {
+	// @TODO 6-10: Change location?
+	return probeUnits.newBuilding(unitType, Broodwar->self()->getStartLocation());
+}
+
+bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {
 	// @TODO
 	return false;
 }

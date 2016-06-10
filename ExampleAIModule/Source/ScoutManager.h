@@ -22,11 +22,10 @@
 class DLL_SPECIFIER ScoutManager {
 public:
 	ScoutManager();
-	ScoutManager(BWAPI::Game *gameWrapper);
 	~ScoutManager();
 
 	// Init function
-	bool _init();
+	bool _init(BWAPI::Game* broodwarPtr);
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);

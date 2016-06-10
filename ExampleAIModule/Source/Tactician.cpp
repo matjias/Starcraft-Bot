@@ -3,19 +3,21 @@
 
 using namespace BWAPI;
 
-Tactician::Tactician() {
+Tactician::Tactician() { }
+
+Tactician::~Tactician() { }
+
+bool Tactician::_init(Game* broodwarPtr, ScoutManager* scoutMan) {
 	currentStage = Start;
 
 	initArmyCompositions();
 	armyComposition = initialArmyComposition;
 
-	unitHandler._init();
+	unitHandler._init(broodwarPtr);
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
-}
 
-Tactician::~Tactician() { }
 
-bool Tactician::_init(ScoutManager* scoutMan) {
+
 	if (scoutMan == NULL) {
 		return false;
 	}
@@ -244,7 +246,7 @@ void Tactician::initArmyCompositions() {
 	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 
 	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
@@ -253,7 +255,7 @@ void Tactician::initArmyCompositions() {
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
 	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
