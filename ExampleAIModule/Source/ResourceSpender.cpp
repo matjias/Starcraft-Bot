@@ -99,20 +99,21 @@ void ResourceSpender::update() {
 	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
 	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
 	Broodwar->drawTextScreen(280, 25, "Nexuses: %i", buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus));
-	Broodwar->drawTextScreen(280, 35, "Warping Probes: %i", unitsInProgress(BWAPI::UnitTypes::Protoss_Probe));
+	Broodwar->drawTextScreen(280, 35, "Pylons: %i", buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Pylon));
+	Broodwar->drawTextScreen(280, 45, "Warping Probes: %i", unitsInProgress(BWAPI::UnitTypes::Protoss_Probe));
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
 			if (investments[i].pending) {
-				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
+				Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
 			}
 			else {
-				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+				Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
 			}
 		}
 		else {
 			if (investments[i].pending) {
-				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s (Pending)", i, investments[i].getUpgradeType().c_str());
+				Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s (Pending)", i, investments[i].getUpgradeType().c_str());
 			}
 			else {
 				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
@@ -402,7 +403,7 @@ bool ResourceSpender::workerNeeded() {
 
 bool ResourceSpender::supplyNeeded() {
 	return Broodwar->self()->supplyUsed() / 2 +
-		getMaxSupplyOutput() >= 
+		getMaxSupplyOutput() >=
 		(Broodwar->self()->supplyTotal() + 
 		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Pylon) * BWAPI::UnitTypes::Protoss_Pylon.supplyProvided() +
 		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Nexus) * BWAPI::UnitTypes::Protoss_Nexus.supplyProvided()) / 2;
