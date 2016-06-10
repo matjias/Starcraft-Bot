@@ -1,22 +1,22 @@
 #pragma once
 #include "ExampleAIModule.h"
 
+// BWTA2 variables
+bool analyzed;
+bool analyzedJustFinished;
+
 using namespace BWAPI;
 using namespace Filter;
 
 // BWTA2 function for threading the analysis
-DWORD WINAPI AnalyzeThread(ExampleAIModule *para) {
+DWORD WINAPI AnalyzeThread() {
 	BWTA::analyze();
 
-	para->analyzed = true;
-	Broodwar->sendText("Finished analyzing map");
-
-	// Tell any classes here that BWTA has finished
-	para->tactician.setAnalyzed();
+	analyzed = true;
+	analyzedJustFinished = true;
 
 	return 0;
 }
-
 
 void ExampleAIModule::onStart() {
 	// Bot Setup
@@ -26,9 +26,10 @@ void ExampleAIModule::onStart() {
 	// BWTA2 stuffs
 	BWTA::readMap();
 	analyzed = false;
+	analyzedJustFinished = false;
 
 	Broodwar->sendText("Analyzing map, slow if map has not loaded yet");
-	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, this, 0, NULL);
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, NULL, 0, NULL);
 
 	// Other onStart stuff
 	scoutManager._init();
@@ -43,9 +44,18 @@ void ExampleAIModule::onFrame() {
 	// Debug drawing
 	drawData();
 
-	// BWTA2 drawing on the map
-	if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self())
+	// When BWTA2 finishes reading the map, we can call all
+	// classes that use the BWTA2 functions and say it is available
+	if (analyzedJustFinished) {
+		Broodwar->sendText("Finished analyzing map");
+		analyzedJustFinished = false;
+		tactician.setAnalyzed();
+	}
+
+	// Skip game logic if it's not really 'us'
+	if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self()) {
 		return;
+	}
 
 	// Call our game logic
 	strategyDecider.update();

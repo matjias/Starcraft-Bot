@@ -56,19 +56,22 @@ bool ScoutUnits::hasScouts() {
 
 bool ScoutUnits::assignGoal(Position goal) {
 	// Has the goal already been set?
-	for (auto &scout : scouts) {
-		if (scout->goal = goal) {
+	for (auto &scoutAndgoal : scouts) {
+		if (scoutAndgoal->goal == goal) {
 			return false;
 		}
 	}
 
 	// Otherwise we set it
-	for (auto &scout : scouts) {
-		if (scout->goal != Position(0, 0)) {
-			scout->goal = goal;
+	for (auto &scoutAndgoal : scouts) {
+		if (scoutAndgoal->goal == Position(0, 0)) {
+			scoutAndgoal->goal = goal;
 			return true;
 		}
 	}
+
+	// If we still did not set it tell the game
+	Broodwar->sendText("Scout did not get a goal");
 
 	return false;
 }
