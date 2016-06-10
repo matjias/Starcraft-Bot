@@ -18,6 +18,7 @@ public:
 	UnitHandler();
 	~UnitHandler();
 	void _init(BWAPI::Game* broodwarPtr);
+	void setBroodwarMock(BWAPI::Game* mockBroodwarPtr);
 
 	void addUnit(BWAPI::Unit u);
 	void addWarpingUnit(BWAPI::Unit u);
