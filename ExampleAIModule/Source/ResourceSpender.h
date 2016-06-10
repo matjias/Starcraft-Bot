@@ -42,6 +42,8 @@ public:
 	bool unitInvestmentExists(BWAPI::UnitType investment);
 	void addUnitInvestment(BWAPI::UnitType investment, bool urgent);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, bool urgent);
+	BWAPI::UnitType getPendingBuilding();
+	void pendingBuildingPlaced();
 
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
@@ -70,10 +72,11 @@ private:
 	std::vector<UnitOrUpgrade> investments;
 	std::vector<BWAPI::UpgradeType> upgradesInProgress;
 
-	bool allIn;
-	bool defend;
+	bool allIn = false;
+	bool defend = false;
 	int reservedMinerals = 0;
 	int reservedGas = 0;
+	int pendingBuilding = NULL;
 
 	UnitHandler* unitHandlerPtr;
 	BuildingUnits* buildingUnitsPtr;

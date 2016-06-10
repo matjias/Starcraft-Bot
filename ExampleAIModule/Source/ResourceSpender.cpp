@@ -92,6 +92,7 @@ void ResourceSpender::update() {
 	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();
+	pendingBuilding = NULL;
 	purchase();
 
 	// Draw/print
@@ -142,10 +143,21 @@ void ResourceSpender::purchase() {
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].pending) {
 			if (investments[i].isUnitType()) {
-				unitHandlerPtr->purchase(investments[i].getUnitType());
+				if (investments[i].getUnitType().isBuilding()) {
+					if (unitHandlerPtr->purchaseBuilding(investments[i].getUnitType())) {
+						removeInvestment(i);
+					}
+				}
+				else {
+					if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
+						removeInvestment(i);
+					}
+				}
 			}
 			else {
-				unitHandlerPtr->purchase(investments[i].getUpgradeType());
+				if (unitHandlerPtr->purchaseUpgrade(investments[i].getUpgradeType())) {
+					removeInvestment(i);
+				}
 			}
 		}
 	}
