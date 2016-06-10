@@ -19,6 +19,9 @@ struct ScoutAndGoalStruct {
 	BWAPI::Unit scout;
 	BWAPI::Position goal = BWAPI::Position(0, 0);
 	bool reachedGoal = false;
+	bool peekEnemyBase = false;
+	bool underAttack = false;
+	bool kiting = false;
 };
 
 // Economy

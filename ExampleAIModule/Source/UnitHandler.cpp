@@ -124,6 +124,7 @@ void UnitHandler::update() {
 
 void UnitHandler::setAnalyzed(){
 	probeUnits.setAnalyzed();
+	scoutUnits.setAnalyzed();
 }
 
 bool UnitHandler::deleteUnit(Unit u){
