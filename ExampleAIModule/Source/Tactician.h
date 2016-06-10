@@ -61,15 +61,18 @@ private:
 
 	std::vector<std::pair<BWAPI::UnitType, float>> initialArmyComposition;
 
-	std::vector<std::pair<BWAPI::UnitType, float>> protossEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> protossEarlyGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> protossEarlyGasHeavy;
 	std::vector<std::pair<BWAPI::UnitType, float>> protossMidGasLight;
 	std::vector<std::pair<BWAPI::UnitType, float>> protossMidGasHeavy;
 
-	std::vector<std::pair<BWAPI::UnitType, float>> terranEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> terranEarlyGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> terranEarlyGasHeavy;
 	std::vector<std::pair<BWAPI::UnitType, float>> terranMidGasLight;
 	std::vector<std::pair<BWAPI::UnitType, float>> terranMidGasHeavy;
 
-	std::vector<std::pair<BWAPI::UnitType, float>> zergEarly;
+	std::vector<std::pair<BWAPI::UnitType, float>> zergEarlyGasLight;
+	std::vector<std::pair<BWAPI::UnitType, float>> zergEarlyGasHeavy;
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasLight;
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasHeavy;
 };

@@ -192,49 +192,6 @@ BWAPI::UpgradeType Tactician::neededUpgrade() {
 	return NULL;
 }
 
-void Tactician::computeArmyComposition() {
-
-	if (Broodwar->self()->getRace() == BWAPI::Races::Zerg) {
-		if (currentStage == Mid) {
-			if (gasSurplus()) {
-				armyComposition = zergMidGasHeavy;
-			}
-			else if (mineralSurplus()) {
-				armyComposition = zergMidGasLight;
-			}
-		}
-		else {
-			armyComposition = zergEarly;
-		}
-	}
-	else if (Broodwar->self()->getRace() == BWAPI::Races::Terran) {
-		if (currentStage == Mid) {
-			if (gasSurplus()) {
-				armyComposition = terranMidGasHeavy;
-			}
-			else if (mineralSurplus()) {
-				armyComposition = terranMidGasLight;
-			}
-		}
-		else {
-			armyComposition = terranEarly;
-		}
-	}
-	else if (Broodwar->self()->getRace() == BWAPI::Races::Protoss) {
-		if (currentStage == Mid) {
-			if (gasSurplus()) {
-				armyComposition = protossMidGasHeavy;
-			}
-			else if (mineralSurplus()) {
-				armyComposition = protossMidGasLight;
-			}
-		}
-		else {
-			armyComposition = protossEarly;
-		}
-	}
-}
-
 bool Tactician::mineralSurplus() {
 	return Broodwar->self()->minerals() > MINERAL_SURPLUS_LIMIT;
 }
@@ -243,38 +200,113 @@ bool Tactician::gasSurplus() {
 	return Broodwar->self()->gas() > GAS_SURPLUS_LIMIT;
 }
 
+void Tactician::computeArmyComposition() {
+
+	switch (currentStage) {
+	case Start:
+		armyComposition = initialArmyComposition;
+		break;
+
+	case Early:
+		if (Broodwar->self()->getRace() == BWAPI::Races::Zerg) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = zergEarlyGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = zergEarlyGasLight;
+				}
+			}
+		}
+		else if (Broodwar->self()->getRace() == BWAPI::Races::Terran) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = terranEarlyGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = terranEarlyGasLight;
+				}
+			}
+		}
+		else if (Broodwar->self()->getRace() == BWAPI::Races::Protoss) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = protossEarlyGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = protossEarlyGasLight;
+				}
+			}
+		}
+		break;
+
+	case Mid:
+		if (Broodwar->self()->getRace() == BWAPI::Races::Zerg) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = zergMidGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = zergMidGasLight;
+				}
+			}
+		}
+		else if (Broodwar->self()->getRace() == BWAPI::Races::Terran) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = terranMidGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = terranMidGasLight;
+				}
+			}
+		}
+		else if (Broodwar->self()->getRace() == BWAPI::Races::Protoss) {
+			if (currentStage == Mid) {
+				if (gasSurplus()) {
+					armyComposition = protossMidGasHeavy;
+				}
+				else if (mineralSurplus()) {
+					armyComposition = protossMidGasLight;
+				}
+			}
+		}
+		break;
+	}
+}
+
 void Tactician::initArmyCompositions() {
 
 	// Army compositions vs Protoss, Terran, and Zerg
 	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 
-	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	protossEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	
+	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
-	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 5.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
-	zergEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	zergEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
-	zergEarly.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
-
+	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
+	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
-
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
