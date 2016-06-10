@@ -64,7 +64,7 @@ bool ProbeUnits::deleteUnit(Unit u){
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
-}
+		}
 	}
 	return false;
 }
@@ -89,10 +89,10 @@ bool ProbeUnits::newBuilding(UnitType type, TilePosition basePos){
 
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
 	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
-	while (!checkMargin(type, curPos)){
-		curPos = Broodwar->getBuildLocation(type, basePos);
-	}
-	return curPos;
+	//while (!checkMargin(type, curPos)){
+	//	curPos = Broodwar->getBuildLocation(type, basePos);
+	//}
+	//return curPos;
 	int radius = 1;
 	if (checkMargin(type, curPos)){
 		return curPos;
@@ -113,7 +113,7 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 				}
 			}
 		}
-		curPos = TilePosition(basePos.x + i, basePos.y);
+		curPos = TilePosition(basePos.x, basePos.y - i);
 		if (checkMargin(type, curPos)){
 			return curPos;
 		}

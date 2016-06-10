@@ -12,6 +12,11 @@ void CombatUnits::_init(){
 }
 
 
+// Fuck det her Hvornr skal der kører idle vs attack :O
+void CombatUnits::update(){
+
+}
+
 
 void CombatUnits::idleUpdate(){
 	
