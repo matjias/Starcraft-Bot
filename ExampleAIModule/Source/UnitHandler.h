@@ -18,7 +18,7 @@ class DLL_SPECIFIER UnitHandler {
 public:
 	UnitHandler();
 	~UnitHandler();
-	void _init(BWAPI::Game* broodwarPtr);
+	void _init();
 	void setBroodwarMock(BWAPI::Game* mockBroodwarPtr);
 
 	void addUnit(BWAPI::Unit u);

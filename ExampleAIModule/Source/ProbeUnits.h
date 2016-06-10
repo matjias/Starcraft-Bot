@@ -14,8 +14,8 @@ public:
 	ProbeUnits();
 	~ProbeUnits();
 
-	void _init(BWAPI::Game* broodwarPtr);
-	void setBroodwarMock(BWAPI::Game* mockBroodwarPtr);
+	void _init();
+	void setBroodwarMock(BWAPI::Game* broodwarPtr);
 
 	void addUnit(BWAPI::Unit u);
 	int getWorkerCount();
@@ -33,8 +33,6 @@ public:
 	void setAnalyzed();
 
 private:
-	BWAPI::Game* broodwar;
-
 	int workerCount = 0;
 	bool mapAnalyzed;
 

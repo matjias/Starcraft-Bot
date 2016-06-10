@@ -25,8 +25,8 @@ public:
 	~ScoutManager();
 
 	// Init function
-	bool _init(BWAPI::Game* broodwarPtr);
-	void setBroodwar(BWAPI::Game* broodwarPtr);
+	bool _init();
+	void setBroodwarMock(BWAPI::Game* broodwarPtr);
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);
@@ -73,7 +73,6 @@ public:
 	bool isScouting = false;
 
 private:
-	BWAPI::Game* broodwar;
 	ScoutUnits* scoutUnits;
 
 	// Private functions

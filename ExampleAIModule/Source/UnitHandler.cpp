@@ -10,9 +10,8 @@ UnitHandler::UnitHandler() {
 
 UnitHandler::~UnitHandler() { }
 
-void UnitHandler::_init(Game* broodwarPtr){
+void UnitHandler::_init(){
 	combatUnits._init();
-	probeUnits._init(broodwarPtr);
 }
 
 void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {

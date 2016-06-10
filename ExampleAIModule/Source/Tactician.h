@@ -10,7 +10,12 @@ public:
 	Tactician();
 	~Tactician();
 	
-	bool _init(BWAPI::Game* broodwarPtr, ScoutManager* scoutMan);
+	// Only used in Unit Testing!!!
+	void setBroodwarMock(BWAPI::Game* broodwarPtr);
+
+	bool _init(ScoutManager* scoutMan);
+	
+	
 
 	void updateTactician(StrategyName currentStrategy);
 	void scout();

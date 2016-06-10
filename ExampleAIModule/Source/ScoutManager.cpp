@@ -14,12 +14,11 @@ Player ScoutManager::test() {
 	//return Broodwar->self();
 }
 
-void ScoutManager::setBroodwar(Game* broodwarPtr) {
+void ScoutManager::setBroodwarMock(Game* broodwarPtr) {
 	BroodwarPtr = broodwarPtr;
 }
 
-bool ScoutManager::_init(Game* broodwarPtr) {
-	setBroodwar(broodwarPtr);
+bool ScoutManager::_init() {
 
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
@@ -28,10 +27,10 @@ bool ScoutManager::_init(Game* broodwarPtr) {
 	}
 
 	TilePosition::list unsortedSpawns;
-	TilePosition ownSpawn = BroodwarPtr->self()->getStartLocation();
+	TilePosition ownSpawn = Broodwar->self()->getStartLocation();
 
 	// Adds all the spawns to a list, excluding our own spawn
-	for (auto &location : broodwar->getStartLocations()) {
+	for (auto &location : Broodwar->getStartLocations()) {
 		if (location != ownSpawn) {
 			unsortedSpawns.push_back(location);
 		}
@@ -72,14 +71,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 	if (enemyUnits.count(u->getID()) == 1) {
 		// Then we update their position and when we last saw it
 		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
-		enemyUnits.at(u->getID())->lastScouted = broodwar->getFrameCount();
+		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
 	}
 	// Otherwise we need to record it
 	else {
 		UnitStruct *uStruct = new UnitStruct();
 		uStruct->unit = u;
 		uStruct->lastKnownPosition = u->getPosition();
-		uStruct->lastScouted = broodwar->getFrameCount();
+		uStruct->lastScouted = Broodwar->getFrameCount();
 
 		enemyUnits.insert(std::make_pair(u->getID(), uStruct));
 	}
@@ -98,7 +97,7 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	if (elementsRemoved == 0) {
 		// TODO: Currently just tells the player about it,
 		// but this should be covered somewhere
-		broodwar->sendText("A unit was destroyed which was not recorded");
+		Broodwar->sendText("A unit was destroyed which was not recorded");
 	}
 
 	return elementsRemoved;
@@ -107,11 +106,11 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 void ScoutManager::recordUnitEvade(Unit u) {
 	if (enemyUnits.count(u->getID()) == 1) {
 		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
-		enemyUnits.at(u->getID())->lastScouted = broodwar->getFrameCount();
+		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
 	}
 	else {
 		// Something went wrong, for now just tell the client
-		broodwar->sendText("A unit has evaded that wasnt recorded");
+		Broodwar->sendText("A unit has evaded that wasnt recorded");
 	}
 }
 
@@ -176,7 +175,7 @@ void ScoutManager::findEnemySpawn() {
 		}
 
 		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
-		if (broodwar->isVisible(goalPosition)) {
+		if (Broodwar->isVisible(goalPosition)) {
 
 			for (auto &spawn : spawns) {
 				if (goalPosition == spawn->location) {
@@ -209,7 +208,7 @@ void ScoutManager::findEnemySpawn() {
 			}
 			
 			if (!gaveNewGoal){
-				broodwar->sendText("Returning scout to unithandler");
+				Broodwar->sendText("Returning scout to unithandler");
 
 				scoutUnits->removeUnit(scoutAndGoal->scout);
 				// Send back to base and back to probeUnits for now
@@ -283,7 +282,7 @@ void ScoutManager::updateSpawnList() {
 
 		if (spawns.at(i)->hasScout && !spawns.at(i - 1)->hasScout) {
 			std::swap(spawns.at(i), spawns.at(i - 1));
-			broodwar->sendText("Scout got assigned a better goal");
+			Broodwar->sendText("Scout got assigned a better goal");
 		}
 	}
 }
