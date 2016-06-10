@@ -11,12 +11,15 @@ void BuildingUnits::addBuilding(BWAPI::Unit unit) {
 }
 
 void BuildingUnits::removeBuilding(BWAPI::Unit unit) {
+
+	std::map<BWAPI::UnitType, BWAPI::Unit>::iterator buildingsIterator = buildings.begin();
+
 	while (buildingsIterator != buildings.end()) {
 		if (buildingsIterator->second == unit) {
 			buildingsIterator = buildings.erase(buildingsIterator);
 		}
 		else {
-			++buildingsIterator;
+			buildingsIterator++;
 		}
 	}
 }
@@ -26,16 +29,17 @@ int BuildingUnits::getBuildingCount(BWAPI::UnitType unitType) {
 }
 
 BWAPI::Unit BuildingUnits::getIdleBuilding(BWAPI::UnitType unitType) {
-	int idleBuildings = 0;
+
+	std::map<BWAPI::UnitType, BWAPI::Unit>::iterator buildingsIterator = buildings.begin();
 
 	while (buildingsIterator != buildings.end()) {
 		if (buildingsIterator->first == unitType &&
-			buildingsIterator->second->isCompleted() &&
 			!buildingsIterator->second->isTraining() &&
 			!buildingsIterator->second->isResearching()) {
 
 			return buildingsIterator->second;
 		}
+		buildingsIterator++;
 	}
 
 	return NULL;

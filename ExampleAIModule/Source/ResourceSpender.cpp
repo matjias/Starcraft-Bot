@@ -88,45 +88,88 @@ void ResourceSpender::update() {
 	if (supplyNeeded()) {
 		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, true);
 	}
-	addRequirements(0);
 
-	calculateReservedResources();
+	addAllRequirements();
+	clearReservedResources();
+	setPendingInvestments();
+	pendingBuilding = NULL;
 	purchase();
 
-	// Draw/print investment list
+	// Draw/print
+	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
+	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
+
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
-			Broodwar->drawTextScreen(5, 5 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+			if (investments[i].pending) {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
+			}
+			else {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+			}
 		}
 		else {
-			Broodwar->drawTextScreen(5, 5 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
+			if (investments[i].pending) {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s (Pending)", i, investments[i].getUpgradeType().c_str());
+			}
+			else {
+				Broodwar->drawTextScreen(280, 35 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
+			}
+		}
+	}
+}
+
+void ResourceSpender::setPendingInvestments() {
+
+	bool falseReached = false;
+
+	for (int i = 0; i < investments.size(); i++) {
+
+		if (!falseReached &&
+			((investments[i].isUnitType() && canBuildUnit(investments[i].getUnitType())) ||
+			(investments[i].isUpgradeType() && canUpgrade(investments[i].getUpgradeType())))) {
+
+			investments[i].pending = true;
+			calculateReservedResources();
+		}
+		else {
+			investments[i].pending = false;
+			falseReached = true;
 		}
 	}
 }
 
 void ResourceSpender::purchase() {
 	for (int i = 0; i < investments.size(); i++) {
-		if (!investments[i].pending) {
-			if ((investments[i].isUnitType() && canBuildUnit(investments[i].getUnitType())) ||
-				(investments[i].isUpgradeType() && canUpgrade(investments[i].getUpgradeType()))) {
-
-				investments[i].pending = true;
-
-				if (investments[i].isUnitType()) {
-					unitHandlerPtr->purchase(investments[i].getUnitType());
+		if (investments[i].pending) {
+			if (investments[i].isUnitType()) {
+				if (investments[i].getUnitType().isBuilding()) {
+					if (unitHandlerPtr->purchaseBuilding(investments[i].getUnitType())) {
+						removeInvestment(i);
+					}
 				}
 				else {
-					unitHandlerPtr->purchase(investments[i].getUpgradeType());
+					if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
+						removeInvestment(i);
+					}
 				}
 			}
-			break;
+			else {
+				if (unitHandlerPtr->purchaseUpgrade(investments[i].getUpgradeType())) {
+					removeInvestment(i);
+				}
+			}
 		}
 	}
 }
 
-void ResourceSpender::calculateReservedResources() {
+void ResourceSpender::clearReservedResources() {
 	reservedMinerals = 0;
 	reservedGas = 0;
+}
+
+void ResourceSpender::calculateReservedResources() {
+	clearReservedResources();
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].pending) {
@@ -138,27 +181,24 @@ void ResourceSpender::calculateReservedResources() {
 
 void ResourceSpender::addUnitInvestment(BWAPI::UnitType investment, bool urgent) {
 	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(investment);
-
-	if (!investmentExists(investment)) {
-		if (urgent) {
-			investments.insert(investments.begin(), unitOrUpgrade);
-		}
-		else {
-			investments.push_back(unitOrUpgrade);
-		}
+	removeInvestments(investment);
+	if (urgent) {
+		investments.insert(investments.begin(), unitOrUpgrade);
 	}
+	else {
+		investments.push_back(unitOrUpgrade);
+	}
+	
 }
 
 void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType investment, bool urgent) {
 	UnitOrUpgrade unitOrUpgrade = investment;
-
-	if (!investmentExists(investment)) {
-		if (urgent) {
-			investments.insert(investments.begin(), unitOrUpgrade);
-		}
-		else {
-			investments.push_back(unitOrUpgrade);
-		}
+	removeInvestments(investment);
+	if (urgent ) {
+		investments.insert(investments.begin(), unitOrUpgrade);
+	}
+	else {
+		investments.push_back(unitOrUpgrade);
 	}
 }
 
@@ -172,12 +212,58 @@ void ResourceSpender::addUpgradeInvestment(BWAPI::UpgradeType investment, int po
 	investments.insert(investments.begin() + position, unitOrUpgrade);
 }
 
+void ResourceSpender::removeInvestment(int position) {
+	investments.erase(investments.begin() + position);
+}
+
+bool ResourceSpender::removeInvestments(BWAPI::UnitType investment) {
+	bool itemRemoved = false;
+
+	for (int i = 0; i < investments.size(); i++) {
+		if (investments[i].isUnitType() && investments[i].getUnitType() == investment) {
+			investments.erase(investments.begin() + i);
+			itemRemoved = true;
+		}
+	}
+	return itemRemoved;
+}
+
+bool ResourceSpender::removeInvestments(BWAPI::UpgradeType investment) {
+	bool itemRemoved = false;
+
+	for (int i = 0; i < investments.size(); i++) {
+		if (investments[i].isUpgradeType() && investments[i].getUpgradeType() == investment) {
+			investments.erase(investments.begin() + i);
+			itemRemoved = true;
+		}
+	}
+	return itemRemoved;
+}
+
+void ResourceSpender::removeAllDublicates() {
+	for (int i = 0; i < investments.size(); i++) {
+		removeDublicates(i);
+	}
+}
+
+bool ResourceSpender::removeDublicates(int number) {
+	bool itemRemoved = false;
+
+	for (int i = number + 1; i < investments.size(); i++) {
+		if (investments[i] == investments[number]) {
+			investments.erase(investments.begin() + i);
+			itemRemoved = true;
+		}
+	}
+	return itemRemoved;
+}
+
 bool ResourceSpender::canBuildUnit(BWAPI::UnitType unitType) {
 	
 	// Is the unit/building affordable?
-	if (unitType.mineralPrice() - reservedMinerals > Broodwar->self()->minerals() ||
-		unitType.gasPrice() - reservedGas > Broodwar->self()->gas() ||
-		unitType.supplyRequired() > (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2) {
+	if (unitType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
+		unitType.gasPrice() > Broodwar->self()->gas() - reservedGas ||
+		unitType.supplyRequired() / 2 > (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2) {
 
 		return false;
 	}
@@ -206,8 +292,8 @@ bool ResourceSpender::canBuildUnit(BWAPI::UnitType unitType) {
 bool ResourceSpender::canUpgrade(BWAPI::UpgradeType upgradeType) {
 	
 	// Is the upgrade affordable?
-	if (upgradeType.mineralPrice() - reservedMinerals > Broodwar->self()->minerals() ||
-		upgradeType.gasPrice() - reservedGas > Broodwar->self()->gas()) {
+	if (upgradeType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
+		upgradeType.gasPrice() > Broodwar->self()->gas() - reservedGas) {
 
 		return false;
 	}
@@ -228,35 +314,51 @@ bool ResourceSpender::canUpgrade(BWAPI::UpgradeType upgradeType) {
 	return true;
 }
 
-void ResourceSpender::addRequirements(int number) {
+void ResourceSpender::addAllRequirements() {
 	if (investments.size() >= 1) {
-
-		// Add required buildings and upgrades
-		auto requiredUnits = investments[number].getUnitType().requiredUnits();
-
-		for (auto& unitType : requiredUnits){
-			if (buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
-				!investmentExists(unitType.first)) {
-				
-				addUnitInvestment(unitType.first, number);
-				addRequirements(number);
-			}
-		}
-
-		// Add Assimilators
-		if (!investmentExists(BWAPI::UnitTypes::Protoss_Assimilator)
-			&&
-			((investments[number].gasPrice() > 0 && !allIn) ||
-			(investments[number].gasPrice() > Broodwar->self()->gas()))
-			&&
-			(unitsInProgress(BWAPI::UnitTypes::Protoss_Assimilator) +
-			buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Assimilator) <
-			(unitsInProgress(BWAPI::UnitTypes::Protoss_Nexus) +
-			buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus)))) {
-			
-			addUnitInvestment(BWAPI::UnitTypes::Protoss_Assimilator, number);
+		for (int i = 0; i < investments.size(); i++) {
+			addRequirements(i);
 		}
 	}
+}
+
+void ResourceSpender::addRequirements(int number) {
+	
+	// Add required buildings
+	auto requiredUnits = investments[number].getUnitType().requiredUnits();
+
+	for (auto& unitType : requiredUnits){
+		if (unitType.first.isBuilding() &&
+			buildingUnitsPtr->getBuildingCount(unitType.first) < 1) {
+
+			addUnitInvestment(unitType.first, number);
+		}
+	}
+
+	// Add Pylon
+	if (investments[number].isUnitType() &&
+		investments[number].getUnitType().requiresPsi() &&
+		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Pylon) +
+		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Pylon) < 1) {
+
+		addUnitInvestment(BWAPI::UnitTypes::Protoss_Pylon, number);
+	}
+
+	// @TODO: gasPrice is always 0?
+	// Add Assimilator
+	if (((investments[number].gasPrice() > 0 && !allIn && !defend) ||
+		(investments[number].gasPrice() > Broodwar->self()->gas()))
+		&&
+		(unitsInProgress(BWAPI::UnitTypes::Protoss_Assimilator) +
+		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Assimilator) <
+		(unitsInProgress(BWAPI::UnitTypes::Protoss_Nexus) +
+		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus)))) {
+		
+		addUnitInvestment(BWAPI::UnitTypes::Protoss_Assimilator, number);
+	}
+
+	// Remove repeating elements in investment list
+	removeAllDublicates();
 }
 
 bool ResourceSpender::investmentExists(UnitType unitType) {
@@ -280,10 +382,7 @@ bool ResourceSpender::investmentExists(UpgradeType upgradeType) {
 }
 
 bool ResourceSpender::workerNeeded() {
-	return true;
-
-	// @TODO
-	/*return !allIn
+	return !allIn
 		&&
 		!defend
 		&&
@@ -293,18 +392,18 @@ bool ResourceSpender::workerNeeded() {
 		&&
 		probeUnitsPtr->getWorkerCount() < MAX_WORKERS
 		&&
-		probeUnitsPtr->getWorkerCount() + MAX_WORKER_SURPLUS <
+		probeUnitsPtr->getWorkerCount() <
 		(buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus)) * (WORKERS_PER_MINERAL_LINE) +
-		(buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Assimilator)) * (WORKERS_PER_GEYSER);*/
+		(buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Assimilator)) * (WORKERS_PER_GEYSER) + 
+		MAX_WORKER_SURPLUS;
 }
 
 bool ResourceSpender::supplyNeeded() {
-	
-	return Broodwar->self()->supplyUsed() / 2 + 
-		2 > // @TODO: getMaxSupplyOutput() > 
-		Broodwar->self()->supplyTotal() / 2 + 
+	return Broodwar->self()->supplyUsed() / 2 +
+		getMaxSupplyOutput() >= 
+		(Broodwar->self()->supplyTotal() + 
 		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Pylon) * BWAPI::UnitTypes::Protoss_Pylon.supplyProvided() +
-		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Nexus) * BWAPI::UnitTypes::Protoss_Pylon.supplyProvided();
+		unitHandlerPtr->getWarpingUnitCount(BWAPI::UnitTypes::Protoss_Nexus) * BWAPI::UnitTypes::Protoss_Nexus.supplyProvided()) / 2;
 }
 
 void ResourceSpender::setAllIn(bool status) {
@@ -333,7 +432,7 @@ int ResourceSpender::getMaxSupplyOutput() {
 		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Nexus) *
 		(ceil(BWAPI::UnitTypes::Protoss_Pylon.buildTime() / BWAPI::UnitTypes::Protoss_Probe.buildTime()));
 
-	maxSupplyOutput += BWAPI::UnitTypes::Protoss_Probe.supplyRequired() *
+	maxSupplyOutput += BWAPI::UnitTypes::Protoss_Zealot.supplyRequired() *
 		buildingUnitsPtr->getBuildingCount(BWAPI::UnitTypes::Protoss_Gateway) *
 		(ceil(BWAPI::UnitTypes::Protoss_Pylon.buildTime() / BWAPI::UnitTypes::Protoss_Zealot.buildTime()));
 	
@@ -364,5 +463,5 @@ int ResourceSpender::getMaxSupplyOutput() {
 			(ceil(BWAPI::UnitTypes::Protoss_Pylon.buildTime() / BWAPI::UnitTypes::Protoss_Scout.buildTime()));
 	}
 	
-	return maxSupplyOutput;
+	return maxSupplyOutput / 2;
 }
