@@ -307,7 +307,12 @@ bool ScoutManager::foundEnemyBase(TilePosition position) {
 }
 
 bool ScoutManager::beginScouting(ScoutUnits* scoutUnitsPtr) {
-	if (scoutUnits != NULL || scoutUnitsPtr == NULL) {
+	if (scoutUnits != NULL){
+		Broodwar->sendText("scoutunitzz alreadu is");
+		return false;
+	}
+	if (scoutUnitsPtr == NULL) {
+		Broodwar->sendText("POINTER NOOOOOT");
 		return false;
 	}
 	

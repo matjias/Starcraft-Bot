@@ -14,13 +14,14 @@ void ScoutUnits::setUnitHandler(UnitHandler* unitHandler) {
 }
 
 bool ScoutUnits::addUnit(Unit unit) {
-	if (!unit->exists() || !unit->isCompleted()) {
+	if (!unit->exists() || !unit->isCompleted() || unit == NULL) {
 		return false;
 	}
 
 	ScoutAndGoalStruct *newScout = new ScoutAndGoalStruct();
 	newScout->scout = unit;
 	scouts.push_back(newScout);
+
 
 	return true;
 }
