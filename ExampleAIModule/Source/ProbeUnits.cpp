@@ -13,6 +13,9 @@ void ProbeUnits::_init(Game* broodwarPtr) {
 	broodwar = broodwarPtr;
 }
 
+void ProbeUnits::setBroodwarMock(Game* mockBroodwarPtr) {
+	BroodwarPtr = mockBroodwarPtr;
+}
 
 
 void ProbeUnits::update(){

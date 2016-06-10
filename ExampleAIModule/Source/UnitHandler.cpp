@@ -15,6 +15,11 @@ void UnitHandler::_init(Game* broodwarPtr){
 	probeUnits._init(broodwarPtr);
 }
 
+void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
+	BroodwarPtr = mockBroodwarPtr;
+	probeUnits.setBroodwarMock(mockBroodwarPtr);
+}
+
 void UnitHandler::addWarpingUnit(Unit u){
 	warpingUnits.insert(std::make_pair(u->getType(), u));
 }

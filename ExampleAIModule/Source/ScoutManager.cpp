@@ -8,8 +8,18 @@ ScoutManager::ScoutManager() { }
 
 ScoutManager::~ScoutManager() { }
 
+Player ScoutManager::test() {
+	//return broodwar->self();
+	return Broodwar->self();
+	//return Broodwar->self();
+}
+
+void ScoutManager::setBroodwar(Game* broodwarPtr) {
+	BroodwarPtr = broodwarPtr;
+}
+
 bool ScoutManager::_init(Game* broodwarPtr) {
-	broodwar = broodwarPtr;
+	setBroodwar(broodwarPtr);
 
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop

@@ -26,6 +26,7 @@ public:
 
 	// Init function
 	bool _init(BWAPI::Game* broodwarPtr);
+	void setBroodwar(BWAPI::Game* broodwarPtr);
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);
@@ -34,6 +35,10 @@ public:
 
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();
+
+
+	// TESTING
+	BWAPI::Player test();
 
 	// Unit structure, used for caching enemy units in a map
 	struct UnitStruct {
