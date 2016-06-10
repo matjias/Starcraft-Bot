@@ -31,10 +31,10 @@ void ExampleAIModule::onStart() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AnalyzeThread, this, 0, NULL);
 
 	// Other onStart stuff
-	scoutManager._init(BroodwarPtr);
+	scoutManager._init();
 
 	strategyDecider._init(&tactician, &scoutManager);
-	tactician._init(BroodwarPtr, &scoutManager);
+	tactician._init(&scoutManager);
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }

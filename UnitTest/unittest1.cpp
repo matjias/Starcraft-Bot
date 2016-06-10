@@ -103,7 +103,8 @@ namespace UnitTest {
 			// Ensure spawns is empty because _init has not been called
 			Assert::AreEqual(0, (int) scoutMan.getSpawns().size());
 
-			scoutMan._init(broodwar);
+			scoutMan.setBroodwarMock(broodwar);
+			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Tests to make sure only the enemy's spawn is saved
@@ -141,7 +142,8 @@ namespace UnitTest {
 			Game* broodwar = &Broodwar_Mock.get();
 
 			ScoutManager scoutMan;
-			scoutMan._init(broodwar);
+			scoutMan.setBroodwarMock(broodwar);
+			scoutMan._init();
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
 
 			// Now for the actual sorting tests
@@ -210,7 +212,8 @@ namespace UnitTest {
 			Game* broodwar = &Broodwar_Mock.get();
 
 			ScoutManager scoutMan;
-			scoutMan._init(broodwar);
+			scoutMan.setBroodwarMock(broodwar);
+			scoutMan._init();
 
 			ScoutUnits scoutUnits;
 
@@ -316,9 +319,10 @@ namespace UnitTest {
 
 			//Game* broodwar = &Broodwar_Mock.get();
 
-			BroodwarPtr = &Broodwar_Mock.get();
+			Game* broodwar = &Broodwar_Mock.get();
 
-			handler._init(BroodwarPtr);
+			handler.setBroodwarMock(broodwar);
+			handler._init();
 
 			Unit unit = &Probe_Mock.get();
 			handler.addUnit(unit);
@@ -359,7 +363,7 @@ namespace UnitTest {
 
 			BroodwarPtr = &Broodwar_Mock.get();
 
-			scoutMan.setBroodwar(BroodwarPtr);
+			scoutMan.setBroodwarMock(BroodwarPtr);
 
 			/*Game* bw = &Broodwar_Mock.get();
 			scoutMan.setBroodwar(bw);*/

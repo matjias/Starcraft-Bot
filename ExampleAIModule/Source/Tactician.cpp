@@ -7,13 +7,12 @@ Tactician::Tactician() { }
 
 Tactician::~Tactician() { }
 
-bool Tactician::_init(Game* broodwarPtr, ScoutManager* scoutMan) {
+bool Tactician::_init(ScoutManager* scoutMan) {
 	currentStage = Start;
 
 	initArmyCompositions();
 	armyComposition = initialArmyComposition;
 
-	unitHandler._init(broodwarPtr);
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
 
 
@@ -25,6 +24,10 @@ bool Tactician::_init(Game* broodwarPtr, ScoutManager* scoutMan) {
 	scoutManagerPtr = scoutMan;
 
 	return true;
+}
+
+void Tactician::setBroodwarMock(Game* broodwarPtr) {
+	unitHandler.setBroodwarMock(broodwarPtr);
 }
 
 bool Tactician::addWarpingUnit(Unit u){
