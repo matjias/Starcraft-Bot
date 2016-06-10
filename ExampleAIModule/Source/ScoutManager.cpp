@@ -19,7 +19,6 @@ void ScoutManager::setBroodwarMock(Game* broodwarPtr) {
 }
 
 bool ScoutManager::_init() {
-
 	// If we have already defined called _init once 
 	// and defined the spawns, then we just stop
 	if (spawns.size() > 0) {
@@ -174,11 +173,19 @@ void ScoutManager::findEnemySpawn() {
 			continue;
 		}
 
-		TilePosition goalPosition = TilePosition(scoutAndGoal->goal);
-		if (Broodwar->isVisible(goalPosition)) {
+		Position goalPos = scoutAndGoal->goal;
+		TilePosition goalTilePos = TilePosition(goalPos);
+		/*Position scoutPos = scoutAndGoal->scout->getPosition();
+
+		int radius = scoutAndGoal->scout->getType().sightRange();
+		int xDif = goalPos.x - scoutPos.x;
+		int yDif = goalPos.y - scoutPos.y;*/
+
+		if (/*xDif * xDif + yDif * yDif < radius * radius &&*/
+			Broodwar->isVisible(goalTilePos)) {
 
 			for (auto &spawn : spawns) {
-				if (goalPosition == spawn->location) {
+				if (goalTilePos == spawn->location) {
 					spawn->scouted = true;
 					scoutAndGoal->reachedGoal = true;
 

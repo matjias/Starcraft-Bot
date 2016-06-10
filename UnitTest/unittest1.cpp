@@ -205,7 +205,7 @@ namespace UnitTest {
 				isVisible,
 				bool(int, int)
 				).Using(enemySpawn3.x, enemySpawn3.y)
-			).Return(false, true);
+			).Return(/*false, */true);
 
 
 			
@@ -223,9 +223,9 @@ namespace UnitTest {
 			
 			TilePosition closeEnemySpawn3 = TilePosition(enemySpawn3.x - 20, enemySpawn3.y);
 			When(Method(Unit_Mock, getPosition))
-				.Return(Position(ownSpawn), Position(ownSpawn),
-						Position(closeEnemySpawn3), Position(closeEnemySpawn3),
-						Position(enemySpawn3), Position(enemySpawn3));
+				.Return(Position(ownSpawn),
+						Position(closeEnemySpawn3),
+						Position(enemySpawn3));
 
 			
 			
@@ -240,15 +240,24 @@ namespace UnitTest {
 			Assert::IsFalse(hasScouts.at(1));
 
 			TilePosition::list recordedSpawns = scoutMan.getSpawns();
-			
-			
+
 			// Scout is in own spawn now
 			scoutMan.updateScoutManager(); 
+			// Scout is still in own spawn???
+
+			// Scout is in own spawn
+			scoutMan.updateScoutManager();
 			// Scout is now in closeEnemySpawn3
 
-			// Scout is now in closeEnemySpawn3
+			// Scout is in own closeEnemySpawn3
 			scoutMan.updateScoutManager();
 			// Scout is now in enemySpawn3
+
+			/*std::vector<ScoutAndGoalStruct*> scouts = scoutMan.getScouts();
+			Position pos = scouts.at(0)->scout->getPosition();
+			std::wstring s = std::to_wstring(pos.x) + L", " +
+				std::to_wstring(pos.y);
+			Logger::WriteMessage(s.c_str());*/
 			
 			// Now we should have scouted the enemySpawn3 and the enemy was not there
 			// so now it should update the list to move enemySpawn3 all the way back

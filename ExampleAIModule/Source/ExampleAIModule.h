@@ -40,10 +40,6 @@ public:
 
 	// Our functions
 	void drawData();
-
-	// Our global variables
-	// BWTA variables, need to be here
-	bool analyzed;
 	
 	// The classes that the AI Module holds
 	StrategyDecider strategyDecider;
@@ -54,4 +50,4 @@ public:
 
 
 // BWTA Thread Function
-DWORD WINAPI AnalyzeThread(ExampleAIModule *para);
+DWORD WINAPI AnalyzeThread();
