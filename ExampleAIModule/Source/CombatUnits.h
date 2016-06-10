@@ -39,6 +39,7 @@ private:
 	bool unitAtPos(BWAPI::Unit u, BWAPI::TilePosition pos);
 	bool squadAtPos(Squad uSet, BWAPI::TilePosition pos);
 	void attackUpdate();
+	bool enemyTooClose(BWAPI::Unit unit);
 
 	BWAPI::Unit getOptimalTarget(BWAPI::Unit unit);
 
