@@ -93,10 +93,10 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 
 	previousStage = currentStage;
 	setStage();
-	if (currentStage != previousStage &&
-		!AllIn && !Defend) {
+	computeArmyComposition();
+	/*if (!AllIn && !Defend) {
 		computeArmyComposition();
-	}
+	}*/
 
 	switch (currentStage) {
 	case Start:
