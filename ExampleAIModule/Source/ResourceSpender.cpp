@@ -89,9 +89,11 @@ void ResourceSpender::update() {
 		addUnitInvestment(UnitTypes::Protoss_Pylon, true);
 	}
 
+	//addProductionFacilities();
 	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();
+	//addProductionFacilities();
 	purchase();
 
 	// Draw/print
@@ -164,7 +166,14 @@ void ResourceSpender::purchase() {
 	}
 
 	unitHandlerPtr->purchaseBuilding(buildingToBuild);
-	Broodwar->drawTextScreen(280, 45, "%s", buildingToBuild.c_str());
+	
+	// Draw/print
+	if (buildingToBuild != NULL) {
+		Broodwar->drawTextScreen(280, 45, "Build: %s", buildingToBuild.c_str());
+	}
+	else {
+		Broodwar->drawTextScreen(280, 45, "Build: ");
+	}
 }
 
 void ResourceSpender::clearReservedResources() {
@@ -363,7 +372,8 @@ void ResourceSpender::addRequirements(int number) {
 
 	for (auto& unitType : requiredUnits){
 		if (unitType.first.isBuilding() &&
-			buildingUnitsPtr->getBuildingCount(unitType.first) < 1) {
+			buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
+			unitHandlerPtr->getWarpingUnitCount(unitType.first) < 1) {
 
 			addUnitInvestment(unitType.first, number);
 		}
@@ -378,7 +388,6 @@ void ResourceSpender::addRequirements(int number) {
 		addUnitInvestment(UnitTypes::Protoss_Pylon, number);
 	}
 
-	// @TODO: gasPrice is always 0?
 	// Add Assimilator
 	if (((investments[number].gasPrice() > 0 && !allIn && !defend) ||
 		(investments[number].gasPrice() > Broodwar->self()->gas()))
@@ -393,6 +402,27 @@ void ResourceSpender::addRequirements(int number) {
 
 	// Remove repeating elements in investment list
 	removeAllDublicates();
+}
+
+void ResourceSpender::addProductionFacilities() {
+
+	// This will only add Gateways
+	if (canBuildBuilding(UnitTypes::Protoss_Gateway)
+		&&
+		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) == 0 ||
+		buildingUnitsPtr->getIdleBuilding(UnitTypes::Protoss_Gateway) == NULL)
+		&&
+		Broodwar->self()->minerals() - reservedMinerals >= 
+		UnitTypes::Protoss_Gateway.mineralPrice() + 
+		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) +
+		unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Gateway)) * 
+		(UnitTypes::Protoss_Zealot.mineralPrice())) {
+
+		addUnitInvestment(UnitTypes::Protoss_Gateway, false);
+
+		// Remove repeating elements in investment list
+		removeAllDublicates();
+	}
 }
 
 bool ResourceSpender::investmentExists(UnitType unitType) {

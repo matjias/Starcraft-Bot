@@ -55,6 +55,7 @@ private:
 	void removeAllDublicates();
 	bool removeDublicates(int number);
 	void addAllRequirements();
+	void addProductionFacilities();
 	void addRequirements(int priority);
 	void setPendingInvestments();
 	void purchase();

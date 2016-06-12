@@ -31,6 +31,7 @@ public:
 private:
 	StrategyName lastKnownStrategy;
 	GameStage currentStage;
+	GameStage previousStage;
 
 	void updateTacticianStart();
 	void invest();
