@@ -355,6 +355,10 @@ bool ScoutManager::canAddAnotherScout() {
 }
 
 void ScoutManager::scoutPeekEnemySpawn() {
+	if (scoutUnits->getAmountOfScouts() == 0) {
+		return;
+	}
+
 	std::vector<ScoutAndGoalStruct*> scouts = scoutUnits->getScouts();
 	ScoutAndGoalStruct* scoutAssignedToPeek;
 
@@ -366,8 +370,6 @@ void ScoutManager::scoutPeekEnemySpawn() {
 	}
 
 	scoutAssignedToPeek->goal = Position(enemySpawn);
-
-
 }
 
 // Debug functions

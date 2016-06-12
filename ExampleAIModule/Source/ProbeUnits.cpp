@@ -20,7 +20,16 @@ void ProbeUnits::setBroodwarMock(Game* broodwarPtr) {
 void ProbeUnits::update(){
 	if (mapAnalyzed){
 		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
-		Broodwar->drawBoxMap(Position(pos.x - 64, pos.y - 32), Position(pos.x + 64, pos.y + 64), Colors::Green);
+		Position bottomRight = Position(pos.x + UnitTypes::Protoss_Pylon.tileWidth() * TILE_SIZE,
+										pos.y +  UnitTypes::Protoss_Pylon.tileHeight() * TILE_SIZE);
+		
+		Broodwar->drawBoxMap(pos, bottomRight, Colors::Green);
+
+		pos = Position(Broodwar->getBuildLocation(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
+		bottomRight = Position(pos.x + UnitTypes::Protoss_Pylon.tileWidth() * TILE_SIZE,
+			pos.y + UnitTypes::Protoss_Pylon.tileHeight() * TILE_SIZE);
+
+		Broodwar->drawBoxMap(pos, bottomRight, Colors::Blue);
 	}
 	//mineMinerals(miningProbes);
 	//mineGas(gasProbes);
@@ -108,7 +117,7 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	if (building == NULL) {
 		if (u == builder) {
-			u->gather(u->getClosestUnit()); // @TODO: mine the mineral fields from the assigned base
+			u->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
 			builder = NULL;
 		}
 	}
@@ -118,16 +127,15 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	/*if (builder != u) {
 		if (builder != NULL) {
-			builder->stop(); // @TODO: Replace stop by: Mine minerals at assigned base
+			builder->stop(); // Replace stop by: Mine minerals at assigned base
 		}
 		builder = u;
 	}*/
 
-	// @TODO 6-10: Make this work: Move to build location, build when u can, return true when building is placed
 	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
 		u->build(type, getOptimalBuildPlacement(type, basePos));
 		builder = NULL;
-		builder->stop(); // @TODO 6-10: Replace stop by: Mine minerals at assigned base
+		builder->stop(); // Replace stop by: Mine minerals at assigned base
 		return true;
 	}
 	else {
@@ -135,7 +143,6 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 		return false;
 	}*/
 
-	// @TODO 6-10: Remove the following
 	if (building != NULL && builder != NULL) {
 		return builder->build(building, getOptimalBuildPlacement(building, basePos));
 	}
@@ -149,52 +156,84 @@ TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition ba
 	/*while (!checkMargin(type, curPos)){
 		curPos = broodwar->getBuildLocation(type, basePos);
 	}*/
-	return curPos;
-	int radius = 1;
+	//return curPos;
+
 	if (checkMargin(type, curPos)){
 		return curPos;
 	}
+
 	// Maybe replace this with calling getBuildLocation again until a proper placement is found
-	return recPlacement(type, basePos, radius);
+	return recPlacement(type, curPos, 0);
 }
 
-TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth){
+TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int depth) {
 	//Broodwar->sendText("custom Recursive placement in use");
 	TilePosition curPos = basePos;
-	for (int i = -depth; i <= depth; i++){
-		if (i == -depth || i == depth){
-			for (int j = -depth; j <= depth; j++){
+	for (int i = -depth; i <= depth; i++) {
+		if (i == -depth || i == depth) {
+			for (int j = -depth; j <= depth; j++) {
 				curPos = TilePosition(basePos.x + i, basePos.y + j);
-				if (checkMargin(type, curPos)){
+				if (checkMargin(type, curPos)) {
 					return curPos;
 				}
 			}
 		}
-		curPos = TilePosition(basePos.x, basePos.y - i);
-		if (checkMargin(type, curPos)){
+		curPos = TilePosition(basePos.x + i, basePos.y - depth);
+		if (checkMargin(type, curPos)) {
 			return curPos;
 		}
-		curPos = TilePosition(basePos.x, basePos.y + i);
-		if (checkMargin(type, curPos)){
+		curPos = TilePosition(basePos.x + i, basePos.y + depth);
+		if (checkMargin(type, curPos)) {
 			return curPos;
 		}
 	}
+
+	if (depth >= BUILD_LOCATION_FACTOR) {
+		return TilePosition(0, 0);
+	}
+
 	return recPlacement(type, basePos, depth + 1);
 }
 
-bool ProbeUnits::checkMargin(UnitType type, TilePosition basePos){
-	bool isBuildable = basePos.x <= 150 && basePos.y <= 150;
-	if (isBuildable){
-		for (int i = -(ceil(type.dimensionLeft()/32.0)) - 1; i <= ceil(type.dimensionRight()/32.0) + 1; i++){
+bool ProbeUnits::checkMargin(UnitType type, TilePosition tilePos){
+	//bool isBuildable = basePos.x <= 150 && basePos.y <= 150;
+	//if (isBuildable){
+		/*for (int i = -(ceil(type.dimensionLeft()/32.0)) - 1; i <= ceil(type.dimensionRight()/32.0) + 1; i++){
 			for (int j = -(ceil(type.dimensionUp()/32.0)) - 1; j <= ceil(type.dimensionDown()/32.0) + 1; j++){
 				if (!Broodwar->isBuildable(TilePosition(basePos.x + i, basePos.y + j), type) || unitBlocking(TilePosition(basePos.x + i, basePos.y + j))){
-				return false;
+					return false;
+				}
+			}
+		}*/
+
+	bool unitsBlocking = tileAvailableFromUnits(type, tilePos);
+
+	if (!unitsBlocking) {
+		return false;
+	}
+
+	bool canWalkAroundBuilding = true;
+
+	for (int i = -1; i <= type.tileWidth(); i++) {
+		for (int j = -1; j <= type.tileHeight(); j++) {
+			TilePosition tileToCheck = TilePosition(tilePos.x + i, tilePos.y + j);
+			if (!Broodwar->isBuildable(tileToCheck) ||
+				!tileAvailableFromBuildings(tileToCheck)) {
+
+				canWalkAroundBuilding = false;
 			}
 		}
 	}
-	}
+
+	/*return tileAvailableFromBuildings(TilePosition(basePos.x - 1, basePos.y - 1)) &&
+		tileAvailableFromBuildings(TilePosition(basePos.x - 1, basePos.y + 1)) &&
+		tileAvailableFromBuildings(TilePosition(basePos.x + 1, basePos.y - 1)) &&
+		tileAvailableFromBuildings(TilePosition(basePos.x + 1, basePos.y + 1));*/
+
+
+	//}
 	// Fucker lucker det her ma friend
-	return isBuildable;
+	return canWalkAroundBuilding;
 }
 
 
@@ -231,11 +270,53 @@ void ProbeUnits::setAnalyzed(){
 	mapAnalyzed = true;
 }
 
-bool ProbeUnits::unitBlocking(TilePosition basePos){
+bool ProbeUnits::tileAvailableFromUnits(UnitType type, TilePosition tilePos){
 	// getUnitsinRectalngle instead mby
-	return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
+	/*return (Broodwar->getClosestUnit(Position(basePos))->getPosition().x <= Position(basePos).x + 32 &&
 			Broodwar->getClosestUnit(Position(basePos))->getPosition().x >= Position(basePos).x - 32 &&
 			Broodwar->getClosestUnit(Position(basePos))->getPosition().y <= Position(basePos).y + 32 &&
 			Broodwar->getClosestUnit(Position(basePos))->getPosition().y >= Position(basePos).y - 32
-		);
+		);*/
+
+	Position posTopLeft = Position(tilePos);
+	Position posBottomRight = Position(posTopLeft.x + type.tileWidth() * TILE_SIZE, 
+										posTopLeft.y + type.tileHeight() * TILE_SIZE);
+
+	Unitset unitsInRectangle = Broodwar->getUnitsInRectangle(posTopLeft, posBottomRight);
+
+	if (unitsInRectangle.size() == 0) {
+		return true;
+	}
+	else if (unitsInRectangle.size() > 1) {
+		return false;
+	}
+	else {
+		Unit u = *unitsInRectangle.begin();
+		return u == builder;
+	}
+
+}
+
+bool ProbeUnits::tileAvailableFromBuildings(TilePosition tilePos) {
+	Position posTopLeft = Position(tilePos);
+	Position posBottomRight = Position(posTopLeft.x + TILE_SIZE, posTopLeft.y + TILE_SIZE);
+	Unitset unitsInRectangle = Broodwar->getUnitsInRectangle(posTopLeft, posBottomRight);
+
+	if (unitsInRectangle.size() == 0) {
+		return true;
+	}
+	else  {
+		bool buildingOnTilePos = false;
+		for (Unitset::iterator it = unitsInRectangle.begin();
+			it != unitsInRectangle.end();
+			it++) {
+
+			Unit u = *it;
+			if (u->getType().isBuilding()) {
+				buildingOnTilePos = true;
+			}
+		}
+
+		return !buildingOnTilePos;
+	}
 }

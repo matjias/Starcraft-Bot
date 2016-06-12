@@ -44,7 +44,7 @@ bool ScoutUnits::removeUnit(Unit unit) {
 
 	scouts.erase(scouts.begin() + scoutPosInVector);
 	unitHandlerPtr->addUnit(unit);
-
+	Broodwar->sendText("Returning unit %i to unitHandler", unit->getID());
 }
 
 int ScoutUnits::getAmountOfScouts() {
@@ -100,6 +100,10 @@ void ScoutUnits::updateScouts() {
 
 void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
 	Unit scout = u->scout;
+
+	if (scout->isUnderAttack()) {
+		u->underAttack = true;
+	}
 
 	if (!u->kiting && !u->underAttack) {
 		// Go to enemy spawn base
@@ -169,6 +173,9 @@ void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
 	}
 	else {
 		// more stoofs
+
+		// For now just 'saves' the drone by returning it to UnitHandler
+		removeUnit(scout);
 	}
 }
 

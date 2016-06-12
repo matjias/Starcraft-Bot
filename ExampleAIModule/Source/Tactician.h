@@ -31,6 +31,7 @@ public:
 private:
 	StrategyName lastKnownStrategy;
 	GameStage currentStage;
+	GameStage previousStage;
 
 	void updateTacticianStart();
 	void invest();
@@ -44,8 +45,7 @@ private:
 	bool gasSurplus();
 	void initArmyCompositions();
 	void computeArmyComposition();
-
-	
+	void setStage();
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

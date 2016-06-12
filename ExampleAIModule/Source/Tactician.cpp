@@ -10,9 +10,10 @@ Tactician::~Tactician() { }
 bool Tactician::_init(ScoutManager* scoutMan) {
 
 	currentStage = Start;
+	previousStage = currentStage;
 
 	initArmyCompositions();
-	armyComposition = initialArmyComposition;
+	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
 
@@ -90,6 +91,13 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 		lastKnownStrategy = currentStategy;
 	}
 
+	previousStage = currentStage;
+	setStage();
+	if (currentStage != previousStage &&
+		!AllIn && !Defend) {
+		computeArmyComposition();
+	}
+
 	switch (currentStage) {
 	case Start:
 		updateTacticianStart();
@@ -108,6 +116,9 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 	
 	invest();
 	resourceSpender.update();
+
+	// Draw/print
+	Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
 }
 
 void Tactician::updateTacticianStart() {
@@ -118,6 +129,27 @@ void Tactician::updateTacticianStart() {
 	
 	unitHandler.update();
 
+}
+
+void Tactician::setStage() {
+	switch (currentStage) {
+	case Start:
+		if (Broodwar->self()->supplyUsed() / 2 >= EARLY_STAGE_SUPPLY) {
+			currentStage = Early;
+		}
+		break;
+
+	case Early:
+		if (Broodwar->self()->supplyUsed() / 2 >= MID_STAGE_SUPPLY) {
+			currentStage = Mid;
+		}
+		break;
+
+	case Mid:
+
+
+		break;
+	}
 }
 
 void Tactician::setAnalyzed(){
@@ -210,67 +242,55 @@ void Tactician::computeArmyComposition() {
 		break;
 
 	case Early:
-		if (Broodwar->self()->getRace() == BWAPI::Races::Zerg) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = zergEarlyGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = zergEarlyGasLight;
-				}
+		if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = zergEarlyGasLight;
+			}
+			else {
+				armyComposition = zergEarlyGasHeavy;
 			}
 		}
-		else if (Broodwar->self()->getRace() == BWAPI::Races::Terran) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = terranEarlyGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = terranEarlyGasLight;
-				}
+		else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = terranEarlyGasLight;
+			}
+			else {
+				armyComposition = terranEarlyGasHeavy;
 			}
 		}
-		else if (Broodwar->self()->getRace() == BWAPI::Races::Protoss) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = protossEarlyGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = protossEarlyGasLight;
-				}
+		else {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = protossEarlyGasLight;
+			}
+			else {
+				armyComposition = protossEarlyGasHeavy;
 			}
 		}
 		break;
 
 	case Mid:
-		if (Broodwar->self()->getRace() == BWAPI::Races::Zerg) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = zergMidGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = zergMidGasLight;
-				}
+		if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = zergMidGasLight;
+			}
+			else {
+				armyComposition = zergMidGasHeavy;
 			}
 		}
-		else if (Broodwar->self()->getRace() == BWAPI::Races::Terran) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = terranMidGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = terranMidGasLight;
-				}
+		else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = terranMidGasLight;
+			}
+			else {
+				armyComposition = terranMidGasHeavy;
 			}
 		}
-		else if (Broodwar->self()->getRace() == BWAPI::Races::Protoss) {
-			if (currentStage == Mid) {
-				if (gasSurplus()) {
-					armyComposition = protossMidGasHeavy;
-				}
-				else if (mineralSurplus()) {
-					armyComposition = protossMidGasLight;
-				}
+		else {
+			if (mineralSurplus() && !gasSurplus()) {
+				armyComposition = protossMidGasLight;
+			}
+			else {
+				armyComposition = protossMidGasHeavy;
 			}
 		}
 		break;
