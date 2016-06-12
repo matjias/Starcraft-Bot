@@ -104,8 +104,7 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 		break;
 
 	case Early:
-
-
+		updateTacticianStart();
 		break;
 
 	case Mid:
@@ -126,10 +125,19 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	
+	// opdatër magiske tal til constants eller noget
+	if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
+		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 3) ||
+		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 6) &&
+		scoutManagerPtr->getEnemySpawn() != TilePosition(0,0)){
+		unitHandler.getCombatUnits()->setAttacking(Position(scoutManagerPtr->getEnemySpawn()));
+	}
+
+	Broodwar->drawTextScreen(480, 60, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	unitHandler.update();
 
 }
+
 
 void Tactician::setStage() {
 	switch (currentStage) {

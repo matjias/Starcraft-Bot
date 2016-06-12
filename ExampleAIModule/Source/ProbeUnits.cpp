@@ -117,7 +117,7 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	if (building == NULL) {
 		if (u == builder) {
-			u->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
+			u->gather(u->getClosestUnit(Filter::IsMineralField));
 			builder = NULL;
 		}
 	}

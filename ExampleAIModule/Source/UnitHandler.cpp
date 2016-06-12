@@ -11,7 +11,6 @@ UnitHandler::UnitHandler() {
 UnitHandler::~UnitHandler() { }
 
 void UnitHandler::_init(){
-	combatUnits._init();
 }
 
 void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
@@ -27,8 +26,7 @@ void UnitHandler::addWarpingUnit(Unit u){
 }
 
 void UnitHandler::removeWarpingUnit(Unit u){
-	Broodwar->sendText("Das type Gefjernt from wapapa %s %s", u->getType().c_str(), 
-		warpingUnits.erase(u->getType()) ? "Slettet" : "NOT");
+	warpingUnits.erase(u->getType());
 	// @TODO: Should do something like this. For the moment the above works.
 	/*std::pair<std::multimap<UnitType, Unit>::iterator, std::multimap<UnitType, Unit>::iterator> itr = warpingUnits.equal_range(u->getType());
 	std::multimap<UnitType, Unit>::iterator it = itr.first;
@@ -120,11 +118,13 @@ int UnitHandler::getWarpingUnitCount(BWAPI::UnitType unitType) {
 void UnitHandler::update() {
 	probeUnits.update();
 	scoutUnits.updateScouts();
+	combatUnits.update();
 }
 
 void UnitHandler::setAnalyzed(){
 	probeUnits.setAnalyzed();
 	scoutUnits.setAnalyzed();
+	combatUnits.setAnalyzed();
 }
 
 bool UnitHandler::deleteUnit(Unit u){

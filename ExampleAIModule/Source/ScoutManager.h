@@ -80,7 +80,7 @@ private:
 	bool foundEnemySpawn = false;
 	bool peekEnemySpawn = false;
 	bool peekEnemyExpansions = false;
-	BWAPI::TilePosition enemySpawn;
+	BWAPI::TilePosition enemySpawn = BWAPI::TilePosition(0,0);
 
 	void findEnemySpawn();
 	void updateSpawnList();

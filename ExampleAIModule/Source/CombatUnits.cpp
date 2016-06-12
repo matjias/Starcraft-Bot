@@ -14,36 +14,55 @@ void CombatUnits::_init(){
 
 // Fuck det her Hvornr skal der kører idle vs attack :O
 void CombatUnits::update(){
-
+	if (attacking){
+		runAttack();
+	}
+	else{
+		//idleUpdate();
+	}
 }
 
 
 void CombatUnits::idleUpdate(){
-	
 	//Squad loops
 	for (int i = 0; i < zealotSquads.size(); i++){
 		idleMovement(&zealotSquads.at(i), ownChoke);
+	}
+	for (int i = 0; i < dragoonSquads.size(); i++){
+		idleMovement(&dragoonSquads.at(i), ownChoke);
+	}
+}
 
-		//Zealot Rush
-		if (zealotCount > ZEALOT_RUSH_COUNT){
+void CombatUnits::runAttack(){
+	// Could be something from tactician? not very flexible.
+	int squadCount = std::min(zealotSquads.size(), dragoonSquads.size());
+
+	for (int i = 0; i < squadCount; i++){
+		/*if (zealotCount > ZEALOT_RUSH_COUNT){
+			attackMovement(&zealotSquads.at(i));
+		}*/
+		// fuk den her kode
+		if (dragoonSquads.size() > i){
+			if (dragoonSquads.at(i).getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
+				dragoonMicro(dragoonSquads.at(i));
+			}
+			else{
+				attackMovement(&dragoonSquads.at(i));
+			}
+		}
+		if (zealotSquads.size() > i){
 			attackMovement(&zealotSquads.at(i));
 		}
 	}
-	for (int i = 0; i < dragoonSquads.size(); i++){
-		if (attacking){
-			dragoonMicro(dragoonSquads.at(i));
-		}
-	}
 }
 
-void CombatUnits::attackUpdate(){
-	// Someding
-}
 
 void CombatUnits::dragoonMicro(Squad squad){
 	for (auto& unit : squad){
 		if (unit->getHitPoints() < (unit->getType().maxHitPoints() / 2) || enemyTooClose(unit)){
-			unit->attack(getOptimalTarget(unit));
+			if (unit->canAttack()){
+				unit->attack(getOptimalTarget(unit));
+			}
 			unit->move(escapePos(unit));
 		}
 		else {
@@ -63,12 +82,19 @@ void CombatUnits::idleMovement(Squad *squad, Position idleLoc){
 	}
 }
 
+void CombatUnits::idleMovement(Unit u, Position idleLoc){
+	if (!unitAtPos(u, TilePosition(idleLoc))){
+		u->attack(idleLoc);
+	}
+}
+
 void CombatUnits::attackMovement(Squad *squad){
 	squad->attack(attackLoc);
 }
 
 void CombatUnits::addUnit(Unit u){
 	units.push_back(u);
+	idleMovement(u, ownChoke);
 	
 	if (u->getType() == UnitTypes::Protoss_Zealot && u->getPlayer() == Broodwar->self()){
 		zealotCount++;
@@ -151,6 +177,8 @@ bool CombatUnits::enemyTooClose(Unit unit){
 	return unit->getDistance(enemy) < unit->getType().groundWeapon().maxRange() * 2/*Magisk tal*/;
 }
 
+
+// Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
 	int number = 0;
 	for (int i; i < units.size(); i++) {
@@ -160,4 +188,16 @@ int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
 	}
 
 	return number;
+}
+
+//Expand with oveloaded functions with larger flexibility for tactician.
+void CombatUnits::setAttacking(Position pos){
+	attacking = true;
+	attackLoc = pos;
+	enemyChoke = BWTA::getNearestChokepoint(attackLoc)->getCenter();
+}
+
+void CombatUnits::setAnalyzed(){
+	mapAnalyzed = true;
+	ownChoke = BWTA::getNearestChokepoint(Broodwar->self()->getStartLocation())->getCenter();
 }
