@@ -150,7 +150,7 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	//return builder->build(type, getOptimalBuildPlacement(type, basePos));
 }
 
-// @TODO 6-10: It should ignore the builder when looking for a build loc
+// @TODO: It should ignore the builder when looking for a build loc
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
 	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
 	/*while (!checkMargin(type, curPos)){

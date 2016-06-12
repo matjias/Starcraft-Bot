@@ -75,4 +75,7 @@ private:
 	std::vector<std::pair<BWAPI::UnitType, float>> zergEarlyGasHeavy;
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasLight;
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasHeavy;
+
+	std::vector<std::pair<BWAPI::UnitType, float>> dummyArmyComposition;
+	bool useDummyArmyComposition;
 };
