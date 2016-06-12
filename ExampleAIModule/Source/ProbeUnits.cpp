@@ -105,49 +105,29 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
-	// @TODO: Don't take the scout and the gas miners!
-
-	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
-
 	if (building == NULL) {
-		if (u == builder) {
-			u->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
+		if (builder != NULL) {
+			builder->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
 			builder = NULL;
 		}
 	}
-	else if (builder == NULL) {
-		builder = u;
-	}
-
-	/*if (builder != u) {
-		if (builder != NULL) {
-			builder->stop(); // Replace stop by: Mine minerals at assigned base
-		}
-		builder = u;
-	}*/
-
-	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
-		u->build(type, getOptimalBuildPlacement(type, basePos));
-		builder = NULL;
-		builder->stop(); // Replace stop by: Mine minerals at assigned base
-		return true;
-	}
 	else {
-		u->move(getOptimalBuildPlacement(type, basePos), false);
-		return false;
-	}*/
-
-	if (building != NULL && builder != NULL) {
-		if (building == UnitTypes::Protoss_Assimilator) {
-			//return builder->build(building, Broodwar->getBuildLocation(building, builder->getTilePosition()));
-			return builder->build(building, Broodwar->getBuildLocation(building, basePos));
+		if (builder == NULL) {
+			// @TODO: Don't use the scout and the gas miners!
+			Unit unit = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+			builder = unit;
 		}
-		else {
-			return builder->build(building, getOptimalBuildPlacement(building, basePos));
+
+		if (builder != NULL) {
+			if (building == UnitTypes::Protoss_Assimilator) {
+				return builder->build(building, Broodwar->getBuildLocation(building, basePos));
+			}
+			else {
+				return builder->build(building, getOptimalBuildPlacement(building, basePos));
+			}
 		}
 	}
 	return true;
-	//return builder->build(type, getOptimalBuildPlacement(type, basePos));
 }
 
 // @TODO: It should ignore the builder when looking for a build loc

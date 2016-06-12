@@ -13,7 +13,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	previousStage = currentStage;
 
 	initArmyCompositions();
-	useDummyArmyComposition = false;
+	useDummyArmyComposition = true;
 	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
