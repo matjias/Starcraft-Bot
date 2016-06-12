@@ -138,7 +138,13 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	}*/
 
 	if (building != NULL && builder != NULL) {
-		return builder->build(building, getOptimalBuildPlacement(building, basePos));
+		if (building == UnitTypes::Protoss_Assimilator) {
+			//return builder->build(building, Broodwar->getBuildLocation(building, builder->getTilePosition()));
+			return builder->build(building, Broodwar->getBuildLocation(building, basePos));
+		}
+		else {
+			return builder->build(building, getOptimalBuildPlacement(building, basePos));
+		}
 	}
 	return true;
 	//return builder->build(type, getOptimalBuildPlacement(type, basePos));

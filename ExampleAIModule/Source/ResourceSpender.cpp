@@ -89,7 +89,7 @@ void ResourceSpender::update() {
 		addUnitInvestment(UnitTypes::Protoss_Pylon, true);
 	}
 
-	//addProductionFacilities();
+	addProductionFacilities();
 	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();

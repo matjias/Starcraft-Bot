@@ -33,7 +33,7 @@ const int MAX_WORKER_SURPLUS = WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER;
 const int MINERAL_SURPLUS_LIMIT = 600;
 const int GAS_SURPLUS_LIMIT = 400;
 const int EARLY_STAGE_SUPPLY = 6;
-const int MID_STAGE_SUPPLY = 40;
+const int MID_STAGE_SUPPLY = 50;
 
 // Units and buildings
 const int MIN_OBSERVERS = 1; // Observers needed to scout
