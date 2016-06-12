@@ -93,7 +93,6 @@ void ResourceSpender::update() {
 	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();
-	//addProductionFacilities();
 	purchase();
 
 	// Draw/print
@@ -404,24 +403,37 @@ void ResourceSpender::addRequirements(int number) {
 	removeAllDublicates();
 }
 
-void ResourceSpender::addProductionFacilities() {
+bool ResourceSpender::addProductionFacilities() {
 
 	// This will only add Gateways
-	if (canBuildBuilding(UnitTypes::Protoss_Gateway)
-		&&
-		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) == 0 ||
-		buildingUnitsPtr->getIdleBuilding(UnitTypes::Protoss_Gateway) == NULL)
-		&&
-		Broodwar->self()->minerals() - reservedMinerals >= 
-		UnitTypes::Protoss_Gateway.mineralPrice() + 
-		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) +
-		unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Gateway)) * 
-		(UnitTypes::Protoss_Zealot.mineralPrice())) {
+	for (int i = 0; i < investments.size(); i++) {
+		if (investments[i] == UnitTypes::Protoss_Gateway) {
+			return false;
+		}
+		else if (investments[i] == UnitTypes::Protoss_Zealot ||
+			investments[i] == UnitTypes::Protoss_Dragoon ||
+			investments[i] == UnitTypes::Protoss_High_Templar ||
+			investments[i] == UnitTypes::Protoss_Dark_Templar) {
 
-		addUnitInvestment(UnitTypes::Protoss_Gateway, false);
+			if (canBuildBuilding(UnitTypes::Protoss_Gateway)
+				&&
+				(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) == 0 ||
+				buildingUnitsPtr->getIdleBuilding(UnitTypes::Protoss_Gateway) == NULL)
+				&&
+				Broodwar->self()->minerals() - reservedMinerals >=
+				UnitTypes::Protoss_Gateway.mineralPrice() +
+				(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) +
+				unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Gateway)) *
+				(UnitTypes::Protoss_Zealot.mineralPrice())) {
 
-		// Remove repeating elements in investment list
-		removeAllDublicates();
+				addUnitInvestment(UnitTypes::Protoss_Gateway, i);
+
+				// Remove repeating elements in investment list
+				removeAllDublicates();
+			}
+
+			return true;
+		}
 	}
 }
 
