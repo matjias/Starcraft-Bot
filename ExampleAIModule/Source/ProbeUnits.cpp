@@ -67,6 +67,9 @@ Unit ProbeUnits::extractUnit(){
 bool ProbeUnits::deleteUnit(Unit u){
 	for (auto& probePair : miningProbes){
 		if (probePair.second.contains(u)){
+			if (builder == u){
+				builder = NULL;
+			}
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
@@ -74,10 +77,13 @@ bool ProbeUnits::deleteUnit(Unit u){
 	}
 	for (auto& probePair : gasProbes){
 		if (probePair.second.contains(u)){
+			if (builder == u){
+				builder = NULL;
+			}
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
-}
+		}
 	}
 	return false;
 }
