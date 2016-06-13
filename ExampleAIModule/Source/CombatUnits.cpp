@@ -108,10 +108,25 @@ void CombatUnits::addUnit(Unit u){
 void CombatUnits::saveUnitToSquad(Unit u, std::vector<Squad> *squads){
 
 	if (unitMap.size() == 0){
-		unitMap = 
+		unitMap.insert(std::make_pair(u->getType(), Squad()));
+	}
+	if (unitMap.size() > 0){
+		for (auto &squad : unitMap){
+			if (squad.first == u->getType()){
+				if (squad.second.size() <= SQUAD_SIZE){
+					squad.second.insert(u);
+					break;
+				}
+				else{
+					Squad tempSq = Squad();
+					tempSq.insert(u);
+					unitMap.insert(std::make_pair(u->getType(), tempSq));
+				}
+			}
+		}
 	}
 
-	if (squads->size() == 0){
+	/*if (squads->size() == 0){
 		squads->push_back(Squad());
 	}
 	if (squads->size() > 0){
@@ -125,7 +140,7 @@ void CombatUnits::saveUnitToSquad(Unit u, std::vector<Squad> *squads){
 				squads->at(i + 1).insert(u);
 			}
 		}
-	}
+	}*/
 }
 
 bool CombatUnits::squadAtPos(Squad uSet, TilePosition pos){
@@ -143,7 +158,7 @@ bool CombatUnits::unitAtPos(Unit u, TilePosition pos){
 }
 
 void CombatUnits::debugDraw(std::vector<Squad> squads){
-	if (squads.size() > 0){
+	/*if (squads.size() > 0){
 		for (int i = 0; i < squads.size(); i++){
 			for (Unit unit : squads.at(i)){
 				if (unit != NULL){
@@ -164,7 +179,7 @@ void CombatUnits::debugDraw(std::vector<Squad> squads){
 				}
 			}
 		}
-	}
+	}*/
 }
 
 Position CombatUnits::escapePos(Unit unit){
