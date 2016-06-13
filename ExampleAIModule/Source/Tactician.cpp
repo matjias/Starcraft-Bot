@@ -13,7 +13,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	previousStage = currentStage;
 
 	initArmyCompositions();
-	useDummyArmyComposition = true;
+	useDummyArmyComposition = false;
 	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
@@ -131,7 +131,8 @@ void Tactician::updateTacticianStart() {
 		unitHandler.getCombatUnits()->setAttacking(Position(scoutManagerPtr->getEnemySpawn()));
 	}
 
-	Broodwar->drawTextScreen(480, 60, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
+	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
+	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
 	unitHandler.update();
 
 }

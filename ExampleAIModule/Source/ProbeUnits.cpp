@@ -68,7 +68,6 @@ Unit ProbeUnits::extractUnit(){
 		tempProbe = probe;
 	}
 	uSet->erase(tempProbe);
-	Broodwar->sendText("Probbaaaa %i", uSet->size());
 	workerCount--;
 	return tempProbe;
 }
@@ -112,8 +111,8 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	if (building == NULL) {
-		if (u == builder) {
-			u->gather(u->getClosestUnit(Filter::IsMineralField));
+		if (builder != NULL) {
+			builder->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
 			builder = NULL;
 		}
 	}
@@ -122,16 +121,16 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 			// @TODO: Don't use the scout and the gas miners!
 			Unit unit = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
 			builder = unit;
-	}
+		}
 
 		if (builder != NULL) {
-		if (building == UnitTypes::Protoss_Assimilator) {
-			return builder->build(building, Broodwar->getBuildLocation(building, basePos));
+			if (building == UnitTypes::Protoss_Assimilator) {
+				return builder->build(building, Broodwar->getBuildLocation(building, basePos));
+			}
+			else {
+				return builder->build(building, getOptimalBuildPlacement(building, basePos));
+			}
 		}
-		else {
-			return builder->build(building, getOptimalBuildPlacement(building, basePos));
-		}
-	}
 	}
 	return true;
 }
