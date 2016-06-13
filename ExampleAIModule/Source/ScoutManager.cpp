@@ -15,7 +15,7 @@ void ScoutManager::setBroodwarMock(Game* broodwarPtr) {
 }
 
 // Quick testing function for testing override of the
-// Broodwar keyword (previous function has already been called)
+// Broodwar keyword (above function has already been called)
 Player ScoutManager::testBroodwarReturnPlayer() {
 	return Broodwar->self();
 }
