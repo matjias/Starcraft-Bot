@@ -29,7 +29,7 @@ public:
 
 	// Unit Testing functions, used for unit testing
 	void setBroodwarMock(BWAPI::Game* broodwarPtr);
-	BWAPI::Player testBroodwar();
+	BWAPI::Player testBroodwarReturnPlayer();
 
 	// Information tracking
 	void recordUnitDiscover(BWAPI::Unit u);

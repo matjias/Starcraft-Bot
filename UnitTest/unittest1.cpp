@@ -84,7 +84,7 @@ namespace UnitTest {
 			ScoutManager scoutMan;
 			scoutMan.setBroodwarMock(BroodwarPtr);
 
-			Player pp = scoutMan.testBroodwar();
+			Player pp = scoutMan.testBroodwarReturnPlayer();
 			int p1 = p->minerals();
 			int p2 = pp->minerals();
 
@@ -174,9 +174,6 @@ namespace UnitTest {
 			//The following sort is the correct one based on data
 			//directly from Starcraft and if we did a euclidean
 			//check, we would find this to be true as well.
-			//A little note however is that it uses a
-			//getApproxDistance function which we don't know
-			//the exact behaviour of
 			//	  enemySpawn3
 			//	  enemySpawn1
 			//	  enemySpawn2
