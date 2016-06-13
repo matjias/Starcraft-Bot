@@ -12,8 +12,9 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	currentStage = Start;
 	previousStage = currentStage;
 
+	detectionNeeded = false;
 	initArmyCompositions();
-	useDummyArmyComposition = false;
+	useDummyArmyComposition = true;
 	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
@@ -73,7 +74,6 @@ void Tactician::scout() {
 			scoutManagerPtr->beginScouting(unitHandler.getScoutUnits());
 		}
 	}
-	
 }
 
 void Tactician::addAllScouts() {
@@ -82,11 +82,11 @@ void Tactician::addAllScouts() {
 	}
 }
 
-void Tactician::updateTactician(StrategyName currentStategy) {
-	if (lastKnownStrategy != currentStategy) {
+void Tactician::updateTactician(StrategyName currentStrategy) {
+	if (lastKnownStrategy != currentStrategy) {
 		
 
-		lastKnownStrategy = currentStategy;
+		lastKnownStrategy = currentStrategy;
 	}
 
 	previousStage = currentStage;
@@ -136,7 +136,6 @@ void Tactician::updateTacticianStart() {
 
 }
 
-
 void Tactician::setStage() {
 	switch (currentStage) {
 	case Start:
@@ -172,7 +171,7 @@ void Tactician::invest() {
 	}
 	else if (expansionNeeded()) {
 		resourceSpender.addUnitInvestment(BWAPI::UnitTypes::Protoss_Nexus, false);
-}
+	}
 	else if (neededUpgrade() != NULL) {
 		resourceSpender.addUpgradeInvestment(neededUpgrade(), false);
 	}
@@ -187,30 +186,7 @@ bool Tactician::defenseStructureNeeded() {
 }
 
 bool Tactician::detectorNeeded() {
-
-	if (!detectionNeeded) {
-		//if (scoutManagerPtr->canAddAnotherScout()) { 
-		/*return (scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Templar_Archives)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observatory)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Factory)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Starport)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Science_Facility)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Covert_Ops)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hydralisk_Den)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lair)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observer) // TODO: Unit map
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Templar)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Archon)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Arbiter)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture_Spider_Mine)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Ghost)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker)
-		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker_Egg))*/
+	if (!detectionNeeded && enemyCloakPossible()) {
 		detectionNeeded = true;
 	}
 
@@ -223,12 +199,11 @@ bool Tactician::detectorNeeded() {
 int Tactician::neededDetectors() {
 	int number = 0;
 
-	if (currentStage != Start && currentStage != Early) {
-
+	if (currentStage == Mid || currentStage == Late) {
 		number += OBSERVERS_TO_SCOUT;
 	}
 
-	if (!detectionNeeded) {
+	if (detectionNeeded) {
 		number += OBSERVERS_WITH_ARMY;
 	}
 
@@ -361,7 +336,7 @@ void Tactician::initArmyCompositions() {
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
 	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
@@ -370,13 +345,12 @@ void Tactician::initArmyCompositions() {
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 5.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
 	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
-	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
@@ -388,5 +362,49 @@ void Tactician::initArmyCompositions() {
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
-	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Carrier, 1.0));
+}
+
+bool Tactician::enemyCloakPossible() {
+	// Detection is needed if the enemy has a unit that can cloak,
+	// a unit from a similar tech path, or the building unlocking/constructing them
+	return scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Citadel_of_Adun) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Templar_Archives) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Robotics_Facility) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Observatory) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Arbiter_Tribunal) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_High_Templar) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Archon) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Dark_Templar) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Dark_Archon) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Observer) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Shuttle) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Reaver) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Protoss_Arbiter) ||
+
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Nuclear_Silo) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Factory) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Machine_Shop) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Starport) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Control_Tower) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Science_Facility) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Covert_Ops) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Physics_Lab) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Ghost) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Nuclear_Missile) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Vulture) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Vulture_Spider_Mine) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Goliath) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Siege_Tank_Tank_Mode) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Siege_Tank_Siege_Mode) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Wraith) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Dropship) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Valkyrie) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Science_Vessel) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Battlecruiser) ||
+
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hydralisk_Den) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hydralisk) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker_Egg) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker);
 }

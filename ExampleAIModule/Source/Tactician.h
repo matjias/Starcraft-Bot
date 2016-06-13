@@ -39,6 +39,7 @@ private:
 	bool defenseStructureNeeded();
 	bool detectorNeeded();
 	int neededDetectors();
+	bool enemyCloakPossible();
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();

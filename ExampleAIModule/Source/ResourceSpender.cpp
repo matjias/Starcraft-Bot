@@ -388,7 +388,9 @@ void ResourceSpender::addRequirements(int number) {
 	}
 
 	// Add Assimilator
-	if (((investments[number].gasPrice() > 0 && !allIn && !defend) ||
+	if ((((investments[number].gasPrice() > 0 || (investments[number].isUnitType() &&
+		investments[number].getUnitType() == UnitTypes::Protoss_Cybernetics_Core)) &&
+		!allIn && !defend) ||
 		(investments[number].gasPrice() > Broodwar->self()->gas()))
 		&&
 		(unitsInProgress(UnitTypes::Protoss_Assimilator) +

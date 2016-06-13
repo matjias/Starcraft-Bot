@@ -40,7 +40,6 @@ const int EARLY_STAGE_SUPPLY = 6;
 const int MID_STAGE_SUPPLY = 50;
 
 // Units and buildings
-
 const int OBSERVERS_TO_SCOUT = 1;
 const int OBSERVERS_WITH_ARMY = 1;
 const int DEFENSE_STRUCTURES_PER_BASE = 3;

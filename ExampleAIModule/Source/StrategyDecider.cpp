@@ -20,6 +20,8 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
+	decideStrategy();
+
 	if (needsScouting) {
 		tacticianPtr->scout();
 	}
@@ -30,9 +32,22 @@ void StrategyDecider::update() {
 }
 
 void StrategyDecider::decideStrategy() {
-	if (needsToUpdateStrategy) {
+	/*if (needsToUpdateStrategy) {
 		currentStrategy = Default;
 		needsToUpdateStrategy = false;
+	}*/
+
+	if (false) { // @TODO: Enemies in our regions
+		currentStrategy = Defend;
+	}
+	else if (false) { // @TODO: Behind in expansions && behind in worker count && behind in army value
+		currentStrategy = AllIn;
+	}
+	else if (false) { // @TODO: Behind in expansions || has mineral surplus || enemy builds defenses
+		currentStrategy = Expand;
+	}
+	else {
+		currentStrategy = Default;
 	}
 }
 
