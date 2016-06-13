@@ -5,6 +5,7 @@ using namespace BWAPI;
 
 StrategyDecider::StrategyDecider() {
 	currentStrategy = Default;
+	strategyUpdateTime = STRATEGY_UPDATE_TIME;
 	needsScouting = true;
 }
 
@@ -22,7 +23,11 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
-	decideStrategy();
+	strategyUpdateTime++;
+
+	if (strategyUpdateTime >= STRATEGY_UPDATE_TIME) {
+		decideStrategy();
+	}
 
 	if (needsScouting) {
 		tacticianPtr->scout();
@@ -42,7 +47,10 @@ void StrategyDecider::decideStrategy() {
 	if (false) { // @TODO: Enemies in our regions
 		currentStrategy = Defend;
 	}
-	else if (false) { // @TODO: Behind in expansions && behind in worker count && behind in army value
+	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
+		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
+		workerBalance() < ALLIN_WORKER_BALANCE) {
+		
 		currentStrategy = AllIn;
 	}
 	else if (tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
@@ -71,3 +79,12 @@ void StrategyDecider::decideStrategy() {
 	}
 }
 
+float StrategyDecider::workerBalance() {
+	if (tacticianPtr->getWorkerCount() + scoutManagerPtr->getEnemyWorkerCount() > 0) {
+		return tacticianPtr->getWorkerCount() / 
+			(tacticianPtr->getWorkerCount() + scoutManagerPtr->getEnemyWorkerCount());
+	}
+	else {
+		return 0.5;
+	}
+}

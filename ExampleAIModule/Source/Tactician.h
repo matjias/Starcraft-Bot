@@ -27,6 +27,7 @@ public:
 	void addAllScouts();
 
 	int getBaseCount();
+	int getWorkerCount();
 	bool mineralSurplus();
 	bool gasSurplus();
 

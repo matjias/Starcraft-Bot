@@ -161,6 +161,19 @@ int ScoutManager::getEnemyBaseCount() {
 	return 0;
 }
 
+int ScoutManager::getEnemyWorkerCount() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Probe);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_SCV);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Drone);
+	}
+	return 0;
+}
+
 int ScoutManager::getEnemyDefenseValue() {
 	if (Broodwar->enemy()->getRace() == Races::Protoss) {
 		return getAmountOfEnemyUnit(UnitTypes::Protoss_Photon_Cannon) * 

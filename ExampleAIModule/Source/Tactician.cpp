@@ -250,6 +250,12 @@ int Tactician::getBaseCount() {
 	return unitHandler.getWarpingUnitCount(UnitTypes::Protoss_Nexus) +
 		unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Nexus);
 }
+int Tactician::getWorkerCount() {
+	return unitHandler.getWarpingUnitCount(UnitTypes::Protoss_Probe) + 
+		unitHandler.getProbeUnits()->getWorkerCount() + 
+		unitHandler.getScoutUnits()->getScoutCount(UnitTypes::Protoss_Probe) + 
+		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Probe);
+}
 
 BWAPI::UpgradeType Tactician::neededUpgrade() {
 	// @TODO

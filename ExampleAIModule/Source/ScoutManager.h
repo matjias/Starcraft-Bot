@@ -40,6 +40,7 @@ public:
 	int getAmountOfEnemyUnit(BWAPI::UnitType u);
 	std::map<BWAPI::UnitType, int> getEnemyUnitsAmount();
 	int getEnemyBaseCount();
+	int getEnemyWorkerCount();
 	int getEnemyDefenseValue();
 
 	// ScoutManager gets information from somewhere

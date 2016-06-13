@@ -126,7 +126,7 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 			builder = extractUnit();
 		}
 
-		if (builder != NULL && (previousBuildingToBuild != building || buildLocationCounter >= BUILD_LOCTION_UPDATE_TIME)) {
+		if (builder != NULL && (previousBuildingToBuild != building || buildLocationCounter >= BUILD_LOCATION_UPDATE_TIME)) {
 			buildLocationCounter = 0;
 
 			if (building == UnitTypes::Protoss_Assimilator) {

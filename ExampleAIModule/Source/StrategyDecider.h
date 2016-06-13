@@ -14,16 +14,15 @@ public:
 	// On frame
 	void update();
 
-	
 	bool needsToUpdateStrategy = true;
 	
-	
-
 	void decideStrategy();
 
-	
-
 private:
+	float workerBalance();
+
+	int strategyUpdateTime;
+
 	// Class pointers
 	Tactician* tacticianPtr;
 	ScoutManager* scoutManagerPtr;
