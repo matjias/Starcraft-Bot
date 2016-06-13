@@ -14,8 +14,6 @@ public:
 	void setBroodwarMock(BWAPI::Game* broodwarPtr);
 
 	bool _init(ScoutManager* scoutMan);
-	
-	
 
 	void updateTactician(StrategyName currentStrategy);
 	void scout();
@@ -27,6 +25,10 @@ public:
 	void setAnalyzed();
 
 	void addAllScouts();
+
+	int getBaseCount();
+	bool mineralSurplus();
+	bool gasSurplus();
 
 private:
 	StrategyName lastKnownStrategy;
@@ -43,8 +45,6 @@ private:
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
-	bool mineralSurplus();
-	bool gasSurplus();
 	void initArmyCompositions();
 	void computeArmyComposition();
 	void setStage();

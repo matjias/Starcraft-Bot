@@ -142,6 +142,47 @@ int ScoutManager::getAmountOfEnemyUnit(UnitType u) {
 	}
 }
 
+std::map<BWAPI::UnitType, int> ScoutManager::getEnemyUnitsAmount() {
+	return enemyUnitsAmount;
+}
+
+int ScoutManager::getEnemyBaseCount() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Nexus);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_Command_Center);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Hatchery) + 
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Lair) + 
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Hive);
+	}
+	return 0;
+}
+
+int ScoutManager::getEnemyDefenseValue() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Photon_Cannon) * 
+			UnitTypes::Protoss_Photon_Cannon.mineralPrice();
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_Bunker) * 
+			(UnitTypes::Terran_Bunker.mineralPrice() + 
+			UnitTypes::Terran_Marine.mineralPrice() * 2) + 
+			getAmountOfEnemyUnit(UnitTypes::Terran_Missile_Turret) *
+			(UnitTypes::Terran_Missile_Turret.mineralPrice());
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Creep_Colony) *
+			UnitTypes::Zerg_Creep_Colony.mineralPrice() +
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Sunken_Colony) *
+			UnitTypes::Zerg_Sunken_Colony.mineralPrice() +
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Spore_Colony) *
+			UnitTypes::Zerg_Spore_Colony.mineralPrice();
+	}
+	return 0;
+}
 
 void ScoutManager::updateScoutManager() {
 	if (!isScouting) {
@@ -436,6 +477,3 @@ TilePosition ScoutManager::getEnemySpawn() {
 	return enemySpawn;
 }
 
-std::map<BWAPI::UnitType, int> ScoutManager::getEnemyUnitsAmount() {
-	return enemyUnitsAmount;
-}

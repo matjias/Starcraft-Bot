@@ -38,6 +38,9 @@ public:
 
 	// Getting information
 	int getAmountOfEnemyUnit(BWAPI::UnitType u);
+	std::map<BWAPI::UnitType, int> getEnemyUnitsAmount();
+	int getEnemyBaseCount();
+	int getEnemyDefenseValue();
 
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();
@@ -73,7 +76,6 @@ public:
 	std::vector<bool> getSpawnHasScouts();
 	std::vector<ScoutAndGoalStruct*> getScouts();
 	BWAPI::TilePosition getEnemySpawn();
-	std::map<BWAPI::UnitType, int> getEnemyUnitsAmount();
 	bool hasScouts();
 	bool isScouting = false;
 

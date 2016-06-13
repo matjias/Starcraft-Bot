@@ -1,4 +1,5 @@
 #pragma once
+#include "BWAPI.h"
 #include "Constants.h"
 #include "ScoutManager.h"
 #include "Tactician.h"

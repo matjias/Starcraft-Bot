@@ -129,7 +129,7 @@ void Tactician::updateTacticianStart() {
 		scoutManagerPtr->getEnemySpawn() != TilePosition(0,0)){
 		unitHandler.getCombatUnits()->setAttacking(Position(scoutManagerPtr->getEnemySpawn()));
 	}*/
-
+	
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
 	unitHandler.update();
@@ -244,6 +244,11 @@ BWAPI::UnitType Tactician::neededCombatUnit() {
 	}
 
 	return NULL;
+}
+
+int Tactician::getBaseCount() {
+	return unitHandler.getWarpingUnitCount(UnitTypes::Protoss_Nexus) +
+		unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Nexus);
 }
 
 BWAPI::UpgradeType Tactician::neededUpgrade() {
@@ -362,7 +367,7 @@ void Tactician::initArmyCompositions() {
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
-	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Carrier, 1.0));
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 }
 
 bool Tactician::enemyCloakPossible() {
