@@ -5,6 +5,7 @@ using namespace BWAPI;
 
 ProbeUnits::ProbeUnits() {
 	builder = NULL;
+	previousBuildingToBuild = NULL;
 }
 
 ProbeUnits::~ProbeUnits() { }
@@ -111,6 +112,8 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
+	buildLocationCounter++;
+
 	if (building == NULL) {
 		if (builder != NULL) {
 			builder->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
@@ -124,11 +127,15 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 			builder = unit;
 		}
 
-		if (builder != NULL) {
+		if (builder != NULL && (previousBuildingToBuild != building || buildLocationCounter >= BUILD_LOCTION_UPDATE_TIME)) {
+			buildLocationCounter = 0;
+
 			if (building == UnitTypes::Protoss_Assimilator) {
+				previousBuildingToBuild = building;
 				return builder->build(building, Broodwar->getBuildLocation(building, basePos));
 			}
 			else {
+				previousBuildingToBuild = building;
 				return builder->build(building, getOptimalBuildPlacement(building, basePos));
 			}
 		}

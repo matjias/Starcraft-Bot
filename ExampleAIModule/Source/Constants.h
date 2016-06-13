@@ -48,6 +48,9 @@ const int DRAGOONS_BEFORE_RANGE = 4;
 const int ZEALOT_RUSH_SIZE = 12;
 const int DRAGOON_RUSH_SIZE = 16;
 
+// Build location
+const int BUILD_LOCTION_UPDATE_TIME = 60;
+
 // Scouting, distances, and map size
 const int MEDIUM_MAP_SIZE = 128 * 128; // 128 * 128
 const int RUSH_DISTANCE_CEIL = 128 * 32; // 128 * 32

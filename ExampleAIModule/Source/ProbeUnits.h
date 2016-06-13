@@ -42,6 +42,8 @@ private:
 	std::map<int, BWAPI::Unitset> miningProbes;
 	std::map<int, BWAPI::Unitset> gasProbes;
 	BWAPI::Unit builder;
+	BWAPI::UnitType previousBuildingToBuild;
+	int buildLocationCounter;
 
 	void mineMinerals();
 	void mineGas(BWAPI::Unit base);
