@@ -38,6 +38,7 @@ private:
 
 	bool defenseStructureNeeded();
 	bool detectorNeeded();
+	int neededDetectors();
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
@@ -46,6 +47,8 @@ private:
 	void initArmyCompositions();
 	void computeArmyComposition();
 	void setStage();
+
+	bool detectionNeeded;
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

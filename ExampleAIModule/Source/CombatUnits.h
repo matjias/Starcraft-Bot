@@ -31,18 +31,15 @@ private:
 
 	// Probably should be united to one multimap based on unit type since we are focusing on expandability.
 	// too static and not enough flexibility for the tactician.
-	std::vector<BWAPI::Unit> units;
-	std::vector<Squad> zealotSquads;
-	std::vector<Squad> dragoonSquads;
 	std::multimap<BWAPI::UnitType, Squad> unitMap;
 
 	void idleUpdate();
 	void runAttack();
-	void dragoonMicro(Squad squad);
+	void dragoonMicro(Squad *squad);
 	void idleMovement(Squad *squad, BWAPI::Position idleLoc);
 	void idleMovement(BWAPI::Unit u, BWAPI::Position idleLoc);
 	void attackMovement(Squad *squad);
-	void saveUnitToSquad(BWAPI::Unit u, std::vector<Squad> *squads);
+	void saveUnitToSquad(BWAPI::Unit u);
 	bool unitAtPos(BWAPI::Unit u, BWAPI::TilePosition pos);
 	bool squadAtPos(Squad uSet, BWAPI::TilePosition pos);
 	bool enemyTooClose(BWAPI::Unit unit);

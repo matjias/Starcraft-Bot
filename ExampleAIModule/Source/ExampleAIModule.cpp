@@ -83,12 +83,14 @@ void ExampleAIModule::onPlayerLeft(BWAPI::Player player) { }
 void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
 
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
+	if (unit->getType() == UnitTypes::Protoss_Assimilator){
+		Broodwar->sendText("mamb discovered %s", unit->getType().c_str());
+
+	}
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		Broodwar->sendText("Main - Unit Discovered %i", unit->getID());
 		tactician.addWarpingUnit(unit);
 
-		//Broodwar->sendText("Own unit discovered: %s\n", unit->getType().c_str());
 
 	}
 	// Was it an enemy unit?
@@ -112,7 +114,7 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		tactician.recordDeadUnit(unit);
+		Broodwar->sendText("%s er %s slettet", unit->getType().c_str(), tactician.recordDeadUnit(unit) ? "" : "IKKE!");
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
@@ -127,8 +129,11 @@ void ExampleAIModule::onUnitRenegade(BWAPI::Unit unit) { }
 void ExampleAIModule::onSaveGame(std::string gameName) { }
 
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
+	if (unit->getType() == UnitTypes::Protoss_Assimilator){
+		Broodwar->sendText("MUnit Complete %s", unit->getType().c_str());
+
+	}
 	if (Broodwar->self() == unit->getPlayer()) {
-		Broodwar->sendText("Main - Unit Complete %i", unit->getID());
 		tactician.recordNewUnit(unit);
 	}
 }

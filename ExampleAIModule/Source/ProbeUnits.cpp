@@ -69,7 +69,6 @@ Unit ProbeUnits::extractUnit(){
 		tempProbe = probe;
 	}
 	uSet->erase(tempProbe);
-	Broodwar->sendText("Probbaaaa %i", uSet->size());
 	workerCount--;
 	return tempProbe;
 }
@@ -117,14 +116,14 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	if (building == NULL) {
 		if (builder != NULL) {
 			builder->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
+			addUnit(builder);
 			builder = NULL;
 		}
 	}
 	else {
 		if (builder == NULL) {
 			// @TODO: Don't use the scout and the gas miners!
-			Unit unit = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
-			builder = unit;
+			builder = extractUnit();
 		}
 
 		if (builder != NULL && (previousBuildingToBuild != building || buildLocationCounter >= BUILD_LOCTION_UPDATE_TIME)) {
