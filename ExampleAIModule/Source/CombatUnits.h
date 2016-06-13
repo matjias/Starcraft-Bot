@@ -34,6 +34,7 @@ private:
 	std::vector<BWAPI::Unit> units;
 	std::vector<Squad> zealotSquads;
 	std::vector<Squad> dragoonSquads;
+	std::multimap<BWAPI::UnitType, Squad> unitMap;
 
 	void idleUpdate();
 	void runAttack();

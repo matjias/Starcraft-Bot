@@ -269,7 +269,7 @@ void ProbeUnits::mineGas(Unit base, Unit geyser) {
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
 	}
 	newSet.gather(geyser);
-	miningProbes.insert(std::make_pair(base->getID(), newSet));
+	gasProbes.insert(std::make_pair(base->getID(), newSet));
 }
 
 void ProbeUnits::setAnalyzed(){

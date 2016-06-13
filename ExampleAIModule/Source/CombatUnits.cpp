@@ -181,11 +181,16 @@ bool CombatUnits::enemyTooClose(Unit unit){
 // Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
 	int number = 0;
-	for (int i; i < units.size(); i++) {
+
+	if (unitType == UnitTypes::Protoss_Zealot){
+		number = zealotCount;
+	}
+
+	/*for (int i; i < units.size(); i++) {
 		if (units[i]->getType() == unitType) {
 			number++;
 		}
-	}
+	}*/
 
 	return number;
 }
