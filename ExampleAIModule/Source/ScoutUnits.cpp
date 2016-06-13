@@ -139,31 +139,23 @@ void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
 				BWTA::Polygon regionPoly = enemyRegion->getPolygon();
 				UnitCommand lastCommand = scout->getLastCommand();
 				Position lastCommandPos = lastCommand.getTargetPosition();
-
-				// Debug draw
-				Broodwar->drawCircleMap(lastCommandPos, 3, Colors::Green, true);
-
-				// Was the position inside of the polygon?
-				int polyAt = -1;
-				for (int i = 0; i < regionPoly.size(); i++) {
-					if (regionPoly.at(i) == lastCommandPos) {
-						polyAt = i;
-						break;
-					}
+				Position centerPos = enemyRegion->getCenter();
+				Position goalPos;
+				
+				if (u->lastPolyPos == -1) {
+					u->lastPolyPos = 0;
+					goalPos = regionPoly.at(0);
 				}
 
-				if (polyAt == -1) {
-					// If we did not move alongside the polygon
-					scout->move(regionPoly.at(0));
-				}
-				else {
-					if (scout->getDistance(regionPoly.at(polyAt)) >=
-						scout->getType().sightRange()) {
+				int polyAt = u->lastPolyPos;
+				goalPos = regionPoly.at(polyAt);
+
+				if (scout->getDistance(lastCommandPos) <
+					scout->getType().sightRange()) {
 						
-						// Do not update any commands, the scout is
-						// moving exactly as we want it to
-						return;
-					}
+					// Do not update any commands, the scout is
+					// moving exactly as we want it to
+					//return;
 
 					int nextPoly = (polyAt + 1) % regionPoly.size();
 					int nextPoly2 = (polyAt + 2) % regionPoly.size();
@@ -174,12 +166,33 @@ void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
 					if (regionPoly.at(polyAt).getDistance(regionPoly.at(nextPoly2)) <
 						regionPoly.at(polyAt).getDistance(regionPoly.at(nextPoly))) {
 
-						scout->move(regionPoly.at(nextPoly2));
+						//scout->move(regionPoly.at(nextPoly2));
+						goalPos = regionPoly.at(nextPoly2);
+						u->lastPolyPos = nextPoly2;
 					}
 					else {
-						scout->move(regionPoly.at(nextPoly));
+						//scout->move(regionPoly.at(nextPoly));
+						goalPos = regionPoly.at(nextPoly);
+						u->lastPolyPos = nextPoly;
 					}
 				}
+
+				Position vectorDir = centerPos - goalPos;
+				if (vectorDir.getLength() != 0) {
+					int factor = TILE_SIZE * 4;
+					vectorDir.x = (double) (vectorDir.x / vectorDir.getLength()) * factor;
+					vectorDir.y = (double) (vectorDir.y / vectorDir.getLength()) * factor;
+				}
+				Position finalPos = goalPos + vectorDir;
+
+				scout->move(finalPos);
+
+				// Debug draw
+				Broodwar->drawCircleMap(lastCommandPos, 3, Colors::Green, true);
+				Broodwar->drawCircleMap(centerPos, 5, Colors::Red, true);
+				Broodwar->drawCircleMap(finalPos, 3, Colors::Teal, true);
+				Broodwar->drawCircleMap(scout->getPosition(), scout->getType().sightRange(),
+					Colors::Cyan);
 			}
 		}
 	}
@@ -187,7 +200,15 @@ void ScoutUnits::updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u) {
 		// more stoofs
 
 		// For now just 'saves' the drone by returning it to UnitHandler
-		removeUnit(scout);
+		Position ownPos = Position(Broodwar->self()->getStartLocation());
+		BWTA::Region* ownRegion = BWTA::getRegion(ownPos);
+		BWTA::Region* scoutRegion = BWTA::getRegion(scout->getPosition());
+
+		if (ownRegion != scoutRegion) {
+			scout->move(ownPos);
+		} else {
+			removeUnit(scout);
+		}
 	}
 }
 

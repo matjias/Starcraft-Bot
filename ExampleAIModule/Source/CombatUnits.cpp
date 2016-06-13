@@ -25,40 +25,44 @@ void CombatUnits::update(){
 
 void CombatUnits::idleUpdate(){
 	//Squad loops
-	for (int i = 0; i < zealotSquads.size(); i++){
-		idleMovement(&zealotSquads.at(i), ownChoke);
-	}
-	for (int i = 0; i < dragoonSquads.size(); i++){
-		idleMovement(&dragoonSquads.at(i), ownChoke);
-	}
+	
 }
 
 void CombatUnits::runAttack(){
 	// Could be something from tactician? not very flexible.
-	int squadCount = std::min(zealotSquads.size(), dragoonSquads.size());
 
-	for (int i = 0; i < squadCount; i++){
-		/*if (zealotCount > ZEALOT_RUSH_COUNT){
-			attackMovement(&zealotSquads.at(i));
-		}*/
-		// fuk den her kode
-		if (dragoonSquads.size() > i){
-			if (dragoonSquads.at(i).getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
-				dragoonMicro(dragoonSquads.at(i));
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++){
+		if (it->first == UnitTypes::Protoss_Zealot){
+			attackMovement(&it->second);
+		}
+		if (it->first == UnitTypes::Protoss_Dragoon){
+			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
+				dragoonMicro(&it->second);
 			}
 			else{
-				attackMovement(&dragoonSquads.at(i));
+				attackMovement(&it->second);
 			}
 		}
-		if (zealotSquads.size() > i){
-			attackMovement(&zealotSquads.at(i));
-		}
 	}
+
+	//for (int i = 0; i < squadCount; i++){
+	//	// fuk den her kode
+	//	if (dragoonSquads.size() > i){
+	//		if (dragoonSquads.at(i).getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
+	//			dragoonMicro(dragoonSquads.at(i));
+	//		}
+	//		else{
+	//			attackMovement(&dragoonSquads.at(i));
+	//		}
+	//	}
+	//	if (zealotSquads.size() > i){
+	//	}
+	//}
 }
 
 
-void CombatUnits::dragoonMicro(Squad squad){
-	for (auto& unit : squad){
+void CombatUnits::dragoonMicro(Squad * squad){
+	for (auto &unit : *squad){
 		if (unit->getHitPoints() < (unit->getType().maxHitPoints() / 2) || enemyTooClose(unit)){
 			if (unit->canAttack()){
 				unit->attack(getOptimalTarget(unit));
@@ -93,21 +97,32 @@ void CombatUnits::attackMovement(Squad *squad){
 }
 
 void CombatUnits::addUnit(Unit u){
-	units.push_back(u);
 	idleMovement(u, ownChoke);
-	
-	if (u->getType() == UnitTypes::Protoss_Zealot && u->getPlayer() == Broodwar->self()){
-		zealotCount++;
-		saveUnitToSquad(u, &zealotSquads);
-	}
-	else if (u->getType() == UnitTypes::Protoss_Dragoon && u->getPlayer() == Broodwar->self()){
-		saveUnitToSquad(u, &dragoonSquads);
-	}
+	saveUnitToSquad(u);
 }
 
-void CombatUnits::saveUnitToSquad(Unit u, std::vector<Squad> *squads){
+void CombatUnits::saveUnitToSquad(Unit u){
 
-	if (squads->size() == 0){
+	if (unitMap.size() == 0){
+		unitMap.insert(std::make_pair(u->getType(), Squad()));
+	}
+	if (unitMap.size() > 0){
+		for (auto &squad : unitMap){
+			if (squad.first == u->getType()){
+				if (squad.second.size() <= SQUAD_SIZE){
+					squad.second.insert(u);
+					break;
+				}
+				else{
+					Squad tempSq = Squad();
+					tempSq.insert(u);
+					unitMap.insert(std::make_pair(u->getType(), tempSq));
+				}
+			}
+		}
+	}
+
+	/*if (squads->size() == 0){
 		squads->push_back(Squad());
 	}
 	if (squads->size() > 0){
@@ -121,7 +136,7 @@ void CombatUnits::saveUnitToSquad(Unit u, std::vector<Squad> *squads){
 				squads->at(i + 1).insert(u);
 			}
 		}
-	}
+	}*/
 }
 
 bool CombatUnits::squadAtPos(Squad uSet, TilePosition pos){
@@ -139,7 +154,7 @@ bool CombatUnits::unitAtPos(Unit u, TilePosition pos){
 }
 
 void CombatUnits::debugDraw(std::vector<Squad> squads){
-	if (squads.size() > 0){
+	/*if (squads.size() > 0){
 		for (int i = 0; i < squads.size(); i++){
 			for (Unit unit : squads.at(i)){
 				if (unit != NULL){
@@ -160,7 +175,7 @@ void CombatUnits::debugDraw(std::vector<Squad> squads){
 				}
 			}
 		}
-	}
+	}*/
 }
 
 Position CombatUnits::escapePos(Unit unit){
@@ -181,19 +196,14 @@ bool CombatUnits::enemyTooClose(Unit unit){
 
 // Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
-	int number = 0;
-
-	if (unitType == UnitTypes::Protoss_Zealot){
-		number = zealotCount;
+	Broodwar->drawTextScreen(480, 70, "Zealot squad count: %i", unitMap.count(unitType));
+	Broodwar->drawTextScreen(480, 80, "size of last squad: %i", unitMap.upper_bound(unitType)->second.size());
+	auto it = unitMap.upper_bound(unitType);
+	it--;
+	if (unitMap.count(unitType) > 0){
+		return (unitMap.count(unitType) - 1)*SQUAD_SIZE + it->second.size();
 	}
-
-	/*for (int i; i < units.size(); i++) {
-		if (units[i]->getType() == unitType) {
-			number++;
-		}
-	}*/
-
-	return number;
+	return 0;
 }
 
 //Expand with oveloaded functions with larger flexibility for tactician.

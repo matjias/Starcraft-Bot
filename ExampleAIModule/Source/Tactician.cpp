@@ -63,7 +63,6 @@ bool Tactician::recordDeadUnit(Unit u) {
 
 	// return unitHandler.removeUnit(u);
 	return unitHandler.deleteUnit(u);
-	return false;
 }
 
 void Tactician::scout() {
@@ -124,14 +123,15 @@ void Tactician::updateTacticianStart() {
 
 	}
 	// opdatër magiske tal til constants eller noget
-	if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
+	/*if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 3) ||
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 6) &&
 		scoutManagerPtr->getEnemySpawn() != TilePosition(0,0)){
 		unitHandler.getCombatUnits()->setAttacking(Position(scoutManagerPtr->getEnemySpawn()));
-	}
+	}*/
 
-	Broodwar->drawTextScreen(480, 60, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
+	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
+	Broodwar->drawTextScreen(480, 60, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
 	unitHandler.update();
 
 }
