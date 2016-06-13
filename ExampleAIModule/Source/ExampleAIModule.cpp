@@ -228,7 +228,8 @@ void ExampleAIModule::drawData() {
 		}
 	}
 	
-	TilePosition pos = scoutManager.getEnemySpawn();
+	TilePosition tilePos = scoutManager.getEnemySpawn();
+	Position pos = Position(tilePos);
 	Broodwar->drawTextScreen(20, 10, "Enemy spawn: (%i, %i)", pos.x, pos.y);
 	
 

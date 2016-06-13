@@ -22,6 +22,7 @@ struct ScoutAndGoalStruct {
 	bool peekEnemyBase = false;
 	bool underAttack = false;
 	bool kiting = false;
+	int lastPolyPos = -1;
 };
 
 // Macro and economy

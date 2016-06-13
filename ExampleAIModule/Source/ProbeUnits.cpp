@@ -18,7 +18,7 @@ void ProbeUnits::setBroodwarMock(Game* broodwarPtr) {
 
 
 void ProbeUnits::update(){
-	if (mapAnalyzed){
+	/*if (mapAnalyzed){
 		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
 		Position bottomRight = Position(pos.x + UnitTypes::Protoss_Pylon.tileWidth() * TILE_SIZE,
 										pos.y +  UnitTypes::Protoss_Pylon.tileHeight() * TILE_SIZE);
@@ -30,7 +30,7 @@ void ProbeUnits::update(){
 			pos.y + UnitTypes::Protoss_Pylon.tileHeight() * TILE_SIZE);
 
 		Broodwar->drawBoxMap(pos, bottomRight, Colors::Blue);
-	}
+	}*/
 	//mineMinerals(miningProbes);
 	//mineGas(gasProbes);
 }
