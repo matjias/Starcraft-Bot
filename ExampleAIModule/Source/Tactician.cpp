@@ -84,8 +84,7 @@ void Tactician::addAllScouts() {
 
 void Tactician::updateTactician(StrategyName currentStrategy) {
 	if (lastKnownStrategy != currentStrategy) {
-		
-
+		resourceSpender.setStrategy(currentStrategy);
 		lastKnownStrategy = currentStrategy;
 	}
 

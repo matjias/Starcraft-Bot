@@ -44,12 +44,12 @@ void StrategyDecider::decideStrategy() {
 		needsToUpdateStrategy = false;
 	}*/
 
-	if (false) { // @TODO: Enemies in our regions
+	if (false) { // @TODO: Enemy combat units in our regions
 		currentStrategy = Defend;
 	}
 	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
 		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
-		workerBalance() < ALLIN_WORKER_BALANCE) {
+		workerBalance() <= ALLIN_WORKER_BALANCE) {
 		
 		currentStrategy = AllIn;
 	}

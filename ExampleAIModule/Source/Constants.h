@@ -44,6 +44,7 @@ const int MAX_WORKERS = 100;
 const int MAX_WORKER_SURPLUS = WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER;
 const int MINERAL_SURPLUS_LIMIT = 600;
 const int GAS_SURPLUS_LIMIT = 400;
+const float GAS_TO_MINERALS = 1.5;
 
 // Units and buildings
 const int OBSERVERS_TO_SCOUT = 1;
