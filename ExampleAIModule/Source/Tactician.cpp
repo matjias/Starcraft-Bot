@@ -85,7 +85,7 @@ void Tactician::addAllScouts() {
 
 void Tactician::updateTactician(StrategyName currentStategy) {
 	if (lastKnownStrategy != currentStategy) {
-		// Some switching logic?
+		
 
 		lastKnownStrategy = currentStategy;
 	}
@@ -115,7 +115,7 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 	resourceSpender.update();
 
 	// Draw/print
-	Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
+	//Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
 }
 
 void Tactician::updateTacticianStart() {
@@ -187,8 +187,52 @@ bool Tactician::defenseStructureNeeded() {
 }
 
 bool Tactician::detectorNeeded() {
-	// @TODO
-	return false;
+
+	if (!detectionNeeded) {
+		//if (scoutManagerPtr->canAddAnotherScout()) { 
+		/*return (scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Templar_Archives)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observatory)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Factory)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Starport)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Science_Facility)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Control_Tower)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Covert_Ops)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Hydralisk_Den)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lair)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Observer) // TODO: Unit map
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Templar)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Dark_Archon)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Protoss_Arbiter)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Vulture_Spider_Mine)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Ghost)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Terran_Wraith)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker)
+		|| scoutClass->getEnemyStructureCount(BWAPI::UnitTypes::Zerg_Lurker_Egg))*/
+		detectionNeeded = true;
+	}
+
+	return unitHandler.getWarpingUnitCount(UnitTypes::Protoss_Observer) +
+		unitHandler.getScoutUnits()->getScoutCount(UnitTypes::Protoss_Observer) +
+		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Observer) <
+		neededDetectors();
+}
+
+int Tactician::neededDetectors() {
+	int number = 0;
+
+	if (currentStage != Start && currentStage != Early) {
+
+		number += OBSERVERS_TO_SCOUT;
+	}
+
+	if (!detectionNeeded) {
+		number += OBSERVERS_WITH_ARMY;
+	}
+
+	return number;
 }
 
 bool Tactician::expansionNeeded() {

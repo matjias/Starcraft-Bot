@@ -25,11 +25,10 @@ public:
 	bool assignGoal(BWAPI::Position goal);
 
 	int getAmountOfScouts();
+	int getScoutCount(BWAPI::UnitType unitType);
 	bool hasScouts();
 	
 	std::vector<ScoutAndGoalStruct*> getScouts();
-
-	
 
 	void updateScouts();
 	void updateScoutsMoveInEnemyBase(ScoutAndGoalStruct* u);
@@ -45,6 +44,4 @@ private:
 
 	BWAPI::Position enemySpawn;
 	bool mapAnalyzed = false;
-	
-
 };

@@ -5,14 +5,17 @@ enum StrategyName {
 	// Default has no direct goal in mind, but just works towards
 	// getting economy, teching up, building an army and harassing
 	// where possible
-	Default, Skirmish,
-	AllIn, Defend,
-	Expand, Turtle
+	Default, // Build anything except for expansions, attack if there are any openings
+	AllIn, // Only spend resources on army and army structures, attack with army when there are openings or the army is "big"
+	Defend, // Send main army back, spend resources on combat units and defense structures
+	Expand // Send main army to expansion, spend resources on a new base first and then on anything else
 };
 
 enum GameStage {
-	Start, Early, EarlyMid,
-	Mid, MidLate, Late
+	Start,
+	Early,
+	Mid, 
+	Late
 };
 
 struct ScoutAndGoalStruct {
@@ -36,8 +39,9 @@ const int EARLY_STAGE_SUPPLY = 6;
 const int MID_STAGE_SUPPLY = 50;
 
 // Units and buildings
-const int MIN_OBSERVERS = 1; // Observers needed to scout
-const int OBSERVERS_TO_DETECT = 3; // Observers needed when cloak/burrow is spotted
+
+const int OBSERVERS_TO_SCOUT = 1;
+const int OBSERVERS_WITH_ARMY = 1;
 const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int CORSAIRS_NEEDED = 3;
 const int ARMY_SUPPLY_BEFORE_OBSERVERS = 8;
@@ -54,3 +58,7 @@ const int BUILD_LOCTION_UPDATE_TIME = 60;
 const int MEDIUM_MAP_SIZE = 128 * 128; // 128 * 128
 const int RUSH_DISTANCE_CEIL = 128 * 32; // 128 * 32
 const int BUILD_LOCATION_FACTOR = 15;
+
+// Old
+const int MIN_OBSERVERS = 1;
+const int OBSERVERS_TO_DETECT = 2;

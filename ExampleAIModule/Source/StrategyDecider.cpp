@@ -13,7 +13,6 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 		return false;
 	}
 
-
 	tacticianPtr = tact;
 	scoutManagerPtr = scoutMan;
 
