@@ -92,7 +92,7 @@ bool ProbeUnits::deleteUnit(Unit u){
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
-		}
+}
 	}
 	return false;
 }
@@ -111,52 +111,32 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
-	// @TODO: Don't take the scout and the gas miners!
-
-	Unit u = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
-
 	if (building == NULL) {
 		if (u == builder) {
 			u->gather(u->getClosestUnit(Filter::IsMineralField));
 			builder = NULL;
 		}
 	}
-	else if (builder == NULL) {
-		builder = u;
-	}
-
-	/*if (builder != u) {
-		if (builder != NULL) {
-			builder->stop(); // Replace stop by: Mine minerals at assigned base
-		}
-		builder = u;
-	}*/
-
-	/*if (u->getDistance(getOptimalBuildPlacement(type, basePos) < 32)) {
-		u->build(type, getOptimalBuildPlacement(type, basePos));
-		builder = NULL;
-		builder->stop(); // Replace stop by: Mine minerals at assigned base
-		return true;
-	}
 	else {
-		u->move(getOptimalBuildPlacement(type, basePos), false);
-		return false;
-	}*/
+		if (builder == NULL) {
+			// @TODO: Don't use the scout and the gas miners!
+			Unit unit = Broodwar->getClosestUnit(Position(basePos), Filter::GetType == UnitTypes::Protoss_Probe);
+			builder = unit;
+	}
 
-	if (building != NULL && builder != NULL) {
+		if (builder != NULL) {
 		if (building == UnitTypes::Protoss_Assimilator) {
-			//return builder->build(building, Broodwar->getBuildLocation(building, builder->getTilePosition()));
 			return builder->build(building, Broodwar->getBuildLocation(building, basePos));
 		}
 		else {
 			return builder->build(building, getOptimalBuildPlacement(building, basePos));
 		}
 	}
+	}
 	return true;
-	//return builder->build(type, getOptimalBuildPlacement(type, basePos));
 }
 
-// @TODO 6-10: It should ignore the builder when looking for a build loc
+// @TODO: It should ignore the builder when looking for a build loc
 TilePosition ProbeUnits::getOptimalBuildPlacement(UnitType type, TilePosition basePos){
 	TilePosition curPos = Broodwar->getBuildLocation(type, basePos);
 	/*while (!checkMargin(type, curPos)){

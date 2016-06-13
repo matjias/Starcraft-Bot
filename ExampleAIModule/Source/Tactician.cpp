@@ -13,11 +13,10 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	previousStage = currentStage;
 
 	initArmyCompositions();
+	useDummyArmyComposition = true;
 	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
-
-
 
 	if (scoutMan == NULL) {
 		return false;
@@ -93,10 +92,9 @@ void Tactician::updateTactician(StrategyName currentStategy) {
 
 	previousStage = currentStage;
 	setStage();
-	computeArmyComposition();
-	/*if (!AllIn && !Defend) {
+	if (!useDummyArmyComposition) {
 		computeArmyComposition();
-	}*/
+	}
 
 	switch (currentStage) {
 	case Start:
@@ -244,64 +242,69 @@ bool Tactician::gasSurplus() {
 
 void Tactician::computeArmyComposition() {
 
-	switch (currentStage) {
-	case Start:
-		armyComposition = initialArmyComposition;
-		break;
+	if (useDummyArmyComposition) {
+		armyComposition = dummyArmyComposition;
+	}
+	else {
+		switch (currentStage) {
+		case Start:
+			armyComposition = initialArmyComposition;
+			break;
 
-	case Early:
-		if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = zergEarlyGasLight;
+		case Early:
+			if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = zergEarlyGasLight;
+				}
+				else {
+					armyComposition = zergEarlyGasHeavy;
+				}
+			}
+			else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = terranEarlyGasLight;
+				}
+				else {
+					armyComposition = terranEarlyGasHeavy;
+				}
 			}
 			else {
-				armyComposition = zergEarlyGasHeavy;
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = protossEarlyGasLight;
+				}
+				else {
+					armyComposition = protossEarlyGasHeavy;
+				}
 			}
-		}
-		else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = terranEarlyGasLight;
-			}
-			else {
-				armyComposition = terranEarlyGasHeavy;
-			}
-		}
-		else {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = protossEarlyGasLight;
-			}
-			else {
-				armyComposition = protossEarlyGasHeavy;
-			}
-		}
-		break;
+			break;
 
-	case Mid:
-		if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = zergMidGasLight;
+		case Mid:
+			if (Broodwar->enemy()->getRace() == BWAPI::Races::Zerg) {
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = zergMidGasLight;
+				}
+				else {
+					armyComposition = zergMidGasHeavy;
+				}
+			}
+			else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = terranMidGasLight;
+				}
+				else {
+					armyComposition = terranMidGasHeavy;
+				}
 			}
 			else {
-				armyComposition = zergMidGasHeavy;
+				if (mineralSurplus() && !gasSurplus()) {
+					armyComposition = protossMidGasLight;
+				}
+				else {
+					armyComposition = protossMidGasHeavy;
+				}
 			}
+			break;
 		}
-		else if (Broodwar->enemy()->getRace() == BWAPI::Races::Terran) {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = terranMidGasLight;
-			}
-			else {
-				armyComposition = terranMidGasHeavy;
-			}
-		}
-		else {
-			if (mineralSurplus() && !gasSurplus()) {
-				armyComposition = protossMidGasLight;
-			}
-			else {
-				armyComposition = protossMidGasHeavy;
-			}
-		}
-		break;
 	}
 }
 
@@ -340,4 +343,6 @@ void Tactician::initArmyCompositions() {
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
+
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 }

@@ -106,6 +106,11 @@ void CombatUnits::addUnit(Unit u){
 }
 
 void CombatUnits::saveUnitToSquad(Unit u, std::vector<Squad> *squads){
+
+	if (unitMap.size() == 0){
+		unitMap = 
+	}
+
 	if (squads->size() == 0){
 		squads->push_back(Squad());
 	}
