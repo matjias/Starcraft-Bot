@@ -19,9 +19,9 @@ void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
 }
 
 void UnitHandler::addWarpingUnit(Unit u){
+	Broodwar->sendText("WAapapap lappa dis %s", u->getType().c_str());
 	if (units.count(u->getID()) == 0){
 		warpingUnits.insert(std::make_pair(u->getType(), u));
-		//Broodwar->sendText("WAapapap lappa dis %s", u->getType().c_str());
 	}
 }
 
@@ -65,6 +65,7 @@ void UnitHandler::addUnit(Unit u){
 		probeUnits.mineGas(u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus), u);
 	}
 }
+
 
 bool UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
@@ -138,7 +139,8 @@ bool UnitHandler::deleteUnit(Unit u){
 		// combatUnits.deleteUnit(u);
 		break;
 	case scout:
-		// scoutUnits.deleteUnit(u);
+	Broodwar->sendText("E Mum is correctos %i", enMum);
+		isDeleted = scoutUnits.removeUnit(u);
 		break;
 	case building:
 		// buildUnits.deleteUnit(u);

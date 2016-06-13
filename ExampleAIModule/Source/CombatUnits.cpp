@@ -196,7 +196,14 @@ bool CombatUnits::enemyTooClose(Unit unit){
 
 // Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
-	return (unitMap.count(unitType) - 1)*SQUAD_SIZE + unitMap.upper_bound(unitType)->second.size();
+	Broodwar->drawTextScreen(480, 70, "Zealot squad count: %i", unitMap.count(unitType));
+	Broodwar->drawTextScreen(480, 80, "size of last squad: %i", unitMap.upper_bound(unitType)->second.size());
+	auto it = unitMap.upper_bound(unitType);
+	it--;
+	if (unitMap.count(unitType) > 0){
+		return (unitMap.count(unitType) - 1)*SQUAD_SIZE + it->second.size();
+	}
+	return 0;
 }
 
 //Expand with oveloaded functions with larger flexibility for tactician.
