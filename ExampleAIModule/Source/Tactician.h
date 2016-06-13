@@ -82,5 +82,12 @@ private:
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasHeavy;
 
 	std::vector<std::pair<BWAPI::UnitType, float>> dummyArmyComposition;
+
+	// AI settings
 	bool useDummyArmyComposition;
+	bool buildDetectors;
+	bool buildDefenseStructures;
+	bool buildExpansions;
+	bool researchUpgrades;
+	bool buildCombatUnits;
 };

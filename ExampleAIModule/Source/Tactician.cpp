@@ -12,9 +12,16 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	currentStage = Start;
 	previousStage = currentStage;
 
+	// AI settings
+	useDummyArmyComposition = false;
+	buildDetectors = true;
+	buildDefenseStructures = true;
+	buildExpansions = true;
+	researchUpgrades = true;
+	buildCombatUnits = true;
+
 	detectionNeeded = false;
 	initArmyCompositions();
-	useDummyArmyComposition = true;
 	computeArmyComposition();
 
 	resourceSpender._init(&unitHandler, unitHandler.getBuildingUnits(), unitHandler.getProbeUnits());
@@ -161,20 +168,19 @@ void Tactician::setAnalyzed(){
 }
 
 void Tactician::invest() {
-	
-	if (detectorNeeded()) {
+	if (buildDetectors && detectorNeeded()) {
 		resourceSpender.addUnitInvestment(BWAPI::UnitTypes::Protoss_Observer, true);
 	}
-	else if (defenseStructureNeeded()) {
+	else if (buildDefenseStructures && defenseStructureNeeded()) {
 		resourceSpender.addUnitInvestment(BWAPI::UnitTypes::Protoss_Photon_Cannon, false);
 	}
-	else if (expansionNeeded()) {
+	else if (buildExpansions && expansionNeeded()) {
 		resourceSpender.addUnitInvestment(BWAPI::UnitTypes::Protoss_Nexus, false);
 	}
-	else if (neededUpgrade() != NULL) {
+	else if (researchUpgrades && neededUpgrade() != NULL) {
 		resourceSpender.addUpgradeInvestment(neededUpgrade(), false);
 	}
-	else if (neededCombatUnit() != NULL) {
+	else if (buildCombatUnits && neededCombatUnit() != NULL) {
 		resourceSpender.addUnitInvestment(neededCombatUnit(), false);
 	}
 }
