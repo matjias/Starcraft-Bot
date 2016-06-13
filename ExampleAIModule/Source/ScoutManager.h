@@ -36,6 +36,9 @@ public:
 	int recordUnitDestroy(BWAPI::Unit u);
 	void recordUnitEvade(BWAPI::Unit u);
 
+	// Getting information
+	int getAmountOfEnemyUnit(BWAPI::UnitType u);
+
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();
 
@@ -70,6 +73,7 @@ public:
 	std::vector<bool> getSpawnHasScouts();
 	std::vector<ScoutAndGoalStruct*> getScouts();
 	BWAPI::TilePosition getEnemySpawn();
+	std::map<BWAPI::UnitType, int> getEnemyUnitsAmount();
 	bool hasScouts();
 	bool isScouting = false;
 
@@ -101,7 +105,13 @@ private:
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the
 	// key and the element containing various other information
-	std::unordered_map<int, UnitStruct*> enemyUnits;
+	std::map<int, UnitStruct*> enemyUnits;
+
+	// To get information about the amount of certain unit
+	// types the enemy have in average constant time,
+	// takes the UnitType as the key and has the amount
+	// discovered as the element
+	std::map<BWAPI::UnitType, int> enemyUnitsAmount;
 
 	// A vector of locations, used for caching information about
 	// spawn locations and which ones have been scouted thus far.

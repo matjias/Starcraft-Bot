@@ -82,6 +82,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		uStruct->lastScouted = Broodwar->getFrameCount();
 
 		enemyUnits.insert(std::make_pair(u->getID(), uStruct));
+
+		// Increment enemyUnitsAmount
+		if (enemyUnitsAmount.count(u->getType()) > 0) {
+			enemyUnitsAmount.at(u->getType()) += 1;
+		}
+		else {
+			enemyUnitsAmount.insert(std::make_pair(u->getType(), 1));
+		}
 	}
 
 	// Was it the enemy nexus?
@@ -92,6 +100,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 
 int ScoutManager::recordUnitDestroy(Unit u) {
 	int elementsRemoved = enemyUnits.erase(u->getID());
+
+	// Decrement enemyUnitsAmount
+	if (enemyUnitsAmount.at(u->getType()) == 1) {
+		enemyUnitsAmount.erase(u->getType());
+	}
+	else {
+		enemyUnitsAmount.at(u->getType()) -= 1;
+	}
 
 	// Something went wrong if we destroyed a unit
 	// we did not have a record of
@@ -112,6 +128,17 @@ void ScoutManager::recordUnitEvade(Unit u) {
 	else {
 		// Something went wrong, for now just tell the client
 		Broodwar->sendText("A unit has evaded that wasnt recorded");
+	}
+}
+
+int ScoutManager::getAmountOfEnemyUnit(UnitType u) {
+	if (enemyUnitsAmount.count(u) == 1) {
+		// Return amount cached
+		return enemyUnitsAmount.at(u);
+	}
+	else {
+		// No units with this unit type cached
+		return 0;
 	}
 }
 
@@ -407,4 +434,8 @@ bool ScoutManager::hasScouts() {
 
 TilePosition ScoutManager::getEnemySpawn() {
 	return enemySpawn;
+}
+
+std::map<BWAPI::UnitType, int> ScoutManager::getEnemyUnitsAmount() {
+	return enemyUnitsAmount;
 }
