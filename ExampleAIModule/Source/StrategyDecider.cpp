@@ -35,20 +35,6 @@ void StrategyDecider::update() {
 		
 	}*/
 
-	// Draw/print
-	if (currentStrategy == Default) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
-	}
-	else if (currentStrategy == Expand) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Expand");
-	}
-	else if (currentStrategy == AllIn) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: AllIn");
-	}
-	else if (currentStrategy == Defend) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
-	}
-
 	if (needsScouting) {
 		tacticianPtr->scout();
 	}
@@ -68,6 +54,9 @@ void StrategyDecider::update() {
 	}
 	else if (currentStrategy == Defend) {
 		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
+	}
+	else {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: ");
 	}
 }
 

@@ -44,6 +44,10 @@ public:
 	BWAPI::UnitType getPendingBuilding();
 	void pendingBuildingPlaced();
 	void removePlacedBuildings(BWAPI::UnitType buildingType);
+	BWAPI::UnitType getUnitWithPendingTech();
+	bool canBuildBuilding(BWAPI::UnitType buildingType);
+	bool canBuildUnit(BWAPI::UnitType unitType);
+	bool canUpgrade(BWAPI::UpgradeType upgradeType);
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, int position);
@@ -61,9 +65,6 @@ private:
 	void clearReservedResources();
 	bool investmentExists(BWAPI::UnitType unitType);
 	bool investmentExists(BWAPI::UpgradeType upgradeType);
-	bool canBuildBuilding(BWAPI::UnitType buildingType);
-	bool canBuildUnit(BWAPI::UnitType unitType);
-	bool canUpgrade(BWAPI::UpgradeType upgradeType);
 	bool workerNeeded();
 	bool supplyNeeded();
 	int unitsInProgress(BWAPI::UnitType unitType);
@@ -77,6 +78,7 @@ private:
 	int reservedGas = 0;
 	int pendingBuilding = NULL;
 	bool investmentAdded = false;
+	BWAPI::UnitType unitWithPendingTech = NULL;
 	StrategyName strategy = Default;
 
 	UnitHandler* unitHandlerPtr;

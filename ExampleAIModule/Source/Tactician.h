@@ -62,7 +62,7 @@ private:
 	std::vector<BWAPI::Position> pathToEnemy;
 	std::vector<BWAPI::TilePosition> tilePathToEnemy = std::vector<BWAPI::TilePosition>();
 
-	bool detectionNeeded;
+	bool detectionNeeded = false;
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

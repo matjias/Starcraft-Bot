@@ -14,13 +14,12 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 
 	// AI settings
 	useDummyArmyComposition = false;
-	buildDetectors = true;
+	buildDetectors = false;
 	buildDefenseStructures = true;
-	buildExpansions = true;
+	buildExpansions = false;
 	researchUpgrades = true;
 	buildCombatUnits = true;
 
-	detectionNeeded = false;
 	initArmyCompositions();
 	computeArmyComposition();
 
@@ -239,31 +238,48 @@ bool Tactician::expansionNeeded() {
 }
 
 BWAPI::UnitType Tactician::neededCombatUnit() {
+
 	if (armyComposition.size() == 1) {
 		return armyComposition[0].first;
 	}
 	else if (armyComposition.size() > 1) {
 
-		float minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[0].first) +
-			unitHandler.getWarpingUnitCount(armyComposition[0].first)) /
-			armyComposition[0].second;
-		int minPosition = 0;
+		if (resourceSpender.getUnitWithPendingTech() == NULL) {
 
-		// Find the unit type that there are fewest of compared to the how many there should be
-		for (int i = 1; i < armyComposition.size(); i++) {
-			if (armyComposition[i].second > 0 &&
-				(unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
-				unitHandler.getWarpingUnitCount(armyComposition[i].first)) /
-				armyComposition[i].second < minRate) {
+			float minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[0].first) +
+				unitHandler.getWarpingUnitCount(armyComposition[0].first)) /
+				armyComposition[0].second;
+			int minPosition = 0;
 
-				minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
+			// Find the unit type that there are fewest of compared to the how many there should be
+			for (int i = 1; i < armyComposition.size(); i++) {
+				if (armyComposition[i].second > 0 &&
+					(unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
 					unitHandler.getWarpingUnitCount(armyComposition[i].first)) /
-					armyComposition[i].second;
-				minPosition = i;
+					armyComposition[i].second < minRate) {
+
+					minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
+						unitHandler.getWarpingUnitCount(armyComposition[i].first)) /
+						armyComposition[i].second;
+					minPosition = i;
+				}
+			}
+
+			return armyComposition[minPosition].first;
+		}
+		else {
+			// Add an alternate unit if the pending unit requires more tech
+			if (resourceSpender.getUnitWithPendingTech() == armyComposition[0].first) {
+				return armyComposition[armyComposition.size() - 1].first;
+			}
+			else {
+				for (int i = 1; i < armyComposition.size(); i++) {
+					if (resourceSpender.getUnitWithPendingTech() == armyComposition[i].first) {
+						return armyComposition[i - 1].first;
+					}
+				}
 			}
 		}
-
-		return armyComposition[minPosition].first;
 	}
 
 	return NULL;
@@ -377,35 +393,41 @@ void Tactician::initArmyCompositions() {
 
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 100.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
+	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.01));
+	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 100.0));
+	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 50.0));
 
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 5.0));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 100.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
+	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
+	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 100.0));
+	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 100.0));
 
 	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
-	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
+	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.01));
+	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
-	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
+	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 1.0));
 
 	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Arbiter, 1.0));
 }
 
 bool Tactician::enemyCloakPossible() {

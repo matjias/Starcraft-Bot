@@ -181,6 +181,9 @@ void ResourceSpender::purchase() {
 					}
 				}
 				else if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
+					if (investments[i].getUnitType() == unitWithPendingTech) {
+						unitWithPendingTech = NULL;
+					}
 					removeInvestment(i);
 				}
 			}
@@ -397,6 +400,8 @@ void ResourceSpender::addAllRequirements() {
 
 void ResourceSpender::addRequirements(int number) {
 	
+	UnitType unitTupe = investments[number].getUnitType();
+
 	// Add required buildings
 	auto requiredUnits = investments[number].getUnitType().requiredUnits();
 
@@ -432,6 +437,18 @@ void ResourceSpender::addRequirements(int number) {
 
 	// Remove repeating elements in investment list
 	removeAllDublicates();
+
+	// Set unit type that requires tech
+	if (investments[number].getUnitType() != unitTupe) {
+		unitWithPendingTech = unitTupe;
+	}
+	else {
+		unitWithPendingTech = NULL;
+	}
+}
+
+UnitType ResourceSpender::getUnitWithPendingTech() {
+	return unitWithPendingTech;
 }
 
 bool ResourceSpender::addProductionFacilities() {
