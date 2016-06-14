@@ -73,7 +73,7 @@ void CombatUnits::dragoonMicro(Squad * squad){
 			//Broodwar->sendText("Skipped a unit");
 			continue;
 		}
-		if (unit->getGroundWeaponCooldown() < 10) {
+		if (unit->getGroundWeaponCooldown() == 0) {
 
 			UnitCommand lastCommand = unit->getLastCommand();
 			Unit targetUnit = getOptimalTarget(unit);

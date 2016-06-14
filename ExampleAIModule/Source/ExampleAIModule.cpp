@@ -117,7 +117,13 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
-	onUnitDiscover(unit);
+	// Hack code...
+	if (Broodwar->self() == unit->getPlayer()) {
+		onUnitDiscover(unit);
+	}
+	else if (Broodwar->enemy() == unit->getPlayer()) {
+		scoutManager.recordUnitMorph(unit);
+	}
 }
 
 void ExampleAIModule::onUnitRenegade(BWAPI::Unit unit) { }

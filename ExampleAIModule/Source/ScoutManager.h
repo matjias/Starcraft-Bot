@@ -37,6 +37,7 @@ public:
 	void recordUnitDiscover(BWAPI::Unit u);
 	int recordUnitDestroy(BWAPI::Unit u);
 	void recordUnitEvade(BWAPI::Unit u);
+	void recordUnitMorph(BWAPI::Unit u);
 
 	// Getting information
 	int getAmountOfEnemyUnit(BWAPI::UnitType u);
@@ -54,6 +55,7 @@ public:
 	// Unit structure, used for caching enemy units in a map
 	struct UnitStruct {
 		BWAPI::Unit unit;
+		BWAPI::UnitType unitType;
 		BWAPI::Position lastKnownPosition;
 		int lastScouted;
 	};
@@ -103,6 +105,9 @@ private:
 	void scoutPeekEnemySpawn();
 
 	bool foundEnemyBaseInit(BWAPI::TilePosition position);
+
+	void incrementEnemyUnitsAmount(BWAPI::Unit u);
+	void decrementEnemyUnitsAmount(BWAPI::Unit u);
 
 	/*bool scoutHasGoal(ScoutAndGoalStruct* scoutAndGoal);
 	LocationStruct* getScoutGoalInSpawns(BWAPI::TilePosition goal);
