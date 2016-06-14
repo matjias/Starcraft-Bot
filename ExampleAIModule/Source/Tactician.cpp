@@ -275,6 +275,15 @@ bool Tactician::gasSurplus() {
 	return Broodwar->self()->gas() > GAS_SURPLUS_LIMIT;
 }
 
+void Tactician::computeArmyBalance() {
+	float armyBalance = DEFAULT_ARMY_BALANCE;
+
+	if (unitHandler.) {
+
+	}
+
+}
+
 void Tactician::computeArmyComposition() {
 
 	if (useDummyArmyComposition) {
