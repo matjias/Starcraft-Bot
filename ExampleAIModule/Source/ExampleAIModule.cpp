@@ -49,7 +49,7 @@ void ExampleAIModule::onFrame() {
 	if (analyzedJustFinished) {
 		Broodwar->sendText("Finished analyzing map");
 		analyzedJustFinished = false;
-		tactician.setAnalyzed();
+		strategyDecider.setAnalyzed();
 	}
 
 	// Skip game logic if it's not really 'us'

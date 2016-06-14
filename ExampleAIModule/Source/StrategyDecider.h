@@ -18,10 +18,14 @@ public:
 	
 	void decideStrategy();
 
+	// Set BWTA analyzed
+	void setAnalyzed();
+
 private:
 	float workerBalance();
+	bool defendMainBase();
 
-	int strategyUpdateTime;
+	int lastStrategyUpdate = 0;
 
 	// Class pointers
 	Tactician* tacticianPtr;
@@ -30,4 +34,5 @@ private:
 	// Variables
 	StrategyName currentStrategy;
 	bool needsScouting;
+	bool mapAnalyzed = false;
 };
