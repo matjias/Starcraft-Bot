@@ -33,9 +33,9 @@ void ExampleAIModule::onStart() {
 
 	// Other onStart stuff
 	scoutManager._init();
-
 	strategyDecider._init(&tactician, &scoutManager);
 	tactician._init(&scoutManager);
+	scoutManager.setStrategyDecider(&strategyDecider);
 }
 
 void ExampleAIModule::onEnd(bool isWinner) { }
@@ -86,8 +86,6 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.addWarpingUnit(unit);
-
-
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {
@@ -129,6 +127,10 @@ void ExampleAIModule::onSaveGame(std::string gameName) { }
 void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.recordNewUnit(unit);
+
+		if (unit->getType() == UnitTypes::Protoss_Assimilator) {
+			Broodwar->sendText("Assimilator completed");
+		}
 	}
 }
 
@@ -247,5 +249,20 @@ void ExampleAIModule::drawData() {
 		i++;
 	}
 
+	Position posRZ = tactician.getRendezvousPos();
+	if (posRZ != Position(0, 0)) {
+		Broodwar->drawCircleMap(posRZ, TILE_SIZE, Colors::Red);
+		Broodwar->drawTextMap(posRZ, "Rendezvous Point");
+	}
+
+	std::vector<TilePosition> path = tactician.getPathToEnemy();
+	//Broodwar->sendText("Size of path %i", path.size());
+	for (int j = 0; j < path.size(); j++) {
+		if (j < path.size() - 1) {
+			Broodwar->drawLineMap(Position(path.at(j)),
+				Position(path.at(j + 1)),
+				Colors::Cyan);
+		}
+	}
 
 }

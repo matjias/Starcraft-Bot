@@ -18,6 +18,8 @@
 #include "Constants.h"
 #include "ScoutUnits.h"
 
+// Forward decleration
+class StrategyDecider;
 
 class DLL_SPECIFIER ScoutManager {
 public:
@@ -65,7 +67,8 @@ public:
 	};
 
 	// Regular scouting functions
-	bool beginScouting(ScoutUnits* scoutUnitsPtr);
+	bool setStrategyDecider(StrategyDecider* strategyPtr);
+	bool beginScouting(ScoutUnits* scoutPtr);
 	bool foundEnemyBase(BWAPI::TilePosition position);
 
 	// Tell the tactician that it can add another scout
@@ -82,7 +85,8 @@ public:
 	bool isScouting = false;
 
 private:
-	ScoutUnits* scoutUnits = nullptr;
+	ScoutUnits* scoutUnitsPtr = nullptr;
+	StrategyDecider* strategyDeciderPtr = nullptr;
 
 	// Private functions
 	bool foundEnemySpawn = false;

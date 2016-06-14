@@ -24,12 +24,19 @@ public:
 
 	void setAnalyzed();
 
+	// ScoutMan call
+	void foundEnemyBase(BWAPI::TilePosition pos);
+
 	void addAllScouts();
 
 	int getBaseCount();
 	int getWorkerCount();
 	bool mineralSurplus();
 	bool gasSurplus();
+
+	// Debug method
+	BWAPI::Position getRendezvousPos();
+	std::vector<BWAPI::TilePosition> getPathToEnemy();
 
 private:
 	StrategyName lastKnownStrategy;
@@ -51,6 +58,10 @@ private:
 	void computeArmyComposition();
 	void setStage();
 
+	BWAPI::Position rendezvousPos;
+	std::vector<BWAPI::Position> pathToEnemy;
+	std::vector<BWAPI::TilePosition> tilePathToEnemy = std::vector<BWAPI::TilePosition>();
+
 	bool detectionNeeded;
 
 	// Classes it holds
@@ -61,6 +72,7 @@ private:
 	ScoutManager* scoutManagerPtr;
 
 	bool assigned = false;
+	bool mapAnalyzed = false;
 
 	// Army compositions vs Protoss, Terran, and Zerg
 	std::vector<std::pair<BWAPI::UnitType, float>> armyComposition;
