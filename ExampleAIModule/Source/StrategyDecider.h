@@ -14,9 +14,13 @@ public:
 	// On frame
 	void update();
 
-	bool needsToUpdateStrategy = true;
+	bool needsToUpdateStrategy = true; // Not used ATM
 	
+	void updateStrategy();
 	void decideStrategy();
+
+	void foundEnemeyBase(BWAPI::TilePosition pos);
+
 
 	// Set BWTA analyzed
 	void setAnalyzed();
@@ -26,6 +30,7 @@ private:
 	int defendMainBase();
 
 	int lastStrategyUpdate = 0;
+	
 
 	// Class pointers
 	Tactician* tacticianPtr;
@@ -35,4 +40,5 @@ private:
 	StrategyName currentStrategy;
 	bool needsScouting;
 	bool mapAnalyzed = false;
+	bool redecideStrategy = false;
 };
