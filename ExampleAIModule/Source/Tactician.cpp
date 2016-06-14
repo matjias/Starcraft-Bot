@@ -112,7 +112,6 @@ void Tactician::updateTactician(StrategyName currentStrategy) {
 
 	case Mid:
 
-
 		break;
 	}
 	
