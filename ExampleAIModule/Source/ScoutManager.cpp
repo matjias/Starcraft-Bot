@@ -74,24 +74,25 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		// Then we update their position and when we last saw it
 		enemyUnits.at(u->getID())->lastKnownPosition = u->getPosition();
 		enemyUnits.at(u->getID())->lastScouted = Broodwar->getFrameCount();
+
+		if (enemyUnits.at(u->getID())->unitType != u->getType()) {
+			recordUnitMorph(u);
+		}
 	}
 	// Otherwise we need to record it
 	else {
-		knownEnemyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
+		knownEnemyValue += u->getType().mineralPrice() + 
+			u->getType().gasPrice() * GAS_TO_MINERALS;
+
 		UnitStruct *uStruct = new UnitStruct();
 		uStruct->unit = u;
+		uStruct->unitType = u->getType();
 		uStruct->lastKnownPosition = u->getPosition();
 		uStruct->lastScouted = Broodwar->getFrameCount();
-
 		enemyUnits.insert(std::make_pair(u->getID(), uStruct));
 
 		// Increment enemyUnitsAmount
-		if (enemyUnitsAmount.count(u->getType()) > 0) {
-			enemyUnitsAmount.at(u->getType()) += 1;
-		}
-		else {
-			enemyUnitsAmount.insert(std::make_pair(u->getType(), 1));
-		}
+		incrementEnemyUnitsAmount(u);
 
 		// Tell StrategyDecider about a new unit
 		strategyDeciderPtr->updateStrategy();
@@ -104,16 +105,13 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 }
 
 int ScoutManager::recordUnitDestroy(Unit u) {
-	int elementsRemoved = enemyUnits.erase(u->getID());
-	knownEnemyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
-
 	// Decrement enemyUnitsAmount
-	if (enemyUnitsAmount.at(u->getType()) == 1) {
-		enemyUnitsAmount.erase(u->getType());
-	}
-	else {
-		enemyUnitsAmount.at(u->getType()) -= 1;
-	}
+	decrementEnemyUnitsAmount(u);
+
+	knownEnemyValue -= u->getType().mineralPrice() + 
+		u->getType().gasPrice() * GAS_TO_MINERALS;
+
+	int elementsRemoved = enemyUnits.erase(u->getID());
 
 	// Something went wrong if we destroyed a unit
 	// we did not have a record of
@@ -134,6 +132,46 @@ void ScoutManager::recordUnitEvade(Unit u) {
 	else {
 		// Something went wrong, for now just tell the client
 		Broodwar->sendText("A unit has evaded that wasnt recorded");
+	}
+}
+
+void ScoutManager::recordUnitMorph(Unit u) {
+	if (enemyUnits.count(u->getID()) == 0) {
+		// If it was not recorded it must have been
+		// an enemy refinery, so we record the unit here
+		recordUnitDiscover(u);
+		return;
+	}
+
+	// Decrement the old enemy type
+	decrementEnemyUnitsAmount(u);
+
+	// Update the recorded unit type
+	enemyUnits.at(u->getID())->unitType = u->getType();
+
+	// Increment the updated enemy type
+	incrementEnemyUnitsAmount(u);
+}
+
+void ScoutManager::incrementEnemyUnitsAmount(Unit u) {
+	// Get the cached unit type (work around against morph)
+	UnitType cachedUnitType = enemyUnits.at(u->getID())->unitType;
+	if (enemyUnitsAmount.count(cachedUnitType) > 0) {
+		enemyUnitsAmount.at(cachedUnitType) += 1;
+	}
+	else {
+		enemyUnitsAmount.insert(std::make_pair(cachedUnitType, 1));
+	}
+}
+
+void ScoutManager::decrementEnemyUnitsAmount(Unit u) {
+	// Get the cached unit type (work around against morph)
+	UnitType cachedUnitType = enemyUnits.at(u->getID())->unitType;
+	if (enemyUnitsAmount.at(cachedUnitType) == 1) {
+		enemyUnitsAmount.erase(cachedUnitType);
+	}
+	else {
+		enemyUnitsAmount.at(cachedUnitType) -= 1;
 	}
 }
 
