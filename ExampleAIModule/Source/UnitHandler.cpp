@@ -39,7 +39,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 }
 
 // Deciding where the discovered unit belongs
-void UnitHandler::addUnit(Unit u){
+void UnitHandler::addUnit(Unit u) {
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
 	armyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 	if (units.count(u->getID()) != 0){
@@ -49,6 +49,7 @@ void UnitHandler::addUnit(Unit u){
 		// If not in unit map, it must be a new unit?
 		removeWarpingUnit(u);
 	}
+
 	if (isCombatUnit(u)){
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), combat));
 		combatUnits.addUnit(u);
@@ -64,8 +65,8 @@ void UnitHandler::addUnit(Unit u){
 	if (u->getType() == UnitTypes::Protoss_Assimilator){
 		probeUnits.mineGas(u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus), u);
 	}
+	
 }
-
 
 bool UnitHandler::addScout(UnitType unitType) {
 	if (unitType == UnitTypes::Protoss_Probe) {
@@ -84,7 +85,9 @@ bool UnitHandler::addScout(UnitType unitType) {
 // 
 bool UnitHandler::isCombatUnit(Unit u){
 	//Add all unit types that needs to be handle by the army
-	return u->getType() == UnitTypes::Protoss_Zealot || u->getType() == UnitTypes::Protoss_Dragoon;
+	return u->getType() == UnitTypes::Protoss_Zealot ||
+		u->getType() == UnitTypes::Protoss_Dragoon ||
+		u->getType() == UnitTypes::Protoss_Observer;
 }
 // #unnecessarybooleanfunction lols
 bool UnitHandler::isProbeUnit(Unit u){
