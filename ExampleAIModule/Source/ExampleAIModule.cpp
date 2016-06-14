@@ -116,7 +116,9 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 }
 
-void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) { }
+void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
+	onUnitDiscover(unit);
+}
 
 void ExampleAIModule::onUnitRenegade(BWAPI::Unit unit) { }
 

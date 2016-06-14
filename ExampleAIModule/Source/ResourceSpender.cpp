@@ -15,7 +15,7 @@ bool ResourceSpender::_init(UnitHandler* unitHandler, BuildingUnits* buildingUni
 	unitHandlerPtr = unitHandler;
 	buildingUnitsPtr = buildingUnits;
 	probeUnitsPtr = probeUnits;
-	
+
 	return true;
 }
 
@@ -121,7 +121,7 @@ void ResourceSpender::update() {
 	// Draw/print
 	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
 	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
-	Broodwar->drawTextScreen(280, 25, "Nexuses: %i", buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus));
+	//Broodwar->drawTextScreen(280, 25, "Assimilators: %i", assimilators);
 	Broodwar->drawTextScreen(280, 35, "Supply output: %i", getMaxSupplyOutput());
 
 	for (int i = 0; i < investments.size(); i++) {
@@ -416,13 +416,14 @@ void ResourceSpender::addRequirements(int number) {
 	}
 
 	// Add Assimilator
-	if ((investments[number].gasPrice() > 0 || (investments[number].isUnitType() &&
+	if ((investments[number].gasPrice() > 0 || 
+		(investments[number].isUnitType() &&
 		investments[number].getUnitType() == UnitTypes::Protoss_Cybernetics_Core)) &&
 		(unitsInProgress(UnitTypes::Protoss_Assimilator) +
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Assimilator) <
 		(unitsInProgress(UnitTypes::Protoss_Nexus) +
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus)))) {
-		
+
 		addUnitInvestment(UnitTypes::Protoss_Assimilator, number);
 	}
 
