@@ -17,7 +17,6 @@ void ProbeUnits::setBroodwarMock(Game* broodwarPtr) {
 	BroodwarPtr = broodwarPtr;
 }
 
-
 void ProbeUnits::update(){
 	/*if (mapAnalyzed){
 		Position pos = Position(getOptimalBuildPlacement(UnitTypes::Protoss_Pylon, Broodwar->self()->getStartLocation()));
@@ -105,7 +104,7 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	for (Unitset::iterator it = setFrom->begin(); counter < amount; it++, counter++) {
 		Unit probe = *it;
 		setTo->insert(probe);
-		setFrom->erase(probe); // @TODO: Fix crash
+		//setFrom->erase(probe); // @TODO: Fix crash
 	}
 }
 
