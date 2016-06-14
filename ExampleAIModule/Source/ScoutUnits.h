@@ -21,6 +21,7 @@ public:
 	
 	bool addUnit(BWAPI::Unit unit);
 	bool removeUnit(BWAPI::Unit unit);
+	bool deleteUnit(BWAPI::Unit unit);
 
 	bool assignGoal(BWAPI::Position goal);
 
