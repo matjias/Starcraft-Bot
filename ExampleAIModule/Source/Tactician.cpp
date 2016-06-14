@@ -90,6 +90,8 @@ void Tactician::addAllScouts() {
 }
 
 void Tactician::updateTactician(StrategyName currentStrategy) {
+	computeArmyBalance();
+
 	if (lastKnownStrategy != currentStrategy) {
 		resourceSpender.setStrategy(currentStrategy);
 		lastKnownStrategy = currentStrategy;
@@ -278,12 +280,14 @@ bool Tactician::gasSurplus() {
 }
 
 void Tactician::computeArmyBalance() {
-	/*float armyBalance = DEFAULT_ARMY_BALANCE;
+	float armyBalance = DEFAULT_ARMY_BALANCE;
 
-	if (unitHandler.) {
+	if (unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue() > 0) {
+		armyBalance = unitHandler.getArmyValue() / 
+			(unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue());
+	}
 
-	}*/
-
+	unitHandler.setArmyBalance(armyBalance);
 }
 
 void Tactician::computeArmyComposition() {

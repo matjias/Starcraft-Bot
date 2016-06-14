@@ -42,6 +42,7 @@ public:
 	int getEnemyBaseCount();
 	int getEnemyWorkerCount();
 	int getEnemyDefenseValue();
+	float getEnemyArmyValue();
 
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();

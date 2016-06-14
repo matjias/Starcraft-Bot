@@ -29,9 +29,9 @@ public:
 	bool purchaseBuilding(BWAPI::UnitType building);
 	bool purchaseUpgrade(BWAPI::UpgradeType upgradeType);
 	bool deleteUnit(BWAPI::Unit);
-
 	bool addScout(BWAPI::UnitType unitType);
-
+	float getArmyValue();
+	void setArmyBalance(float value);
 	void update();
 
 	BuildingUnits* getBuildingUnits();
@@ -61,4 +61,6 @@ private:
 	bool isCombatUnit(BWAPI::Unit u);
 	bool isProbeUnit(BWAPI::Unit u);
 	bool isBuilding(BWAPI::Unit u);
+
+	float armyBalance = DEFAULT_ARMY_BALANCE;
 };

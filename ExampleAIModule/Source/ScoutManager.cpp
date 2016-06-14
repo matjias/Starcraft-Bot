@@ -197,6 +197,11 @@ int ScoutManager::getEnemyDefenseValue() {
 	return 0;
 }
 
+float ScoutManager::getEnemyArmyValue() {
+	// @TODO: Get army value of enemy combat units, 1 gas = 1 GAS_TO_MINERALS
+	return 0.0;
+}
+
 void ScoutManager::updateScoutManager() {
 	if (!isScouting) {
 		return;
