@@ -350,6 +350,11 @@ namespace UnitTest {
 		
 		}
 
+		TEST_METHOD(Move_Probes_Test) {
+			
+
+		}
+
 		//TEST_METHOD(BuildingUnits_Test_Init1) {
 		//	//Tactician tactician;
 
