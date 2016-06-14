@@ -91,6 +91,9 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		else {
 			enemyUnitsAmount.insert(std::make_pair(u->getType(), 1));
 		}
+
+		// Tell StrategyDecider about a new unit
+		strategyDeciderPtr->updateStrategy();
 	}
 
 	// Was it the enemy nexus?

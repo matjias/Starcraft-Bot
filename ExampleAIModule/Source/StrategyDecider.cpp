@@ -22,10 +22,18 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
-	if (lastStrategyUpdate + STRATEGY_UPDATE_TIME < Broodwar->getFrameCount()) {
+	if (redecideStrategy ||
+		lastStrategyUpdate + STRATEGY_UPDATE_TIME < Broodwar->getFrameCount()) {
+
 		lastStrategyUpdate = Broodwar->getFrameCount();
 		decideStrategy();
+		redecideStrategy = false;
 	}
+
+	/*if (lastStrategyUpdate + STRATEGY_UPDATE_TIME < Broodwar->getFrameCount()) {
+		lastStrategyUpdate = Broodwar->getFrameCount();
+		
+	}*/
 
 	// Draw/print
 	if (currentStrategy == Default) {
@@ -63,12 +71,11 @@ void StrategyDecider::update() {
 	}
 }
 
-void StrategyDecider::decideStrategy() {
-	/*if (needsToUpdateStrategy) {
-		currentStrategy = Default;
-		needsToUpdateStrategy = false;
-	}*/
+void StrategyDecider::updateStrategy() {
+	redecideStrategy = true;
+}
 
+void StrategyDecider::decideStrategy() {
 	int defendMainBaseResult = defendMainBase();
 	if (defendMainBaseResult > 0) { // @TODO: Enemy combat units in our regions
 		if (defendMainBaseResult > 1) {
