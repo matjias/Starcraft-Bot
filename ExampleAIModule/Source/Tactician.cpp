@@ -13,10 +13,10 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	previousStage = currentStage;
 
 	// AI settings
-	useDummyArmyComposition = false;
-	buildDetectors = true;
+	useDummyArmyComposition = true;
+	buildDetectors = false;
 	buildDefenseStructures = true;
-	buildExpansions = true;
+	buildExpansions = false;
 	researchUpgrades = true;
 	buildCombatUnits = true;
 
@@ -103,23 +103,26 @@ void Tactician::updateTactician(StrategyName currentStrategy) {
 		computeArmyComposition();
 	}
 
+	unitHandler.update();
+	updateTacticianStart();
+	
 	switch (currentStage) {
 	case Start:
-		updateTacticianStart();
+
 		break;
 
 	case Early:
-		updateTacticianStart();
+
 		break;
 
 	case Mid:
+
 
 		break;
 	}
 	
 	invest();
 	resourceSpender.update();
-	unitHandler.update();
 
 	// Draw/print
 	//Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
@@ -130,7 +133,11 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	
+	if (mapAnalyzed){
+		if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8){
+			unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+		}
+	}
 	
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
@@ -406,6 +413,7 @@ void Tactician::initArmyCompositions() {
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.5));
 
 	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 }
 
 bool Tactician::enemyCloakPossible() {

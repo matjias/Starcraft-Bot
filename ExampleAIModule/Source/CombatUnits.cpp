@@ -40,7 +40,7 @@ void CombatUnits::runAttack(Position attackPos){
 			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
 				dragoonMicro(&it->second);
 			}
-			else{
+			else {
 				attackMovement(&it->second, attackPos);
 			}
 		}
@@ -133,22 +133,20 @@ void CombatUnits::addUnit(Unit u){
 }
 
 void CombatUnits::saveUnitToSquad(Unit u){
-
 	if (unitMap.size() == 0 || unitMap.count(u->getType()) == 0){
+		Broodwar->sendText("Squad count: %i - Unit added: %s", unitMap.count(u->getType()), u->getType().c_str());
 		unitMap.insert(std::make_pair(u->getType(), Squad()));
 	}
 	if (unitMap.size() > 0){
-		for (auto &squad : unitMap){
-			if (squad.first == u->getType()){
-				if (squad.second.size() < SQUAD_SIZE){
-					squad.second.insert(u);
-					break;
-				}
-				else{
-					Squad tempSq = Squad();
-					tempSq.insert(u);
-					unitMap.insert(std::make_pair(u->getType(), tempSq));
-				}
+		for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(u->getType()); it != unitMap.upper_bound(u->getType()); it++){
+			if (it->second.size() < SQUAD_SIZE){
+				it->second.insert(u);
+				break;
+			}
+			else{
+				Squad tempSq = Squad();
+				tempSq.insert(u);
+				unitMap.insert(std::make_pair(u->getType(), tempSq));
 			}
 		}
 	}
@@ -171,13 +169,14 @@ void CombatUnits::saveUnitToSquad(Unit u){
 }
 
 bool CombatUnits::deleteUnit(Unit unit){
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unit->getType());
+		it != unitMap.upper_bound(unit->getType()); 
+		it++){
 
-	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unit->getType()); it != unitMap.upper_bound(unit->getType()); it++){
 		if (it->second.contains(unit)){
 			return it->second.erase(unit);
 		}
 	}
-
 	return false;
 }
 
@@ -239,12 +238,16 @@ bool CombatUnits::enemyTooClose(Unit unit){
 
 // Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
-	auto it = unitMap.upper_bound(unitType);
-	it--;
+	int count = 0;
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unitType); it != unitMap.upper_bound(unitType); it++){
+		count += it->second.size();
+	}
+
+	/*auto it = unitMap.lower_bound(unitType);
 	if (unitMap.count(unitType) > 0){
 		return (unitMap.count(unitType) - 1)*SQUAD_SIZE + it->second.size();
-	}
-	return 0;
+	}*/
+	return count;
 }
 
 //Expand with oveloaded functions with larger flexibility for tactician.
