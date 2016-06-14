@@ -19,7 +19,6 @@ void UnitHandler::setBroodwarMock(Game* mockBroodwarPtr) {
 }
 
 void UnitHandler::addWarpingUnit(Unit u){
-	Broodwar->sendText("WAapapap lappa dis %s", u->getType().c_str());
 	if (units.count(u->getID()) == 0){
 		warpingUnits.insert(std::make_pair(u->getType(), u));
 	}
@@ -136,14 +135,13 @@ bool UnitHandler::deleteUnit(Unit u){
 		isDeleted = probeUnits.deleteUnit(u);
 		break;
 	case combat:
-		// combatUnits.deleteUnit(u);
+		isDeleted = combatUnits.deleteUnit(u);
 		break;
 	case scout:
-	Broodwar->sendText("E Mum is correctos %i", enMum);
-		isDeleted = scoutUnits.removeUnit(u);
+		isDeleted = scoutUnits.deleteUnit(u);
 		break;
 	case building:
-		// buildUnits.deleteUnit(u);
+		isDeleted = buildingUnits.deleteUnit(u);
 		break;
 	}
 	return isDeleted;

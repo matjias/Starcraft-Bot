@@ -74,11 +74,12 @@ Unit ProbeUnits::extractUnit(){
 }
 
 bool ProbeUnits::deleteUnit(Unit u){
+	if (builder == u){
+		builder = NULL;
+		return true;
+	}
 	for (auto& probePair : miningProbes){
 		if (probePair.second.contains(u)){
-			if (builder == u){
-				builder = NULL;
-			}
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
@@ -86,14 +87,12 @@ bool ProbeUnits::deleteUnit(Unit u){
 	}
 	for (auto& probePair : gasProbes){
 		if (probePair.second.contains(u)){
-			if (builder == u){
-				builder = NULL;
-			}
 			probePair.second.erase(u);
 			workerCount--;
 			return true;
-}
+		}
 	}
+	
 	return false;
 }
 
@@ -115,9 +114,10 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	if (building == NULL) {
 		if (builder != NULL) {
-			builder->gather(Broodwar->getClosestUnit(Position(basePos), Filter::IsMineralField));
-			addUnit(builder);
-			builder = NULL;
+			if (builder->isIdle()){
+				addUnit(builder);
+				builder = NULL;
+			}
 		}
 	}
 	else {

@@ -131,7 +131,10 @@ void Tactician::updateTacticianStart() {
 	}*/
 
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
-	Broodwar->drawTextScreen(480, 60, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
+	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
+	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
+	Broodwar->drawTextScreen(480, 80, "Scout Count: %i", unitHandler.getScoutUnits()->getAmountOfScouts());
+	Broodwar->drawTextScreen(480, 90, "pylon Count: %i", unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Pylon));
 	unitHandler.update();
 
 }
