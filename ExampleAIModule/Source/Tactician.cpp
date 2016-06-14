@@ -286,8 +286,6 @@ void Tactician::computeArmyBalance() {
 		armyBalance = unitHandler.getArmyValue() / 
 			(unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue());
 	}
-
-	unitHandler.setArmyBalance(armyBalance);
 }
 
 void Tactician::computeArmyComposition() {

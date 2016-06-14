@@ -44,7 +44,6 @@ public:
 	BWAPI::UnitType getPendingBuilding();
 	void pendingBuildingPlaced();
 	void removePlacedBuildings(BWAPI::UnitType buildingType);
-
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, int position);
