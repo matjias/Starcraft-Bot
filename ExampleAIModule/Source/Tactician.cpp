@@ -130,12 +130,12 @@ void Tactician::updateTacticianStart() {
 
 	}
 	// lav noget fucking ordenlig kodedededede
-	/*if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
+	if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 3) ||
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 6) &&
 		scoutManagerPtr->getEnemySpawn() != TilePosition(0,0)){
-		unitHandler.getCombatUnits()->setAttacking(Position(scoutManagerPtr->getEnemySpawn()));
-	}*/
+		unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+	}
 	
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
