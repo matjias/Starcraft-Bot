@@ -27,8 +27,14 @@ bool ScoutUnits::addUnit(Unit unit) {
 }
 
 bool ScoutUnits::removeUnit(Unit unit) {
-	bool foundUnitInScouts = false;
+	bool isDeleted = deleteUnit(unit);
+	unitHandlerPtr->addUnit(unit);
+	Broodwar->sendText("Returning unit %i to unitHandler", unit->getID());
+	return isDeleted;
+}
 
+bool ScoutUnits::deleteUnit(Unit unit){
+	bool foundUnitInScouts = false;
 	int scoutPosInVector = 0;
 	for (auto &scoutAndGoal : scouts) {
 		if (scoutAndGoal->scout == unit) {
@@ -41,10 +47,8 @@ bool ScoutUnits::removeUnit(Unit unit) {
 	if (!foundUnitInScouts) {
 		return false;
 	}
-
 	scouts.erase(scouts.begin() + scoutPosInVector);
-	unitHandlerPtr->addUnit(unit);
-	Broodwar->sendText("Returning unit %i to unitHandler", unit->getID());
+	return true;
 }
 
 int ScoutUnits::getAmountOfScouts() {

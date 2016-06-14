@@ -10,19 +10,18 @@ void BuildingUnits::addBuilding(BWAPI::Unit unit) {
 	buildings.insert(std::make_pair(unit->getType(), unit));
 }
 
-void BuildingUnits::removeBuilding(BWAPI::Unit unit) {
-
-	std::map<BWAPI::UnitType, BWAPI::Unit>::iterator buildingsIterator = buildings.begin();
-
-	while (buildingsIterator != buildings.end()) {
-		if (buildingsIterator->second == unit) {
-			buildingsIterator = buildings.erase(buildingsIterator);
-		}
-		else {
-			++buildingsIterator; // NOT buildingsIterator++;
+bool BuildingUnits::deleteUnit(BWAPI::Unit unit) {
+	int curAmount = buildings.count(unit->getType());
+	for (std::map<BWAPI::UnitType, BWAPI::Unit>::iterator it = buildings.lower_bound(unit->getType()); it != buildings.upper_bound(unit->getType()); it++){
+		if (it->second == unit){
+			buildings.erase(it);
+			return curAmount > buildings.count(unit->getType());
 		}
 	}
+	return false;
 }
+
+
 
 int BuildingUnits::getBuildingCount(BWAPI::UnitType unitType) {
 	return buildings.count(unitType);

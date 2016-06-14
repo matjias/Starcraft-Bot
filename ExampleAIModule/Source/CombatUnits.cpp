@@ -103,13 +103,13 @@ void CombatUnits::addUnit(Unit u){
 
 void CombatUnits::saveUnitToSquad(Unit u){
 
-	if (unitMap.size() == 0){
+	if (unitMap.size() == 0 || unitMap.count(u->getType()) == 0){
 		unitMap.insert(std::make_pair(u->getType(), Squad()));
 	}
 	if (unitMap.size() > 0){
 		for (auto &squad : unitMap){
 			if (squad.first == u->getType()){
-				if (squad.second.size() <= SQUAD_SIZE){
+				if (squad.second.size() < SQUAD_SIZE){
 					squad.second.insert(u);
 					break;
 				}
@@ -137,6 +137,17 @@ void CombatUnits::saveUnitToSquad(Unit u){
 			}
 		}
 	}*/
+}
+
+bool CombatUnits::deleteUnit(Unit unit){
+
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unit->getType()); it != unitMap.upper_bound(unit->getType()); it++){
+		if (it->second.contains(unit)){
+			return it->second.erase(unit);
+		}
+	}
+
+	return false;
 }
 
 bool CombatUnits::squadAtPos(Squad uSet, TilePosition pos){
@@ -196,8 +207,6 @@ bool CombatUnits::enemyTooClose(Unit unit){
 
 // Map vil også være fint her.
 int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
-	Broodwar->drawTextScreen(480, 70, "Zealot squad count: %i", unitMap.count(unitType));
-	Broodwar->drawTextScreen(480, 80, "size of last squad: %i", unitMap.upper_bound(unitType)->second.size());
 	auto it = unitMap.upper_bound(unitType);
 	it--;
 	if (unitMap.count(unitType) > 0){

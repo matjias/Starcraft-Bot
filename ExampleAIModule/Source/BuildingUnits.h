@@ -10,7 +10,7 @@ public:
 	~BuildingUnits();
 
 	void addBuilding(BWAPI::Unit unit);
-	void removeBuilding(BWAPI::Unit unit);
+	bool deleteUnit(BWAPI::Unit unit);
 	int getBuildingCount(BWAPI::UnitType unitType);
 	BWAPI::Unit getIdleBuilding(BWAPI::UnitType unitType);
 

@@ -12,6 +12,7 @@ public:
 	void _init();
 	void update();
 	void addUnit(BWAPI::Unit u);
+	bool deleteUnit(BWAPI::Unit unit);
 	int getUnitCount(BWAPI::UnitType unitType);
 	void setAttacking(BWAPI::Position pos);
 	void setAnalyzed();
