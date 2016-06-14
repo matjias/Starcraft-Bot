@@ -15,7 +15,7 @@ void ScoutManager::setBroodwarMock(Game* broodwarPtr) {
 }
 
 // Quick testing function for testing override of the
-// Broodwar keyword (previous function has already been called)
+// Broodwar keyword (above function has already been called)
 Player ScoutManager::testBroodwarReturnPlayer() {
 	return Broodwar->self();
 }
@@ -82,6 +82,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		uStruct->lastScouted = Broodwar->getFrameCount();
 
 		enemyUnits.insert(std::make_pair(u->getID(), uStruct));
+
+		// Increment enemyUnitsAmount
+		if (enemyUnitsAmount.count(u->getType()) > 0) {
+			enemyUnitsAmount.at(u->getType()) += 1;
+		}
+		else {
+			enemyUnitsAmount.insert(std::make_pair(u->getType(), 1));
+		}
 	}
 
 	// Was it the enemy nexus?
@@ -92,6 +100,14 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 
 int ScoutManager::recordUnitDestroy(Unit u) {
 	int elementsRemoved = enemyUnits.erase(u->getID());
+
+	// Decrement enemyUnitsAmount
+	if (enemyUnitsAmount.at(u->getType()) == 1) {
+		enemyUnitsAmount.erase(u->getType());
+	}
+	else {
+		enemyUnitsAmount.at(u->getType()) -= 1;
+	}
 
 	// Something went wrong if we destroyed a unit
 	// we did not have a record of
@@ -115,6 +131,71 @@ void ScoutManager::recordUnitEvade(Unit u) {
 	}
 }
 
+int ScoutManager::getAmountOfEnemyUnit(UnitType u) {
+	if (enemyUnitsAmount.count(u) == 1) {
+		// Return amount cached
+		return enemyUnitsAmount.at(u);
+	}
+	else {
+		// No units with this unit type cached
+		return 0;
+	}
+}
+
+std::map<BWAPI::UnitType, int> ScoutManager::getEnemyUnitsAmount() {
+	return enemyUnitsAmount;
+}
+
+int ScoutManager::getEnemyBaseCount() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Nexus);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_Command_Center);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Hatchery) + 
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Lair) + 
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Hive);
+	}
+	return 0;
+}
+
+int ScoutManager::getEnemyWorkerCount() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Probe);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_SCV);
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Drone);
+	}
+	return 0;
+}
+
+int ScoutManager::getEnemyDefenseValue() {
+	if (Broodwar->enemy()->getRace() == Races::Protoss) {
+		return getAmountOfEnemyUnit(UnitTypes::Protoss_Photon_Cannon) * 
+			UnitTypes::Protoss_Photon_Cannon.mineralPrice();
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Terran) {
+		return getAmountOfEnemyUnit(UnitTypes::Terran_Bunker) * 
+			(UnitTypes::Terran_Bunker.mineralPrice() + 
+			UnitTypes::Terran_Marine.mineralPrice() * 2) + 
+			getAmountOfEnemyUnit(UnitTypes::Terran_Missile_Turret) *
+			(UnitTypes::Terran_Missile_Turret.mineralPrice());
+	}
+	else if (Broodwar->enemy()->getRace() == Races::Zerg) {
+		return getAmountOfEnemyUnit(UnitTypes::Zerg_Creep_Colony) *
+			UnitTypes::Zerg_Creep_Colony.mineralPrice() +
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Sunken_Colony) *
+			UnitTypes::Zerg_Sunken_Colony.mineralPrice() +
+			getAmountOfEnemyUnit(UnitTypes::Zerg_Spore_Colony) *
+			UnitTypes::Zerg_Spore_Colony.mineralPrice();
+	}
+	return 0;
+}
 
 void ScoutManager::updateScoutManager() {
 	if (!isScouting) {
@@ -408,3 +489,4 @@ bool ScoutManager::hasScouts() {
 TilePosition ScoutManager::getEnemySpawn() {
 	return enemySpawn;
 }
+

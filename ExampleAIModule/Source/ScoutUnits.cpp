@@ -55,6 +55,18 @@ int ScoutUnits::getAmountOfScouts() {
 	return scouts.size();
 }
 
+int ScoutUnits::getScoutCount(BWAPI::UnitType unitType) {
+	int number = 0;
+
+	for (int i = 0; i < scouts.size(); i++) {
+		if (scouts[i]->scout->getType() == unitType) {
+			number++;
+		}
+	}
+
+	return number;
+}
+
 bool ScoutUnits::hasScouts() {
 	return scouts.size() > 0;
 }

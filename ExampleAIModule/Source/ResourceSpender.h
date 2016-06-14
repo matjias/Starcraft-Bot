@@ -3,7 +3,7 @@
 #include "UnitHandler.h"
 #include "BuildingUnits.h"
 #include "Constants.h"
-#include <BWAPI.h>
+#include "BWAPI.h"
 
 class UnitOrUpgrade {
 public:
@@ -37,8 +37,7 @@ public:
 	~ResourceSpender();
 	bool _init(UnitHandler* UnitHandler, BuildingUnits* buildingUnits, ProbeUnits* probeUnits);
 	void update();
-	void setAllIn(bool status);
-	void setDefend(bool status);
+	void setStrategy(StrategyName strategy);
 	bool unitInvestmentExists(BWAPI::UnitType investment);
 	void addUnitInvestment(BWAPI::UnitType investment, bool urgent);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, bool urgent);
@@ -74,12 +73,12 @@ private:
 
 	std::vector<UnitOrUpgrade> investments;
 	std::vector<BWAPI::UpgradeType> upgradesInProgress;
-
-	bool allIn = false;
-	bool defend = false;
+	
 	int reservedMinerals = 0;
 	int reservedGas = 0;
 	int pendingBuilding = NULL;
+	bool investmentAdded = false;
+	StrategyName strategy = Default;
 
 	UnitHandler* unitHandlerPtr;
 	BuildingUnits* buildingUnitsPtr;

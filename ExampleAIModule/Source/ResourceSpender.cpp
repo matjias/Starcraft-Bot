@@ -15,7 +15,7 @@ bool ResourceSpender::_init(UnitHandler* unitHandler, BuildingUnits* buildingUni
 	unitHandlerPtr = unitHandler;
 	buildingUnitsPtr = buildingUnits;
 	probeUnitsPtr = probeUnits;
-
+	
 	return true;
 }
 
@@ -82,7 +82,7 @@ int UnitOrUpgrade::gasPrice() {
 }
 
 void ResourceSpender::update() {
-	if (workerNeeded()) {
+	/*if (workerNeeded()) {
 		addUnitInvestment(UnitTypes::Protoss_Probe, true);
 	}
 	if (supplyNeeded()) {
@@ -93,8 +93,31 @@ void ResourceSpender::update() {
 	addAllRequirements();
 	clearReservedResources();
 	setPendingInvestments();
-	purchase();
+	purchase();*/
 
+	if (strategy != AllIn) {
+		if (workerNeeded()) {
+			addUnitInvestment(UnitTypes::Protoss_Probe, true);
+		}
+	}
+
+	if (supplyNeeded()) {
+		addUnitInvestment(UnitTypes::Protoss_Pylon, true);
+	}
+
+	if (investmentAdded) {
+		if (strategy == Default || strategy == Expand) {
+			addProductionFacilities();
+		}
+
+		addAllRequirements();
+	}
+
+	// Purchase elements 
+	clearReservedResources();
+	setPendingInvestments();
+	purchase();
+	
 	// Draw/print
 	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
 	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
@@ -191,6 +214,10 @@ void ResourceSpender::calculateReservedResources() {
 	}
 }
 
+void ResourceSpender::setStrategy(StrategyName strategyName) {
+	strategy = strategyName;
+}
+
 void ResourceSpender::addUnitInvestment(UnitType investment, bool urgent) {
 	UnitOrUpgrade unitOrUpgrade = UnitOrUpgrade(investment);
 	removeInvestments(investment);
@@ -200,7 +227,7 @@ void ResourceSpender::addUnitInvestment(UnitType investment, bool urgent) {
 	else {
 		investments.push_back(unitOrUpgrade);
 	}
-	
+	bool investmentAdded = true;
 }
 
 void ResourceSpender::addUpgradeInvestment(UpgradeType investment, bool urgent) {
@@ -388,9 +415,8 @@ void ResourceSpender::addRequirements(int number) {
 	}
 
 	// Add Assimilator
-	if (((investments[number].gasPrice() > 0 && !allIn && !defend) ||
-		(investments[number].gasPrice() > Broodwar->self()->gas()))
-		&&
+	if ((investments[number].gasPrice() > 0 || (investments[number].isUnitType() &&
+		investments[number].getUnitType() == UnitTypes::Protoss_Cybernetics_Core)) &&
 		(unitsInProgress(UnitTypes::Protoss_Assimilator) +
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Assimilator) <
 		(unitsInProgress(UnitTypes::Protoss_Nexus) +
@@ -458,16 +484,9 @@ bool ResourceSpender::investmentExists(UpgradeType upgradeType) {
 }
 
 bool ResourceSpender::workerNeeded() {
-	return !allIn
-		&&
-		!defend
-		&&
-		!investmentExists(UnitTypes::Protoss_Probe)
-		&&
-		unitsInProgress(UnitTypes::Protoss_Probe) < buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus)
-		&&
-		probeUnitsPtr->getWorkerCount() < MAX_WORKERS
-		&&
+	return !investmentExists(UnitTypes::Protoss_Probe) &&
+		unitsInProgress(UnitTypes::Protoss_Probe) < buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus) &&
+		probeUnitsPtr->getWorkerCount() < MAX_WORKERS &&
 		probeUnitsPtr->getWorkerCount() <
 		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus)) * (WORKERS_PER_MINERAL_LINE) +
 		(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Assimilator)) * (WORKERS_PER_GEYSER) + 
@@ -484,14 +503,6 @@ bool ResourceSpender::supplyNeeded() {
 
 void ResourceSpender::removePlacedBuildings(UnitType buildingType) {
 	removeInvestments(buildingType);
-}
-
-void ResourceSpender::setAllIn(bool status) {
-	allIn = status;
-}
-
-void ResourceSpender::setDefend(bool status) {
-	defend = status;
 }
 
 int ResourceSpender::unitsInProgress(UnitType unitType) {

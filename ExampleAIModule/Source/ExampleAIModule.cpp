@@ -192,42 +192,58 @@ void ExampleAIModule::drawData() {
 
 	// ScoutManager debug
 	
-	if (scoutManager.isScouting) {
-		TilePosition::list scoutSpawns = scoutManager.getSpawns();
-		std::vector<bool> scoutSpawnBools = scoutManager.getSpawnBools();
-		std::vector<ScoutAndGoalStruct*> scouters = scoutManager.getScouts();
-		for (u_int i = 0; i < scoutSpawns.size(); i++) {
-			bool draw = scoutSpawnBools.at(i) ? 1 : 0;
+	//if (scoutManager.isScouting) {
+	//	TilePosition::list scoutSpawns = scoutManager.getSpawns();
+	//	std::vector<bool> scoutSpawnBools = scoutManager.getSpawnBools();
+	//	std::vector<ScoutAndGoalStruct*> scouters = scoutManager.getScouts();
+	//	for (u_int i = 0; i < scoutSpawns.size(); i++) {
+	//		bool draw = scoutSpawnBools.at(i) ? 1 : 0;
 
-			Position pos = Position(Broodwar->self()->getStartLocation());
+	//		Position pos = Position(Broodwar->self()->getStartLocation());
 
-			if (scoutManager.hasScouts()) {
-				for (auto &lort : scouters) {
-					if (lort->goal == Position(scoutSpawns.at(i))) {
-						pos = lort->scout->getPosition();
-					}
-				}
-			}
+	//		if (scoutManager.hasScouts()) {
+	//			for (auto &lort : scouters) {
+	//				if (lort->goal == Position(scoutSpawns.at(i))) {
+	//					pos = lort->scout->getPosition();
+	//				}
+	//			}
+	//		}
 
 
-			Broodwar->drawTextScreen(20, 20 + 10 * i, "Spawn %i: (%d, %d), dist: %d, scouted: %d",
-				i,
-				Position(scoutSpawns.at(i)).x,
-				//scoutSpawns.at(i).x,
-				Position(scoutSpawns.at(i)).y,
-				//scoutSpawns.at(i).y,
+	//		Broodwar->drawTextScreen(20, 20 + 10 * i, "Spawn %i: (%d, %d), dist: %d, scouted: %d",
+	//			i,
+	//			Position(scoutSpawns.at(i)).x,
+	//			//scoutSpawns.at(i).x,
+	//			Position(scoutSpawns.at(i)).y,
+	//			//scoutSpawns.at(i).y,
 
-				Position(scoutSpawns.at(i)).getApproxDistance(pos),
-				//Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
-				//Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
-				draw
-				);
-		}
-	}
+	//			Position(scoutSpawns.at(i)).getApproxDistance(pos),
+	//			//Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
+	//			//Position(scoutSpawns.at(i)).getApproxDistance(Position(Broodwar->self()->getStartLocation())),
+	//			draw
+	//			);
+	//	}
+	//}
 	
 	TilePosition tilePos = scoutManager.getEnemySpawn();
 	Position pos = Position(tilePos);
 	Broodwar->drawTextScreen(20, 10, "Enemy spawn: (%i, %i)", pos.x, pos.y);
 	
+	std::map<BWAPI::UnitType, int> maps = scoutManager.getEnemyUnitsAmount();
+
+	std::map<BWAPI::UnitType, int>::iterator it;
+
+	int i = 0;
+	for (it = maps.begin(); it != maps.end(); it++) {
+		Broodwar->drawTextScreen(
+				20, 20 + 10 * i,
+				"UnitType %s, amount %i",
+				it->first.c_str(),
+				it->second
+			);
+
+		i++;
+	}
+
 
 }

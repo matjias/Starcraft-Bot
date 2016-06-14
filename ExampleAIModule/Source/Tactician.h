@@ -14,8 +14,6 @@ public:
 	void setBroodwarMock(BWAPI::Game* broodwarPtr);
 
 	bool _init(ScoutManager* scoutMan);
-	
-	
 
 	void updateTactician(StrategyName currentStrategy);
 	void scout();
@@ -28,6 +26,11 @@ public:
 
 	void addAllScouts();
 
+	int getBaseCount();
+	int getWorkerCount();
+	bool mineralSurplus();
+	bool gasSurplus();
+
 private:
 	StrategyName lastKnownStrategy;
 	GameStage currentStage;
@@ -38,14 +41,16 @@ private:
 
 	bool defenseStructureNeeded();
 	bool detectorNeeded();
+	int neededDetectors();
+	bool enemyCloakPossible();
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
-	bool mineralSurplus();
-	bool gasSurplus();
 	void initArmyCompositions();
 	void computeArmyComposition();
 	void setStage();
+
+	bool detectionNeeded;
 
 	// Classes it holds
 	ResourceSpender resourceSpender;
@@ -77,5 +82,12 @@ private:
 	std::vector<std::pair<BWAPI::UnitType, float>> zergMidGasHeavy;
 
 	std::vector<std::pair<BWAPI::UnitType, float>> dummyArmyComposition;
+
+	// AI settings
 	bool useDummyArmyComposition;
+	bool buildDetectors;
+	bool buildDefenseStructures;
+	bool buildExpansions;
+	bool researchUpgrades;
+	bool buildCombatUnits;
 };
