@@ -117,9 +117,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
-	// Hack code...
 	if (Broodwar->self() == unit->getPlayer()) {
-		onUnitDiscover(unit);
+		// If one of our own units morphed, it must
+		// have been the assimilator and we want to record that
+		tactician.addWarpingUnit(unit);
 	}
 	else if (Broodwar->enemy() == unit->getPlayer()) {
 		scoutManager.recordUnitMorph(unit);
