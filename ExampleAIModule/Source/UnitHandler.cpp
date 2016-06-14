@@ -41,6 +41,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u){
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
+	armyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 	if (units.count(u->getID()) != 0){
 		units.erase(u->getID());
 	}
@@ -124,10 +125,10 @@ void UnitHandler::update() {
 void UnitHandler::setAnalyzed(){
 	probeUnits.setAnalyzed();
 	scoutUnits.setAnalyzed();
-	combatUnits.setAnalyzed();
 }
 
 bool UnitHandler::deleteUnit(Unit u){
+	armyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 	UnitPlacement enMum = units[u->getID()];
 	bool isDeleted = false;
 	switch (enMum){
@@ -167,7 +168,7 @@ bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {
 
 float UnitHandler::getArmyValue() {
 	// @TODO: Get army value from combat units, 1 gas = 1 GAS_TO_MINERALS
-	return 0.0;
+	return armyValue;
 }
 
 void UnitHandler::setArmyBalance(float value) {

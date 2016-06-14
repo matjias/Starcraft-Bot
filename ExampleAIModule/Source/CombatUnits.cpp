@@ -14,12 +14,7 @@ void CombatUnits::_init(){
 
 // Fuck det her Hvornr skal der kører idle vs attack :O
 void CombatUnits::update(){
-	if (attacking){
-		runAttack();
-	}
-	else{
-		//idleUpdate();
-	}
+	
 }
 
 
@@ -28,19 +23,19 @@ void CombatUnits::idleUpdate(){
 	
 }
 
-void CombatUnits::runAttack(){
+void CombatUnits::runAttack(Position attackPos){
 	// Could be something from tactician? not very flexible.
 
 	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++){
 		if (it->first == UnitTypes::Protoss_Zealot){
-			attackMovement(&it->second);
+			attackMovement(&it->second, attackPos);
 		}
 		if (it->first == UnitTypes::Protoss_Dragoon){
 			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
 				dragoonMicro(&it->second);
 			}
 			else{
-				attackMovement(&it->second);
+				attackMovement(&it->second, attackPos);
 			}
 		}
 	}
@@ -75,6 +70,8 @@ void CombatUnits::dragoonMicro(Squad * squad){
 	}
 }
 
+
+
 Unit CombatUnits::getOptimalTarget(Unit unit){
 	// implement the ultimate logic for attacking the right oppponent
 	return unit->getClosestUnit(Filter::IsEnemy);
@@ -92,12 +89,12 @@ void CombatUnits::idleMovement(Unit u, Position idleLoc){
 	}
 }
 
-void CombatUnits::attackMovement(Squad *squad){
-	squad->attack(attackLoc);
+void CombatUnits::attackMovement(Squad *squad, Position pos){
+	squad->attack(pos);
 }
 
 void CombatUnits::addUnit(Unit u){
-	idleMovement(u, ownChoke);
+	idleMovement(u, rendezvousPos);
 	saveUnitToSquad(u);
 }
 
@@ -216,13 +213,12 @@ int CombatUnits::getUnitCount(BWAPI::UnitType unitType) {
 }
 
 //Expand with oveloaded functions with larger flexibility for tactician.
-void CombatUnits::setAttacking(Position pos){
+void CombatUnits::setAttacking(){
 	attacking = true;
-	attackLoc = pos;
-	enemyChoke = BWTA::getNearestChokepoint(attackLoc)->getCenter();
+
 }
 
-void CombatUnits::setAnalyzed(){
+void CombatUnits::setAnalyzed(Position pos){
 	mapAnalyzed = true;
-	ownChoke = BWTA::getNearestChokepoint(Broodwar->self()->getStartLocation())->getCenter();
+	rendezvousPos = pos;
 }

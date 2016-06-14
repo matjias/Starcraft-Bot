@@ -354,9 +354,11 @@ namespace UnitTest {
 			Mock<Unitset> set1;
 			Mock<Unitset> set2;
 			
-			int setSize = 
+			int setSize = 4
 
-			for ()
+			for (int i = 0; i < setSize; i++){
+
+			}
 
 		}
 

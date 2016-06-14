@@ -169,6 +169,7 @@ void Tactician::setStage() {
 
 void Tactician::setAnalyzed(){
 	unitHandler.setAnalyzed();
+	unitHandler.getCombatUnits()->setAnalyzed(rendezvousPos);
 }
 
 void Tactician::invest() {

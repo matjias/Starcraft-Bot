@@ -85,6 +85,7 @@ private:
 	ScoutUnits* scoutUnits = nullptr;
 
 	// Private functions
+	int knownEnemyValue;
 	bool foundEnemySpawn = false;
 	bool peekEnemySpawn = false;
 	bool peekEnemyExpansions = false;

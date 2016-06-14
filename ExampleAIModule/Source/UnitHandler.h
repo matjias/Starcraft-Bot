@@ -49,6 +49,8 @@ private:
 		scout,
 		building,
 	};
+
+	int armyValue;
 	
 	std::map<int, UnitPlacement> units;
 	CombatUnits combatUnits;

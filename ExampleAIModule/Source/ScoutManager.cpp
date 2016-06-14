@@ -76,6 +76,7 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 	}
 	// Otherwise we need to record it
 	else {
+		knownEnemyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 		UnitStruct *uStruct = new UnitStruct();
 		uStruct->unit = u;
 		uStruct->lastKnownPosition = u->getPosition();
@@ -100,6 +101,7 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 
 int ScoutManager::recordUnitDestroy(Unit u) {
 	int elementsRemoved = enemyUnits.erase(u->getID());
+	knownEnemyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 
 	// Decrement enemyUnitsAmount
 	if (enemyUnitsAmount.at(u->getType()) == 1) {
@@ -199,7 +201,7 @@ int ScoutManager::getEnemyDefenseValue() {
 
 float ScoutManager::getEnemyArmyValue() {
 	// @TODO: Get army value of enemy combat units, 1 gas = 1 GAS_TO_MINERALS
-	return 0.0;
+	return knownEnemyValue;
 }
 
 void ScoutManager::updateScoutManager() {
@@ -494,4 +496,5 @@ bool ScoutManager::hasScouts() {
 TilePosition ScoutManager::getEnemySpawn() {
 	return enemySpawn;
 }
+
 
