@@ -168,6 +168,24 @@ void Tactician::setStage() {
 
 void Tactician::setAnalyzed(){
 	unitHandler.setAnalyzed();
+	mapAnalyzed = true;
+
+	// Calculate Rendezvous Point
+	BWTA::Region* ownRegion = BWTA::getRegion(Broodwar->self()->getStartLocation());
+	std::set<BWTA::Chokepoint*> chokesFromOwn = ownRegion->getChokepoints();
+
+	if (chokesFromOwn.size() > 1) {
+		Broodwar->sendText("Multiple chokes in from our region");
+	}
+	else {
+		BWTA::Chokepoint* chokeInOwn = *chokesFromOwn.begin();
+		std::pair<BWTA::Region*, BWTA::Region*> regs = chokeInOwn->getRegions();
+		BWTA::Region* neighborRegion = regs.first == ownRegion ?
+			neighborRegion = regs.second :
+			neighborRegion = regs.first;
+
+		rendezvousPos = neighborRegion->getCenter();
+	}
 }
 
 void Tactician::invest() {
@@ -435,4 +453,16 @@ bool Tactician::enemyCloakPossible() {
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hydralisk) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker_Egg) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker);
+}
+
+Position Tactician::getRendezvousPos() {
+	return rendezvousPos;
+}
+
+void Tactician::foundEnemyBase(TilePosition pos) {
+	tilePathToEnemy = BWTA::getShortestPath(TilePosition(rendezvousPos), pos);
+}
+
+std::vector<BWAPI::TilePosition> Tactician::getPathToEnemy() {
+	return tilePathToEnemy;
 }

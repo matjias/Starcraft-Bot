@@ -18,6 +18,9 @@ public:
 	
 	void decideStrategy();
 
+	void foundEnemeyBase(BWAPI::TilePosition pos);
+
+
 	// Set BWTA analyzed
 	void setAnalyzed();
 

@@ -135,3 +135,7 @@ void StrategyDecider::setAnalyzed() {
 	tacticianPtr->setAnalyzed();
 	mapAnalyzed = true;
 }
+
+void StrategyDecider::foundEnemeyBase(TilePosition pos) {
+	tacticianPtr->foundEnemyBase(pos);
+}
