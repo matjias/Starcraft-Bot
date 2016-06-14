@@ -5,7 +5,6 @@ using namespace BWAPI;
 
 StrategyDecider::StrategyDecider() {
 	currentStrategy = Default;
-	strategyUpdateTime = STRATEGY_UPDATE_TIME;
 	needsScouting = true;
 }
 
@@ -23,9 +22,8 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
-	strategyUpdateTime++;
-
-	if (strategyUpdateTime >= STRATEGY_UPDATE_TIME) {
+	if (lastStrategyUpdate + STRATEGY_UPDATE_TIME < Broodwar->getFrameCount()) {
+		lastStrategyUpdate = Broodwar->getFrameCount();
 		decideStrategy();
 	}
 
@@ -35,7 +33,6 @@ void StrategyDecider::update() {
 
 	tacticianPtr->updateTactician(currentStrategy);
 	scoutManagerPtr->updateScoutManager();
-
 }
 
 void StrategyDecider::decideStrategy() {
@@ -44,8 +41,9 @@ void StrategyDecider::decideStrategy() {
 		needsToUpdateStrategy = false;
 	}*/
 
-	if (false) { // @TODO: Enemy combat units in our regions
+	if (defendMainBase()) { // @TODO: Enemy combat units in our regions
 		currentStrategy = Defend;
+		Broodwar->sendText("Enemy In Our Base!!!");
 	}
 	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
 		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
@@ -87,4 +85,30 @@ float StrategyDecider::workerBalance() {
 	else {
 		return 0.5;
 	}
+}
+
+bool StrategyDecider::defendMainBase() {
+	if (!mapAnalyzed) {
+		return false;
+	}
+
+	Unitset visisbleEnemyUnits = Broodwar->enemy()->getUnits();
+	bool enemyInOurBase = false;
+
+	BWTA::Region* ourRegion = BWTA::getRegion(Broodwar->self()->getStartLocation());
+	for (auto &u : visisbleEnemyUnits) {
+		BWTA::Region* unitRegion = BWTA::getRegion(u->getPosition());
+
+		if (ourRegion == unitRegion) {
+			enemyInOurBase = true;
+			break;
+		}
+	}
+
+	return enemyInOurBase;
+}
+
+void StrategyDecider::setAnalyzed() {
+	tacticianPtr->setAnalyzed();
+	mapAnalyzed = true;
 }
