@@ -16,7 +16,6 @@ public:
 	int getUnitCount(BWAPI::UnitType unitType);
 	void setAttacking(BWAPI::Position pos);
 	void setAnalyzed();
-
 private:
 	const int SQUAD_SIZE = 4;
 	const int POS_RADIUS = 8;

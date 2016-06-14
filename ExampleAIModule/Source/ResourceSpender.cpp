@@ -110,10 +110,13 @@ void ResourceSpender::update() {
 			addProductionFacilities();
 		}
 
-		addAllRequirements();
+		//addAllRequirements();
 	}
 
-	// Purchase elements 
+	// Purchase elements
+	addAllRequirements();
+	addAllRequirements();
+	removeAllDublicates();
 	clearReservedResources();
 	setPendingInvestments();
 	purchase();
