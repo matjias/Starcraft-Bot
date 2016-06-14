@@ -7,6 +7,7 @@ enum StrategyName {
 	// where possible
 	Default, // Build anything except for expansions, attack if there are any openings
 	AllIn, // Only spend resources on army and army structures, attack with army when there are openings or the army is "big"
+	DefendHarass,
 	Defend, // Send main army back, spend resources on combat units and defense structures
 	Expand // Send main army to expansion, spend resources on a new base first and then on anything else
 };
@@ -32,8 +33,10 @@ struct ScoutAndGoalStruct {
 const int EARLY_STAGE_SUPPLY = 6;
 const int MID_STAGE_SUPPLY = 50;
 const int STRATEGY_UPDATE_TIME = 50;
+const float DEFAULT_ARMY_BALANCE = 0.5;
 const float ARMY_ATTACK_POWER_BALANCE = 0.7; // 0 = no army, 1 = enemy has no army
 const float ARMY_RETREAT_POWER_BALANCE = 0.4;
+const float DEFAULT_WORKER_BALANCE = 0.5;
 const float ALLIN_WORKER_BALANCE = 0.2;
 
 // Macro and economy

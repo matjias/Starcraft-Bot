@@ -47,6 +47,7 @@ private:
 	BWAPI::UnitType neededCombatUnit();
 	BWAPI::UpgradeType neededUpgrade();
 	void initArmyCompositions();
+	void computeArmyBalance();
 	void computeArmyComposition();
 	void setStage();
 

@@ -227,7 +227,7 @@ void ResourceSpender::addUnitInvestment(UnitType investment, bool urgent) {
 	else {
 		investments.push_back(unitOrUpgrade);
 	}
-	bool investmentAdded = true;
+	investmentAdded = true;
 }
 
 void ResourceSpender::addUpgradeInvestment(UpgradeType investment, bool urgent) {
@@ -239,6 +239,7 @@ void ResourceSpender::addUpgradeInvestment(UpgradeType investment, bool urgent) 
 	else {
 		investments.push_back(unitOrUpgrade);
 	}
+	investmentAdded = true;
 }
 
 void ResourceSpender::addUnitInvestment(UnitType investment, int position) {

@@ -5,7 +5,6 @@ using namespace BWAPI;
 
 StrategyDecider::StrategyDecider() {
 	currentStrategy = Default;
-	strategyUpdateTime = STRATEGY_UPDATE_TIME;
 	needsScouting = true;
 }
 
@@ -23,10 +22,23 @@ bool StrategyDecider::_init(Tactician* tact, ScoutManager* scoutMan) {
 }
 
 void StrategyDecider::update() {
-	strategyUpdateTime++;
-
-	if (strategyUpdateTime >= STRATEGY_UPDATE_TIME) {
+	if (lastStrategyUpdate + STRATEGY_UPDATE_TIME < Broodwar->getFrameCount()) {
+		lastStrategyUpdate = Broodwar->getFrameCount();
 		decideStrategy();
+	}
+
+	// Draw/print
+	if (currentStrategy == Default) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
+	}
+	else if (currentStrategy == Expand) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Expand");
+	}
+	else if (currentStrategy == AllIn) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: AllIn");
+	}
+	else if (currentStrategy == Defend) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
 	}
 
 	if (needsScouting) {
@@ -36,34 +48,6 @@ void StrategyDecider::update() {
 	tacticianPtr->updateTactician(currentStrategy);
 	scoutManagerPtr->updateScoutManager();
 
-}
-
-void StrategyDecider::decideStrategy() {
-	/*if (needsToUpdateStrategy) {
-		currentStrategy = Default;
-		needsToUpdateStrategy = false;
-	}*/
-
-	if (false) { // @TODO: Enemy combat units in our regions
-		currentStrategy = Defend;
-	}
-	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
-		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
-		workerBalance() <= ALLIN_WORKER_BALANCE) {
-		
-		currentStrategy = AllIn;
-	}
-	else if (tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
-		tacticianPtr->mineralSurplus() ||
-		(scoutManagerPtr->getEnemyDefenseValue() > 0 && 
-		tacticianPtr->getBaseCount() <= scoutManagerPtr->getEnemyBaseCount())) {
-
-		currentStrategy = Expand;
-	}
-	else {
-		currentStrategy = Default;
-	}
-	
 	// Draw/print
 	if (currentStrategy == Default) {
 		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
@@ -79,12 +63,75 @@ void StrategyDecider::decideStrategy() {
 	}
 }
 
+void StrategyDecider::decideStrategy() {
+	/*if (needsToUpdateStrategy) {
+		currentStrategy = Default;
+		needsToUpdateStrategy = false;
+	}*/
+
+	int defendMainBaseResult = defendMainBase();
+	if (defendMainBaseResult > 0) { // @TODO: Enemy combat units in our regions
+		if (defendMainBaseResult > 1) {
+			currentStrategy = Defend;
+			Broodwar->sendText("Enemies in base");
+		}
+		else {
+			currentStrategy = DefendHarass;
+			Broodwar->sendText("Enemy in base");
+		}
+	}
+	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
+		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
+		workerBalance() <= ALLIN_WORKER_BALANCE) {
+		
+		currentStrategy = AllIn;
+	}
+	else if (tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
+		(scoutManagerPtr->getEnemyDefenseValue() > 0 && 
+		tacticianPtr->getBaseCount() <= scoutManagerPtr->getEnemyBaseCount())) {
+
+		currentStrategy = Expand;
+	}
+	else {
+		currentStrategy = Default;
+	}
+}
+
 float StrategyDecider::workerBalance() {
 	if (tacticianPtr->getWorkerCount() + scoutManagerPtr->getEnemyWorkerCount() > 0) {
 		return tacticianPtr->getWorkerCount() / 
 			(tacticianPtr->getWorkerCount() + scoutManagerPtr->getEnemyWorkerCount());
 	}
 	else {
-		return 0.5;
+		return DEFAULT_WORKER_BALANCE;
 	}
+}
+
+int StrategyDecider::defendMainBase() {
+	if (!mapAnalyzed) {
+		return false;
+	}
+
+	Unitset visisbleEnemyUnits = Broodwar->enemy()->getUnits();
+	int enemiesInOurBase = 0;
+
+	BWTA::Region* ourRegion = BWTA::getRegion(Broodwar->self()->getStartLocation());
+	for (auto &u : visisbleEnemyUnits) {
+		BWTA::Region* unitRegion = BWTA::getRegion(u->getPosition());
+
+		if (ourRegion == unitRegion) {
+			enemiesInOurBase++;
+			
+			if (enemiesInOurBase > 1) {
+				break;
+			}
+		}
+	}
+
+	return enemiesInOurBase;
+}
+
+void StrategyDecider::setAnalyzed() {
+	tacticianPtr->setAnalyzed();
+	mapAnalyzed = true;
 }
