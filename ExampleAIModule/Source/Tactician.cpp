@@ -119,6 +119,7 @@ void Tactician::updateTactician(StrategyName currentStrategy) {
 	
 	invest();
 	resourceSpender.update();
+	unitHandler.update();
 
 	// Draw/print
 	//Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
@@ -129,20 +130,14 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	// lav noget fucking ordenlig kodedededede
-	if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
-		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 3) ||
-		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 6) &&
-		scoutManagerPtr->getEnemySpawn() != TilePosition(0,0)){
-		unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
-	}
+	
 	
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
 	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
 	Broodwar->drawTextScreen(480, 80, "Scout Count: %i", unitHandler.getScoutUnits()->getAmountOfScouts());
 	Broodwar->drawTextScreen(480, 90, "pylon Count: %i", unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Pylon));
-	unitHandler.update();
+	
 
 }
 

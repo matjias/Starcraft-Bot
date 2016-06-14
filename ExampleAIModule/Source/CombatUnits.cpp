@@ -14,13 +14,19 @@ void CombatUnits::_init(){
 
 // Fuck det her Hvornr skal der kører idle vs attack :O
 void CombatUnits::update(){
-	
+	idleUpdate();
 }
 
 
 void CombatUnits::idleUpdate(){
 	//Squad loops
-	
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(UnitTypes::Protoss_Dragoon); it != unitMap.upper_bound(UnitTypes::Protoss_Dragoon); it++){
+		if (it->first == UnitTypes::Protoss_Dragoon){
+			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
+				dragoonMicro(&it->second);
+			}
+		}
+	}
 }
 
 void CombatUnits::runAttack(Position attackPos){
@@ -58,14 +64,42 @@ void CombatUnits::runAttack(Position attackPos){
 
 void CombatUnits::dragoonMicro(Squad * squad){
 	for (auto &unit : *squad){
-		if (unit->getHitPoints() < (unit->getType().maxHitPoints() / 2) || enemyTooClose(unit)){
-			if (unit->canAttack()){
-				unit->attack(getOptimalTarget(unit));
-			}
-			unit->move(escapePos(unit));
+		Color innerColor = unit->isAttacking() ? Colors::Green : Colors::Red;
+		Color outerColor = unit->isAttackFrame() ? Colors::Green : Colors::Red;
+		Broodwar->drawCircleMap(unit->getPosition(), 10, innerColor);
+		Broodwar->drawCircleMap(unit->getPosition(), 12, outerColor);
+
+		if (unit->isAttackFrame() || unit->getLastCommandFrame() >= Broodwar->getFrameCount()) {
+			//Broodwar->sendText("Skipped a unit");
+			continue;
 		}
-		else {
-			unit->attack(getOptimalTarget(unit));
+		if (unit->getGroundWeaponCooldown() < 10) {
+
+			UnitCommand lastCommand = unit->getLastCommand();
+			Unit targetUnit = getOptimalTarget(unit);
+			if (!(lastCommand.getType() == UnitCommandTypes::Attack_Unit || targetUnit == lastCommand.getTarget())) {
+
+				unit->attack(targetUnit);
+
+				/*if (lastCommand.getTarget() == NULL) {
+					Broodwar->drawCircleMap(lastCommand.getTargetPosition(), 12, Colors::Cyan);
+					Broodwar->sendText("Last target not there %i, %i", lastCommand.getTargetPosition().x, lastCommand.getTargetPosition().y);
+					continue;
+				}
+				int targetID = targetUnit->getID();
+				int oldID = lastCommand.getTarget()->getID();
+
+				Broodwar->sendText("Gave a new command to %i, old %i, new %i", unit->getID(),
+					oldID, targetID);*/
+
+			}
+		}
+		else {/*
+			Broodwar->sendText("Already attacked (SHOULD NOT RIGHT NOW)");*/
+			UnitCommand lastCommand(unit->getLastCommand());
+			if (lastCommand.getType() != UnitCommandTypes::Move) {
+				unit->move(escapePos(unit));
+			}
 		}
 	}
 }
@@ -187,18 +221,19 @@ void CombatUnits::debugDraw(std::vector<Squad> squads){
 }
 
 Position CombatUnits::escapePos(Unit unit){
+	return Position(Broodwar->self()->getStartLocation()) ;
 	Unit enemy = unit->getClosestUnit(Filter::IsEnemy && Filter::CanAttack, unit->getType().sightRange());
 	if (enemy != NULL){
-		int x = unit->getPosition().x + (unit->getPosition().x - enemy->getPosition().x) * (-1 + (-1 / fabs(1.0*unit->getPosition().x - enemy->getPosition().x)));
-		int y = unit->getPosition().y + (unit->getPosition().y - enemy->getPosition().y) * (-1 + (-1 / fabs(1.0*unit->getPosition().y - enemy->getPosition().y)));
-		return Position(x, y);
+		Position tempVec = (enemy->getPosition() - unit->getPosition()) * (-1);
+		return unit->getPosition() - tempVec;
 	}
 	return unit->getPosition();
 }
 
 bool CombatUnits::enemyTooClose(Unit unit){
 	Unit enemy = unit->getClosestUnit(Filter::IsEnemy);
-	return unit->getDistance(enemy) < unit->getType().groundWeapon().maxRange() * 2/*Magisk tal*/;
+	Broodwar->sendText("Fucker afstanden %i < %i", unit->getDistance(enemy), unit->getType().sightRange());
+	return unit->getDistance(enemy) < unit->getType().sightRange()/*Magisk tal*/;
 }
 
 
