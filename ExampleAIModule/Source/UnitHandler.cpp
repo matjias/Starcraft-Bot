@@ -167,4 +167,9 @@ bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {
 
 float UnitHandler::getArmyValue() {
 	// @TODO: Get army value from combat units, 1 gas = 1 GAS_TO_MINERALS
+	return 0.0;
+}
+
+void UnitHandler::setArmyBalance(float value) {
+	armyBalance = value;
 }
