@@ -23,7 +23,7 @@ public:
 
 private:
 	float workerBalance();
-	bool defendMainBase();
+	int defendMainBase();
 
 	int lastStrategyUpdate = 0;
 

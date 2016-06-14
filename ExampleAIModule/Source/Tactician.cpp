@@ -130,7 +130,7 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	// opdatër magiske tal til constants eller noget
+	// lav noget fucking ordenlig kodedededede
 	/*if (((unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= 3 &&
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 3) ||
 		unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot) >= 6) &&

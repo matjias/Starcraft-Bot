@@ -7,6 +7,7 @@ enum StrategyName {
 	// where possible
 	Default, // Build anything except for expansions, attack if there are any openings
 	AllIn, // Only spend resources on army and army structures, attack with army when there are openings or the army is "big"
+	DefendHarass,
 	Defend, // Send main army back, spend resources on combat units and defense structures
 	Expand // Send main army to expansion, spend resources on a new base first and then on anything else
 };

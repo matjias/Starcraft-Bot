@@ -38,7 +38,11 @@ void ProbeUnits::update(){
 
 void ProbeUnits::addUnit(Unit u){
 	Unit field;
-	int nexusId = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus)->getID();
+	Unit nexus = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus);
+	int nexusId = 0;
+	if (u->exists()){
+		nexusId = nexus->getID();
+	}
 	if (workerCount < 1){
 		miningProbes.insert(std::make_pair(nexusId, Unitset()));
 		field = u->getClosestUnit(Filter::IsMineralField);
@@ -105,7 +109,6 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	}
 }
 
-
 // Build logic
 //
 
@@ -114,10 +117,8 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 
 	if (building == NULL) {
 		if (builder != NULL) {
-			if (builder->isIdle()){
-				addUnit(builder);
-				builder = NULL;
-			}
+			addUnit(builder);
+			builder = NULL;
 		}
 	}
 	else {
@@ -183,7 +184,6 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 	if (depth >= BUILD_LOCATION_FACTOR) {
 		return TilePosition(0, 0);
 	}
-
 	return recPlacement(type, basePos, depth + 1);
 }
 
