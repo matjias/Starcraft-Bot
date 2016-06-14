@@ -27,6 +27,21 @@ void StrategyDecider::update() {
 
 	if (strategyUpdateTime >= STRATEGY_UPDATE_TIME) {
 		decideStrategy();
+		strategyUpdateTime = 0;
+	}
+
+	// Draw/print
+	if (currentStrategy == Default) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
+	}
+	else if (currentStrategy == Expand) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Expand");
+	}
+	else if (currentStrategy == AllIn) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: AllIn");
+	}
+	else if (currentStrategy == Defend) {
+		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
 	}
 
 	if (needsScouting) {
@@ -54,7 +69,6 @@ void StrategyDecider::decideStrategy() {
 		currentStrategy = AllIn;
 	}
 	else if (tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
-		tacticianPtr->mineralSurplus() ||
 		(scoutManagerPtr->getEnemyDefenseValue() > 0 && 
 		tacticianPtr->getBaseCount() <= scoutManagerPtr->getEnemyBaseCount())) {
 
@@ -62,20 +76,6 @@ void StrategyDecider::decideStrategy() {
 	}
 	else {
 		currentStrategy = Default;
-	}
-	
-	// Draw/print
-	if (currentStrategy == Default) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
-	}
-	else if (currentStrategy == Expand) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Expand");
-	}
-	else if (currentStrategy == AllIn) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: AllIn");
-	}
-	else if (currentStrategy == Defend) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
 	}
 }
 
@@ -85,6 +85,6 @@ float StrategyDecider::workerBalance() {
 			(tacticianPtr->getWorkerCount() + scoutManagerPtr->getEnemyWorkerCount());
 	}
 	else {
-		return 0.5;
+		return DEFAULT_WORKER_BALANCE;
 	}
 }

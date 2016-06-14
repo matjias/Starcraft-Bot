@@ -279,11 +279,11 @@ bool Tactician::gasSurplus() {
 }
 
 void Tactician::computeArmyBalance() {
-	float armyBalance = DEFAULT_ARMY_BALANCE;
+	/*float armyBalance = DEFAULT_ARMY_BALANCE;
 
 	if (unitHandler.) {
 
-	}
+	}*/
 
 }
 
