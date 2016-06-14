@@ -55,9 +55,16 @@ void StrategyDecider::decideStrategy() {
 		needsToUpdateStrategy = false;
 	}*/
 
-	if (defendMainBase()) { // @TODO: Enemy combat units in our regions
-		currentStrategy = Defend;
-		Broodwar->sendText("Enemy In Our Base!!!");
+	int defendMainBaseResult = defendMainBase();
+	if (defendMainBaseResult > 0) { // @TODO: Enemy combat units in our regions
+		if (defendMainBaseResult > 1) {
+			currentStrategy = Defend;
+			Broodwar->sendText("Enemies in base");
+		}
+		else {
+			currentStrategy = DefendHarass;
+			Broodwar->sendText("Enemy in base");
+		}
 	}
 	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
 		tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() &&
@@ -88,25 +95,28 @@ float StrategyDecider::workerBalance() {
 	}
 }
 
-bool StrategyDecider::defendMainBase() {
+int StrategyDecider::defendMainBase() {
 	if (!mapAnalyzed) {
 		return false;
 	}
 
 	Unitset visisbleEnemyUnits = Broodwar->enemy()->getUnits();
-	bool enemyInOurBase = false;
+	int enemiesInOurBase = 0;
 
 	BWTA::Region* ourRegion = BWTA::getRegion(Broodwar->self()->getStartLocation());
 	for (auto &u : visisbleEnemyUnits) {
 		BWTA::Region* unitRegion = BWTA::getRegion(u->getPosition());
 
 		if (ourRegion == unitRegion) {
-			enemyInOurBase = true;
-			break;
+			enemiesInOurBase++;
+			
+			if (enemiesInOurBase > 1) {
+				break;
+			}
 		}
 	}
 
-	return enemyInOurBase;
+	return enemiesInOurBase;
 }
 
 void StrategyDecider::setAnalyzed() {
