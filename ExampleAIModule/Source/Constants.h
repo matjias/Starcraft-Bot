@@ -53,8 +53,6 @@ const int OBSERVERS_TO_SCOUT = 1;
 const int OBSERVERS_WITH_ARMY = 1;
 const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int DRAGOONS_BEFORE_RANGE = 4;
-const int ZEALOT_RUSH_SIZE = 12;
-const int DRAGOON_RUSH_SIZE = 16;
 
 // Build location
 const int BUILD_LOCATION_UPDATE_TIME = 50;
@@ -71,3 +69,5 @@ const int CORSAIRS_NEEDED = 3;
 const int ARMY_SUPPLY_BEFORE_OBSERVERS = 8;
 const int ARMY_SUPPLY_BEFORE_CORSAIRS = 2;
 const int ARMY_SUPPLY_BEFORE_UPGRADES = 10;
+const int ZEALOT_RUSH_SIZE = 12;
+const int DRAGOON_RUSH_SIZE = 16;
