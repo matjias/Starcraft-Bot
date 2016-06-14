@@ -138,16 +138,20 @@ void CombatUnits::saveUnitToSquad(Unit u){
 		unitMap.insert(std::make_pair(u->getType(), Squad()));
 	}
 	if (unitMap.size() > 0){
-		for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(u->getType()); it != unitMap.upper_bound(u->getType()); it++){
-			if (it->second.size() < SQUAD_SIZE){
+		int tempSquadSize = 0;
+		for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(u->getType()); 
+			it != unitMap.upper_bound(u->getType()); 
+			it++){
+			tempSquadSize = it->second.size();
+			if (tempSquadSize < SQUAD_SIZE){
 				it->second.insert(u);
 				break;
 			}
-			else{
-				Squad tempSq = Squad();
-				tempSq.insert(u);
-				unitMap.insert(std::make_pair(u->getType(), tempSq));
-			}
+		}
+		if (tempSquadSize == SQUAD_SIZE){
+			Squad tempSq = Squad();
+			tempSq.insert(u);
+			unitMap.insert(std::make_pair(u->getType(), tempSq));
 		}
 	}
 
