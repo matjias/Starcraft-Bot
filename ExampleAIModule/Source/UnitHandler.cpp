@@ -165,7 +165,10 @@ bool UnitHandler::purchaseBuilding(BWAPI::UnitType building) {
 }
 
 bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {
-	// @TODO
+	Unit builderUnit = buildingUnits.getIdleBuilding(upgradeType.whatUpgrades());
+	if (builderUnit != NULL) {
+		return builderUnit->upgrade(upgradeType);
+	}
 	return false;
 }
 

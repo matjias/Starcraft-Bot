@@ -121,6 +121,13 @@ void ResourceSpender::update() {
 	setPendingInvestments();
 	purchase();
 	
+	// Upgrade
+	if (unitHandlerPtr->getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) >= DRAGOONS_BEFORE_RANGE &&
+		canUpgrade(UpgradeTypes::Singularity_Charge)) {
+
+		unitHandlerPtr->purchaseUpgrade(UpgradeTypes::Singularity_Charge);
+	}
+
 	// Draw/print
 	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
 	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
@@ -366,7 +373,7 @@ bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
 }
 
 bool ResourceSpender::canUpgrade(UpgradeType upgradeType) {
-	
+
 	// Is the upgrade affordable?
 	if (upgradeType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
 		upgradeType.gasPrice() > Broodwar->self()->gas() - reservedGas) {
@@ -375,8 +382,7 @@ bool ResourceSpender::canUpgrade(UpgradeType upgradeType) {
 	}
 
 	// Are the required buildings owned?
-	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) == 0 &&
-		buildingUnitsPtr->getBuildingCount(upgradeType.whatsRequired()) == 0) {
+	if (buildingUnitsPtr->getBuildingCount(upgradeType.whatUpgrades()) == 0) {
 
 		return false;
 	}
