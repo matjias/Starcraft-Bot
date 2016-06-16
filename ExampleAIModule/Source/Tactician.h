@@ -33,6 +33,7 @@ public:
 	int getWorkerCount();
 	bool mineralSurplus();
 	bool gasSurplus();
+	bool getBuildExpansions();
 
 	// Debug method
 	BWAPI::Position getRendezvousPos();

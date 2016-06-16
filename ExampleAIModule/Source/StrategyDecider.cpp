@@ -82,9 +82,10 @@ void StrategyDecider::decideStrategy() {
 		
 		currentStrategy = AllIn;
 	}
-	else if (tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
+	else if (tacticianPtr->getBuildExpansions() &&
+		(tacticianPtr->getBaseCount() < scoutManagerPtr->getEnemyBaseCount() ||
 		(scoutManagerPtr->getEnemyDefenseValue() > 0 && 
-		tacticianPtr->getBaseCount() <= scoutManagerPtr->getEnemyBaseCount())) {
+		tacticianPtr->getBaseCount() <= scoutManagerPtr->getEnemyBaseCount()))) {
 
 		currentStrategy = Expand;
 	}

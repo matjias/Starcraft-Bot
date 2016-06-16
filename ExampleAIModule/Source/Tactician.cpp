@@ -13,7 +13,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	previousStage = currentStage;
 
 	// AI settings
-	useDummyArmyComposition = true;
+	useDummyArmyComposition = false;
 	buildDetectors = false;
 	buildDefenseStructures = true;
 	buildExpansions = false;
@@ -426,15 +426,12 @@ void Tactician::initArmyCompositions() {
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
-	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.1));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.01));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Corsair, 0.2));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 1.0));
 
-	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.8));
+	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 }
 
 bool Tactician::enemyCloakPossible() {
@@ -491,4 +488,8 @@ void Tactician::foundEnemyBase(TilePosition pos) {
 
 std::vector<BWAPI::TilePosition> Tactician::getPathToEnemy() {
 	return tilePathToEnemy;
+}
+
+bool Tactician::getBuildExpansions() {
+	return buildExpansions;
 }
