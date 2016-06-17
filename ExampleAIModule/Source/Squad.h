@@ -8,6 +8,8 @@ public:
 	Squad();
 	~Squad();
 
+	bool isIdle();
+	bool isLastAttackPos(BWAPI::Position);
 
 private:
 

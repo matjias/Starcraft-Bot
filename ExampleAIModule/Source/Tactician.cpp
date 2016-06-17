@@ -141,6 +141,7 @@ void Tactician::updateTacticianStart() {
 		}
 		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
 			// @TODO: Move to home
+			unitHandler.getCombatUnits()->runAttack(rendezvousPos);
 		}
 	}
 	
