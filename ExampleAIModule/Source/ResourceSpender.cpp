@@ -129,6 +129,7 @@ void ResourceSpender::update() {
 	// Purchase elements
 	addAllRequirements();
 	addAllRequirements();
+	addAllRequirements();
 	removeAllDublicates();
 	clearReservedResources();
 	setPendingInvestments();
