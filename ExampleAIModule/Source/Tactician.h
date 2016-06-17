@@ -66,6 +66,7 @@ private:
 	float armyBalance;
 	bool detectionNeeded = false;
 	bool attack = false;
+	int lastUnitCommandUpdate = 0;
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

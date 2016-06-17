@@ -133,20 +133,25 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	if (mapAnalyzed){
-		if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
-			attack = true;
-		}
-		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
-			attack = false;
-		}
-	}
+	if (mapAnalyzed) {
+		if (lastUnitCommandUpdate + UNIT_COMMAND_UPDATE_TIME < Broodwar->getFrameCount()) {
 
-	if (attack) {
-		unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
-	}
-	else {
+			lastUnitCommandUpdate = Broodwar->getFrameCount();
 
+			if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
+				attack = true;
+			}
+			else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
+				attack = false;
+			}
+
+			if (attack) {
+				unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+			}
+			else {
+				unitHandler.getCombatUnits()->runAttack(rendezvousPos);
+			}
+		}
 	}
 	
 	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);

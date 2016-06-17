@@ -28,6 +28,7 @@ private:
 	bool attacking = false;
 
 	BWAPI::Position rendezvousPos;
+	BWAPI::Position lastAttackPos;
 
 	// Probably should be united to one multimap based on unit type since we are focusing on expandability.
 	// too static and not enough flexibility for the tactician.
