@@ -351,14 +351,38 @@ namespace UnitTest {
 		}
 
 		TEST_METHOD(Move_Probes_Test) {
-			Mock<Unitset> set1;
-			Mock<Unitset> set2;
+			Unitset set1;
+			Unitset set2;
 			
-			int setSize = 4
+			int setSize = 3;
 
-			for (int i = 0; i < setSize; i++){
+			Mock<UnitInterface> Temp_Mock_Unit1;
+			When(Method(Temp_Mock_Unit1, getID)).AlwaysReturn(1);
+			Unit tempU1 = &Temp_Mock_Unit1.get();
+			set1.insert(tempU1);
 
+			Mock<UnitInterface> Temp_Mock_Unit2;
+			When(Method(Temp_Mock_Unit2, getID)).AlwaysReturn(2);
+			Unit tempU2 = &Temp_Mock_Unit2.get();
+			set1.insert(tempU2);
+
+			Mock<UnitInterface> Temp_Mock_Unit3;
+			When(Method(Temp_Mock_Unit3, getID)).AlwaysReturn(3);
+			Unit tempU3 = &Temp_Mock_Unit3.get();
+			set1.insert(tempU3);
+
+			ProbeUnits probeUnits;
+
+			probeUnits.moveUnits(&set1, &set2, setSize);
+
+			int j = 1;
+			for (auto &unit : set2){
+				std::wstring s1 = std::to_wstring(j);
+				Logger::WriteMessage(s1.c_str());
+				Assert::AreEqual(unit->getID(), j);
+				j++;
 			}
+
 
 		}
 
@@ -375,6 +399,8 @@ namespace UnitTest {
 
 
 		//}
+
+
 
 		
 	};

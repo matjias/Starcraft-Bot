@@ -133,22 +133,22 @@ void UnitHandler::setAnalyzed(){
 bool UnitHandler::deleteUnit(Unit u){
 	armyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 	UnitPlacement enMum = units[u->getID()];
-	bool isDeleted = false;
+	units.erase(u->getID());
 	switch (enMum){
 	case probe:
-		isDeleted = probeUnits.deleteUnit(u);
+		return probeUnits.deleteUnit(u);
 		break;
 	case combat:
-		isDeleted = combatUnits.deleteUnit(u);
+		return combatUnits.deleteUnit(u);
 		break;
 	case scout:
-		isDeleted = scoutUnits.deleteUnit(u);
+		return scoutUnits.deleteUnit(u);
 		break;
 	case building:
-		isDeleted = buildingUnits.deleteUnit(u);
+		return buildingUnits.deleteUnit(u);
 		break;
 	}
-	return isDeleted;
+	return false;
 }
 
 bool UnitHandler::purchaseUnit(UnitType unitType) {

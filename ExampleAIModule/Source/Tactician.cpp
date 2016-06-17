@@ -133,7 +133,7 @@ void Tactician::updateTacticianStart() {
 
 	}
 	if (mapAnalyzed){
-		if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8){
+		if (armyBalance > ARMY_ATTACK_POWER_BALANCE){
 			unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
 		}
 	}
@@ -317,7 +317,7 @@ bool Tactician::gasSurplus() {
 }
 
 void Tactician::computeArmyBalance() {
-	float armyBalance = DEFAULT_ARMY_BALANCE;
+	armyBalance = DEFAULT_ARMY_BALANCE;
 
 	if (unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue() > 0) {
 		armyBalance = unitHandler.getArmyValue() / 

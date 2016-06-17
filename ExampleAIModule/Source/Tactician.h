@@ -63,6 +63,7 @@ private:
 	std::vector<BWAPI::TilePosition> tilePathToEnemy = std::vector<BWAPI::TilePosition>();
 
 	bool detectionNeeded = false;
+	float armyBalance;
 
 	// Classes it holds
 	ResourceSpender resourceSpender;

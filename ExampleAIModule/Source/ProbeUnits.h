@@ -32,6 +32,9 @@ public:
 	BWAPI::Unitset* getMiningUnits();
 	BWAPI::Unit extractUnit();
 
+
+	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
+
 	void setAnalyzed();
 
 private:
@@ -50,7 +53,6 @@ private:
 	bool tileAvailableFromUnits(BWAPI::UnitType type, BWAPI::TilePosition tilePos);
 	bool tileAvailableFromBuildings(BWAPI::TilePosition tilePos);
 
-	void moveUnits(BWAPI::Unitset *setFrom, BWAPI::Unitset *setTo, int amount);
 	BWAPI::TilePosition getOptimalBuildPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos);
 	BWAPI::TilePosition recPlacement(BWAPI::UnitType type, BWAPI::TilePosition basePos, int depth);
 	bool checkMargin(BWAPI::UnitType type, BWAPI::TilePosition basePos);
