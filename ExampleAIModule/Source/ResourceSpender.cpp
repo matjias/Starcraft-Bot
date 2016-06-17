@@ -101,6 +101,13 @@ void ResourceSpender::update() {
 		}
 	}
 
+	//if (unitWithPendingTech != NULL && unitWithPendingTech != UnitTypes::Protoss_Zealot && alternateUnit != NULL && canAffordUnit(alternateUnit)) {
+	if (unitWithPendingTech != NULL &&
+		unitWithPendingTech != UnitTypes::Protoss_Zealot &&
+		canAffordUnit(UnitTypes::Protoss_Zealot)) {
+		addUnitInvestment(UnitTypes::Protoss_Zealot, true);
+	}
+
 	if (supplyNeeded()) {
 		addUnitInvestment(UnitTypes::Protoss_Pylon, true);
 	}
@@ -131,8 +138,6 @@ void ResourceSpender::update() {
 	// Draw/print
 	Broodwar->drawTextScreen(280, 5, "Reserved minerals: %i", reservedMinerals);
 	Broodwar->drawTextScreen(280, 15, "Reserved gas: %i", reservedGas);
-	//Broodwar->drawTextScreen(280, 25, "Assimilators: %i", assimilators);
-	Broodwar->drawTextScreen(280, 35, "Supply output: %i", getMaxSupplyOutput());
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
@@ -190,6 +195,7 @@ void ResourceSpender::purchase() {
 				else if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
 					if (investments[i].getUnitType() == unitWithPendingTech) {
 						unitWithPendingTech = NULL;
+						alternateUnit = NULL;
 					}
 					removeInvestment(i);
 				}
@@ -205,10 +211,16 @@ void ResourceSpender::purchase() {
 	// Draw/print
 	
 	if (unitWithPendingTech != NULL) {
-		Broodwar->drawTextScreen(280, 25, "Teching: %s", unitWithPendingTech.c_str());
+		Broodwar->drawTextScreen(280, 25, "Teching to: %s", unitWithPendingTech.c_str());
 	}
 	else {
-		Broodwar->drawTextScreen(280, 25, "Teching: ");
+		Broodwar->drawTextScreen(280, 25, "Teching to: ");
+	}
+	if (alternateUnit != NULL) {
+		Broodwar->drawTextScreen(280, 35, "Alternate unit: %s", alternateUnit.c_str());
+	}
+	else {
+		Broodwar->drawTextScreen(280, 35, "Alternate unit: ");
 	}
 
 	if (buildingToBuild != NULL) {
@@ -321,11 +333,7 @@ bool ResourceSpender::removeDublicates(int number) {
 
 bool ResourceSpender::canBuildUnit(UnitType unitType) {
 	
-	// Is the unit affordable?
-	if (unitType.mineralPrice() > Broodwar->self()->minerals() - reservedMinerals ||
-		unitType.gasPrice() > Broodwar->self()->gas() - reservedGas ||
-		unitType.supplyRequired() / 2 > (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2) {
-
+	if (!canAffordUnit(unitType)) {
 		return false;
 	}
 
@@ -348,6 +356,12 @@ bool ResourceSpender::canBuildUnit(UnitType unitType) {
 	}
 
 	return true;
+}
+
+bool ResourceSpender::canAffordUnit(UnitType unitType) {
+	return (unitType.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
+		unitType.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
+		unitType.supplyRequired() / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 }
 
 bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
@@ -428,17 +442,8 @@ void ResourceSpender::addRequirements(int number) {
 		}
 	}
 
-	// Add Pylon
-	if (investments[number].isUnitType() &&
-		investments[number].getUnitType().requiresPsi() &&
-		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Pylon) +
-		unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Pylon) < 1) {
-
-		addUnitInvestment(UnitTypes::Protoss_Pylon, number);
-	}
-
 	// Add Assimilator
-	if ((investments[number].gasPrice() > 0 || 
+	if ((investments[number].gasPrice() > 0 ||
 		(investments[number].isUnitType() &&
 		investments[number].getUnitType() == UnitTypes::Protoss_Cybernetics_Core)) &&
 		(unitsInProgress(UnitTypes::Protoss_Assimilator) +
@@ -449,16 +454,26 @@ void ResourceSpender::addRequirements(int number) {
 		addUnitInvestment(UnitTypes::Protoss_Assimilator, number);
 	}
 
-	// Remove repeating elements in investment list
-	removeAllDublicates();
-
 	// Set unit type that requires tech
 	if (investments[number].getUnitType() == unitType) {
 		unitWithPendingTech = NULL;
+		alternateUnit = NULL;
 	}
 	else {
 		unitWithPendingTech = unitType;
 	}
+
+	// Add Pylon
+	if (investments[number].isUnitType() &&
+		investments[number].getUnitType().requiresPsi() &&
+		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Pylon) +
+		unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Pylon) < 1) {
+
+		addUnitInvestment(UnitTypes::Protoss_Pylon, number);
+	}
+
+	// Remove repeating elements in investment list
+	removeAllDublicates();
 }
 
 UnitType ResourceSpender::getUnitWithPendingTech() {
@@ -547,6 +562,10 @@ int ResourceSpender::unitsInProgress(UnitType unitType) {
 
 bool ResourceSpender::upgradeInProgress(UpgradeType upgradeType) {
 	return std::find(upgradesInProgress.begin(), upgradesInProgress.end(), upgradeType) != upgradesInProgress.end();
+}
+
+void ResourceSpender::setAlternateUnit(UnitType unitType) {
+	alternateUnit = unitType;
 }
 
 int ResourceSpender::getMaxSupplyOutput() {

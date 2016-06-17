@@ -48,6 +48,7 @@ public:
 	bool canBuildBuilding(BWAPI::UnitType buildingType);
 	bool canBuildUnit(BWAPI::UnitType unitType);
 	bool canUpgrade(BWAPI::UpgradeType upgradeType);
+	void setAlternateUnit(BWAPI::UnitType alternateUnit);
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, int position);
@@ -70,6 +71,7 @@ private:
 	int unitsInProgress(BWAPI::UnitType unitType);
 	bool upgradeInProgress(BWAPI::UpgradeType upgradeType);
 	int getMaxSupplyOutput();
+	bool canAffordUnit(BWAPI::UnitType unitType);
 
 	std::vector<UnitOrUpgrade> investments;
 	std::vector<BWAPI::UpgradeType> upgradesInProgress;
@@ -79,6 +81,7 @@ private:
 	int pendingBuilding = NULL;
 	bool investmentAdded = false;
 	BWAPI::UnitType unitWithPendingTech = NULL;
+	BWAPI::UnitType alternateUnit = NULL;
 	StrategyName strategy = Default;
 
 	UnitHandler* unitHandlerPtr;

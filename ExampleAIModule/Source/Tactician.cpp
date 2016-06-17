@@ -226,8 +226,11 @@ void Tactician::invest() {
 	else if (researchUpgrades && neededUpgrade() != NULL) {
 		resourceSpender.addUpgradeInvestment(neededUpgrade(), false);
 	}
-	else if (buildCombatUnits && neededCombatUnit() != NULL) {
-		resourceSpender.addUnitInvestment(neededCombatUnit(), false);
+	else if (buildCombatUnits) {
+		if (neededCombatUnit() != NULL) {
+			resourceSpender.addUnitInvestment(neededCombatUnit(), false);
+			resourceSpender.setAlternateUnit(previousCombatUnit(neededCombatUnit()));
+		}
 	}
 }
 
@@ -272,9 +275,6 @@ BWAPI::UnitType Tactician::neededCombatUnit() {
 		return armyComposition[0].first;
 	}
 	else if (armyComposition.size() > 1) {
-
-		if (resourceSpender.getUnitWithPendingTech() == NULL) {
-
 		float minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[0].first) +
 			unitHandler.getWarpingUnitCount(armyComposition[0].first)) /
 			armyComposition[0].second;
@@ -293,24 +293,24 @@ BWAPI::UnitType Tactician::neededCombatUnit() {
 				minPosition = i;
 			}
 		}
-
 		return armyComposition[minPosition].first;
 	}
+	return NULL;
+}
+
+BWAPI::UnitType Tactician::previousCombatUnit(BWAPI::UnitType unitType) {
+	if (armyComposition.size() > 1) {
+		if (unitType == armyComposition[0].first) {
+			return armyComposition[armyComposition.size() - 1].first;
+		}
 		else {
-			// Add an alternate unit if the pending unit requires more tech
-			if (resourceSpender.getUnitWithPendingTech() == armyComposition[0].first) {
-				return armyComposition[armyComposition.size() - 1].first;
-			}
-			else {
-				for (int i = 1; i < armyComposition.size(); i++) {
-					if (resourceSpender.getUnitWithPendingTech() == armyComposition[i].first) {
-						return armyComposition[i - 1].first;
-					}
+			for (int i = 1; i < armyComposition.size(); i++) {
+				if (unitType == armyComposition[i].first) {
+					return armyComposition[i - 1].first;
 				}
 			}
 		}
 	}
-
 	return NULL;
 }
 
@@ -417,6 +417,11 @@ void Tactician::initArmyCompositions() {
 
 	// Army compositions vs Protoss, Terran, and Zerg
 	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+
+	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
+	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));

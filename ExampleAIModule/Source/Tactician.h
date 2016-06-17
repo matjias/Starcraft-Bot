@@ -53,6 +53,7 @@ private:
 	bool enemyCloakPossible();
 	bool expansionNeeded();
 	BWAPI::UnitType neededCombatUnit();
+	BWAPI::UnitType previousCombatUnit(BWAPI::UnitType unitType);
 	BWAPI::UpgradeType neededUpgrade();
 	void initArmyCompositions();
 	void computeArmyBalance();
