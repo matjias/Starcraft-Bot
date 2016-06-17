@@ -58,6 +58,12 @@ void CombatUnits::runAttack(Position attackPos){
 }
 
 void CombatUnits::dragoonMicro(Squad * squad){
+	Unit target = squad->getClosestUnit(Filter::IsEnemy);
+
+	if (target == NULL) {
+		squad->move(rendezvousPos);
+	}
+
 	for (auto &unit : *squad){
 		Color innerColor = unit->isAttacking() ? Colors::Green : Colors::Red;
 		Color outerColor = unit->isAttackFrame() ? Colors::Green : Colors::Red;
@@ -71,10 +77,10 @@ void CombatUnits::dragoonMicro(Squad * squad){
 		if (unit->getGroundWeaponCooldown() == 0) {
 
 			UnitCommand lastCommand = unit->getLastCommand();
-			Unit targetUnit = getOptimalTarget(unit);
-			if (!(lastCommand.getType() == UnitCommandTypes::Attack_Unit || targetUnit == lastCommand.getTarget())) {
+			//Unit targetUnit = getOptimalTarget(unit);
+			if (!(lastCommand.getType() == UnitCommandTypes::Attack_Unit || target == lastCommand.getTarget())) {
 
-				unit->attack(targetUnit);
+				unit->attack(target);
 
 				/*if (lastCommand.getTarget() == NULL) {
 					Broodwar->drawCircleMap(lastCommand.getTargetPosition(), 12, Colors::Cyan);

@@ -50,6 +50,7 @@ void ExampleAIModule::onFrame() {
 		Broodwar->sendText("Finished analyzing map");
 		analyzedJustFinished = false;
 		strategyDecider.setAnalyzed();
+		scoutManager.setAnalyzed();
 	}
 
 	// Skip game logic if it's not really 'us'

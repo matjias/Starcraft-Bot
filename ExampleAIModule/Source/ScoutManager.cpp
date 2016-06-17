@@ -194,6 +194,10 @@ std::map<BWAPI::UnitType, int> ScoutManager::getEnemyUnitsAmount() {
 	return enemyUnitsAmount;
 }
 
+void ScoutManager::setAnalyzed() {
+	mapAnalyzed = true;
+}
+
 int ScoutManager::getEnemyBaseCount() {
 	if (Broodwar->enemy()->getRace() == Races::Protoss) {
 		return getAmountOfEnemyUnit(UnitTypes::Protoss_Nexus);
@@ -262,11 +266,7 @@ void ScoutManager::updateScoutManager() {
 		scoutPeekEnemySpawn();
 	}
 	else if (peekEnemyExpansions) {
-		// See if enemy is expanding anywhere
-
-	}
-	else {
-		// Scout is doing nothing and should do nothing
+		//scoutPeekEnemyExpansions();
 	}
 }
 
@@ -462,6 +462,28 @@ bool ScoutManager::beginScouting(ScoutUnits* scoutPtr) {
 	return true;
 }
 
+//bool ScoutManager::initExpansions() {
+//	if (!mapAnalyzed || !foundEnemySpawn || peekEnemyExpansions) {
+//		return false;
+//	}
+//
+//	for (BWTA::BaseLocation* base : BWTA::getBaseLocations()) {
+//		if (base->isIsland() ||
+//			base->getPosition() == Position(Broodwar->self()->getStartLocation()) ||
+//			base->getPosition() == Position(enemySpawn)) {
+//
+//			continue;
+//		}
+//
+//		ExpansionStruct* expansion = new ExpansionStruct();
+//		expansion->base = base;
+//		expansions.push_back(expansion);
+//	}
+//
+//	peekEnemyExpansions = true;
+//	return true;
+//}
+
 bool ScoutManager::clearUnusedScouts() {
 	std::vector<ScoutAndGoalStruct*> scouts = scoutUnitsPtr->getScouts();
 
@@ -516,8 +538,95 @@ void ScoutManager::scoutPeekEnemySpawn() {
 		}
 	}
 
+	/*if (!peekEnemyExpansions) {
+		initExpansions();
+	}*/
+
 	scoutAssignedToPeek->goal = Position(enemySpawn);
 }
+//
+//void ScoutManager::scoutPeekEnemyExpansions() {
+//	if (scoutUnitsPtr->getAmountOfScouts() == 0) {
+//		return;
+//	}
+//
+//	std::vector<ScoutAndGoalStruct*> scoutExpansions;
+//	for (auto &scoutAndGoal : scoutUnitsPtr->getScouts()) {
+//		if (scoutAndGoal->peekEnemyExpansions) {
+//			scoutExpansions.push_back(scoutAndGoal);
+//		}
+//	}
+//
+//	for (auto &scoutAndGoal : scoutExpansions) {
+//		// Does the scout even have a goal yet
+//		if (scoutAndGoal->goal == Position(0, 0)) {
+//			continue;
+//		}
+//
+//		Position goalPos = scoutAndGoal->goal;
+//		TilePosition goalTilePos = TilePosition(goalPos);
+//
+//		if (Broodwar->isVisible(goalTilePos)) {
+//			// Update to have scouted
+//			for (auto &base : expansions) {
+//				if (goalPos == base->base->getPosition()) {
+//					base->scouted = true;
+//					scoutAndGoal->reachedGoal = true;
+//					base->hasScout = false;
+//					break;
+//				}
+//			}
+//		}
+//	}
+//
+//	for (auto &scoutAndGoal : scoutExpansions) {
+//		// Update all goals
+//		if (scoutAndGoal->goal == Position(0, 0) ||
+//			scoutAndGoal->reachedGoal) {
+//
+//			bool gaveNewGoal = false;
+//
+//			for (auto &base : expansions) {
+//				if (!base->hasScout && !base->scouted) {
+//					scoutAndGoal->goal = Position(base->base->getPosition());
+//					scoutAndGoal->reachedGoal = false;
+//					base->hasScout = true;
+//					gaveNewGoal = true;
+//					break;
+//				}
+//			}
+//
+//			if (!gaveNewGoal){
+//				Broodwar->sendText("Returning scout to unithandler");
+//
+//				scoutUnitsPtr->removeUnit(scoutAndGoal->scout);
+//				// Send back to base and back to probeUnits for now
+//				//scoutAndGoal->goal = Position(broodwar->self()->getStartLocation());
+//				//scoutAndGoal->reachedGoal = false;
+//			}
+//		}
+//	}
+//}
+//
+//bool ScoutManager::hasScoutedAllExpansions() {
+//	if (expansions.size() == 0) {
+//		return false;
+//	}
+//
+//	for (auto &exp : expansions) {
+//		if (!exp->scouted) {
+//			return false;
+//		}
+//	}
+//
+//	return true;
+//}
+//
+//void ScoutManager::resetAllExpansions() {
+//	for (auto &exp : expansions) {
+//		exp->scouted = false;
+//	}
+//}
 
 // Debug functions
 TilePosition::list ScoutManager::getSpawns() {

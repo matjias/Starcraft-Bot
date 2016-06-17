@@ -141,7 +141,7 @@ void Tactician::updateTacticianStart() {
 		}
 		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
 			// @TODO: Move to home
-	}
+		}
 	}
 	
 	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);
@@ -324,8 +324,6 @@ bool Tactician::gasSurplus() {
 }
 
 void Tactician::computeArmyBalance() {
-	float armyBalance = DEFAULT_ARMY_BALANCE;
-
 	if (unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue() > 0) {
 		armyBalance = unitHandler.getArmyValue() / 
 			(unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue());
@@ -438,6 +436,7 @@ void Tactician::initArmyCompositions() {
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 1.0));
 
+	//dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 }
 
