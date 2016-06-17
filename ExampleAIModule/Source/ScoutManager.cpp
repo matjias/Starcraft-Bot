@@ -221,7 +221,7 @@ Position ScoutManager::getAnEnemyPosition() {
 	std::unordered_map<int, UnitStruct*>::iterator it;
 
 	for (it = enemyUnits.begin(); it != enemyUnits.end(); it++) {
-		if (it->second->unitType.isBuilding()) {
+		if (it->second->unitType.isBuilding() && !it->second->unitType.isRefinery()) {
 			return it->second->lastKnownPosition;
 		}
 	}
