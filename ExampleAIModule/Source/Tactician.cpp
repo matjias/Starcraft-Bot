@@ -150,7 +150,7 @@ void Tactician::updateTacticianStart() {
 					unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
 				}
 				else{
-					unitHandler.getCombatUnits()->runAttack(somedin);
+					unitHandler.getCombatUnits()->runAttack(scoutManagerPtr->getAnEnemyPosition());
 				}
 			}
 			else {
