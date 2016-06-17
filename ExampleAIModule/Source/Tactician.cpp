@@ -133,15 +133,25 @@ void Tactician::updateTacticianStart() {
 		// Update defend units
 
 	}
-	if (mapAnalyzed){
-		//if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8) {
-		if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
-			// @TODO: Attack move to nearest building instead
-			unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+	if (mapAnalyzed) {
+		if (lastUnitCommandUpdate + UNIT_COMMAND_UPDATE_TIME < Broodwar->getFrameCount()) {
+
+			lastUnitCommandUpdate = Broodwar->getFrameCount();
+
+			if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
+				attack = true;
+			}
+			else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
+				attack = false;
+			}
+
+			if (attack) {
+				unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+			}
+			else {
+				unitHandler.getCombatUnits()->runAttack(rendezvousPos);
+			}
 		}
-		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
-			// @TODO: Move to home
-	}
 	}
 	
 	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);

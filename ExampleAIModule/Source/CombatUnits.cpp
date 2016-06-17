@@ -11,12 +11,10 @@ void CombatUnits::_init(){
 
 }
 
-
 // Fuck det her Hvornr skal der kører idle vs attack :O
 void CombatUnits::update(){
 	idleUpdate();
 }
-
 
 void CombatUnits::idleUpdate(){
 	//Squad loops
@@ -33,18 +31,22 @@ void CombatUnits::runAttack(Position attackPos){
 	// Could be something from tactician? not very flexible.
 
 	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++){
-		if (it->first == UnitTypes::Protoss_Zealot){
+		if (it->second.isIdle() || attackPos != lastAttackPos){
+			attackMovement(&it->second, attackPos);
+		}
+		
+		/*if (it->first == UnitTypes::Protoss_Zealot && it->second.){
 			attackMovement(&it->second, attackPos);
 		}
 		if (it->first == UnitTypes::Protoss_Dragoon){
-			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() > 0){
-				dragoonMicro(&it->second);
-			}
-			else {
+			dragoonMicro(&it->second);
+			if (it->second.getUnitsInRadius(UnitTypes::Protoss_Dragoon.sightRange(), Filter::IsEnemy).size() == 0){
 				attackMovement(&it->second, attackPos);
 			}
-		}
+		}*/
+
 	}
+	lastAttackPos = attackPos;
 
 	//for (int i = 0; i < squadCount; i++){
 	//	// fuk den her kode
@@ -60,7 +62,6 @@ void CombatUnits::runAttack(Position attackPos){
 	//	}
 	//}
 }
-
 
 void CombatUnits::dragoonMicro(Squad * squad){
 	Unit target = squad->getClosestUnit(Filter::IsEnemy);
@@ -109,8 +110,6 @@ void CombatUnits::dragoonMicro(Squad * squad){
 		}
 	}
 }
-
-
 
 Unit CombatUnits::getOptimalTarget(Unit unit){
 	// implement the ultimate logic for attacking the right oppponent

@@ -45,10 +45,11 @@ const int MAX_SUPPLY = 200;
 const int WORKERS_PER_MINERAL_LINE = 9 * 2; // 9 Mineral Fields, 2 workers per Mineral Field
 const int WORKERS_PER_GEYSER = 3;
 const int MAX_WORKERS = 100;
-const int MAX_WORKER_SURPLUS = (WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER) / 2;
+const int MAX_WORKER_SURPLUS = 1; //(WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER);
 const int MINERAL_SURPLUS_LIMIT = 300;
 const int GAS_SURPLUS_LIMIT = 200;
 const float GAS_TO_MINERALS = 1.2;
+const int UNIT_COMMAND_UPDATE_TIME = 50;
 
 // Units and buildings
 const int OBSERVERS_TO_SCOUT = 1;

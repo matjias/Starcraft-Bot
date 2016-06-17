@@ -69,6 +69,7 @@ Unit ProbeUnits::extractUnit(){
 			tempProbe = probe;
 			break;
 		}
+
 		tempProbe = probe;
 	}
 	uSet->erase(tempProbe);
