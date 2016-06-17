@@ -191,7 +191,7 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 	}
 
 	if (depth >= BUILD_LOCATION_FACTOR) {
-		return TilePosition(0, 0);
+		return Broodwar->getBuildLocation(type, basePos);
 	}
 	return recPlacement(type, basePos, depth + 1);
 }
