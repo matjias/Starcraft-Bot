@@ -113,11 +113,11 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
-	Position pos = Position(getOptimalBuildPlacement(building, basePos));
+	/*Position pos = Position(getOptimalBuildPlacement(building, basePos));
 	Position bottomRight = Position(pos.x + building.tileWidth() * TILE_SIZE,
 		pos.y + building.tileHeight() * TILE_SIZE);
 
-	Broodwar->drawBoxMap(pos, bottomRight, Colors::Green);
+	Broodwar->drawBoxMap(pos, bottomRight, Colors::Green);*/
 	buildLocationCounter++;
 	if (building == NULL) {
 		if (builder != NULL) {
