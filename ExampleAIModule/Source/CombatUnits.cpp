@@ -139,7 +139,6 @@ void CombatUnits::addUnit(Unit u){
 
 void CombatUnits::saveUnitToSquad(Unit u){
 	if (unitMap.size() == 0 || unitMap.count(u->getType()) == 0){
-		Broodwar->sendText("Squad count: %i - Unit added: %s", unitMap.count(u->getType()), u->getType().c_str());
 		unitMap.insert(std::make_pair(u->getType(), Squad()));
 	}
 	if (unitMap.size() > 0){
@@ -240,7 +239,6 @@ Position CombatUnits::escapePos(Unit unit){
 
 bool CombatUnits::enemyTooClose(Unit unit){
 	Unit enemy = unit->getClosestUnit(Filter::IsEnemy);
-	Broodwar->sendText("Fucker afstanden %i < %i", unit->getDistance(enemy), unit->getType().sightRange());
 	return unit->getDistance(enemy) < unit->getType().sightRange()/*Magisk tal*/;
 }
 

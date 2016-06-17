@@ -109,7 +109,6 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
 void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		Broodwar->sendText("%s er %s slettet", unit->getType().c_str(), tactician.recordDeadUnit(unit) ? "" : "IKKE!");
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer()) {

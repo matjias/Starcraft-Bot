@@ -105,7 +105,7 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	for (Unitset::iterator it = setFrom->begin(); counter < amount; it++, counter++) {
 		Unit probe = *it;
 		setTo->insert(probe);
-		//setFrom->erase(probe); // @TODO: Fix crash
+		setFrom->erase(probe); // @TODO: Fix crash
 	}
 }
 
@@ -114,7 +114,6 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	buildLocationCounter++;
-
 	if (building == NULL) {
 		if (builder != NULL) {
 			addUnit(builder);
@@ -191,6 +190,7 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 	}
 
 	if (depth >= BUILD_LOCATION_FACTOR) {
+		Broodwar->sendText("JUpti dub");
 		return Broodwar->getBuildLocation(type, basePos);
 	}
 	return recPlacement(type, basePos, depth + 1);
