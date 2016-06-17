@@ -137,11 +137,12 @@ void Tactician::updateTacticianStart() {
 		//if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8) {
 		if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
 			// @TODO: Attack move to nearest building instead
+			attack = true;
 			unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
 		}
 		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
 			// @TODO: Move to home
-	}
+		}
 	}
 	
 	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);
