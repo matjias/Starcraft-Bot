@@ -88,6 +88,8 @@ bool UnitHandler::isCombatUnit(Unit u){
 	//Add all unit types that needs to be handle by the army
 	return u->getType() == UnitTypes::Protoss_Zealot ||
 		u->getType() == UnitTypes::Protoss_Dragoon ||
+		u->getType() == UnitTypes::Protoss_Archon ||
+		u->getType() == UnitTypes::Protoss_Dark_Templar ||
 		u->getType() == UnitTypes::Protoss_Observer;
 }
 // #unnecessarybooleanfunction lols

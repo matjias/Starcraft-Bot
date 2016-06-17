@@ -66,7 +66,7 @@ void CombatUnits::runAttack(Position attackPos){
 void CombatUnits::dragoonMicro(Squad * squad){
 	Unit target = squad->getClosestUnit(Filter::IsEnemy);
 
-	if (target == NULL) {
+	if (target) {
 		squad->move(rendezvousPos);
 	}
 
