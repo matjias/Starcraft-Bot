@@ -31,11 +31,11 @@ struct ScoutAndGoalStruct {
 
 // Strategy
 const int EARLY_STAGE_SUPPLY = 6;
-const int MID_STAGE_SUPPLY = 40;
-const int STRATEGY_UPDATE_TIME = 200;
+const int MID_STAGE_SUPPLY = 201;
+const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
-const float ARMY_ATTACK_POWER_BALANCE = 0.7; // 0 = no army, 1 = enemy has no army
-const float ARMY_RETREAT_POWER_BALANCE = 0.4;
+const float ARMY_ATTACK_POWER_BALANCE = 0.5; // 0 = no army, 1 = enemy has no army
+const float ARMY_RETREAT_POWER_BALANCE = 0.3;
 const float DEFAULT_WORKER_BALANCE = 0.5;
 const float ALLIN_WORKER_BALANCE = 0.2;
 
@@ -44,10 +44,10 @@ const int MAX_SUPPLY = 200;
 const int WORKERS_PER_MINERAL_LINE = 9 * 2; // 9 Mineral Fields, 2 workers per Mineral Field
 const int WORKERS_PER_GEYSER = 3;
 const int MAX_WORKERS = 100;
-const int MAX_WORKER_SURPLUS = WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER;
-const int MINERAL_SURPLUS_LIMIT = 600;
-const int GAS_SURPLUS_LIMIT = 400;
-const float GAS_TO_MINERALS = 1.5;
+const int MAX_WORKER_SURPLUS = (WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER) / 2;
+const int MINERAL_SURPLUS_LIMIT = 300;
+const int GAS_SURPLUS_LIMIT = 200;
+const float GAS_TO_MINERALS = 1.2;
 
 // Units and buildings
 const int OBSERVERS_TO_SCOUT = 1;
@@ -56,14 +56,14 @@ const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int DRAGOONS_BEFORE_RANGE = 4;
 
 // Build location
-const int BUILD_LOCATION_UPDATE_TIME = 50;
+const int BUILD_LOCATION_UPDATE_TIME = 25;
 
 // Scouting, distances, and map size
-const int MEDIUM_MAP_SIZE = 128 * 128;
-const int RUSH_DISTANCE_CEIL = 128 * 32;
 const int BUILD_LOCATION_FACTOR = 15;
 
 // Old
+const int MEDIUM_MAP_SIZE = 128 * 128;
+const int RUSH_DISTANCE_CEIL = 128 * 32;
 const int MIN_OBSERVERS = 1;
 const int OBSERVERS_TO_DETECT = 2;
 const int CORSAIRS_NEEDED = 3;
