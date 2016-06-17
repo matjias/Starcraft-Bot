@@ -214,9 +214,16 @@ int ScoutManager::getEnemyBaseCount() {
 }
 
 Position ScoutManager::getAnEnemyPosition() {
-	std::unordered_map<int, UnitStruct*>::iterator it = enemyUnits.begin();
-	UnitStruct ut = *it->second;
+	std::unordered_map<int, UnitStruct*>::iterator it;
 
+	for (it = enemyUnits.begin(); it != enemyUnits.end(); it++) {
+		if (it->second->unitType.isBuilding()) {
+			return it->second->lastKnownPosition;
+		}
+	}
+
+
+	UnitStruct ut = *it->second;
 	return ut.lastKnownPosition;
 }
 
