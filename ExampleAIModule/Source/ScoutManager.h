@@ -15,6 +15,7 @@
 #include <unordered_map>
 
 #include "BWAPI.h"
+#include "BWTA.h"
 #include "Constants.h"
 #include "ScoutUnits.h"
 
@@ -50,6 +51,8 @@ public:
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();
 
+	// Got signal to start searching expansions
+	//bool initExpansions();
 	
 
 	// Unit structure, used for caching enemy units in a map
@@ -68,14 +71,28 @@ public:
 		bool hasScout = false;
 	};
 
+	/*struct ExpansionStruct {
+		BWTA::BaseLocation* base = NULL;
+		bool scouted = false;
+		bool hasScout = false;
+		int lastScouted;
+	};*/
+
 	// Regular scouting functions
 	bool setStrategyDecider(StrategyDecider* strategyPtr);
 	bool beginScouting(ScoutUnits* scoutPtr);
 	bool foundEnemyBase(BWAPI::TilePosition position);
 
+	// Expansion functions
+	/*bool hasScoutedAllExpansions();
+	void resetAllExpansions();*/
+
 	// Tell the tactician that it can add another scout
 	// if tactician deems it a good idea
 	bool canAddAnotherScout();
+
+	// BWTA finished analyzing function
+	void setAnalyzed();
 
 	// Debug functions
 	BWAPI::TilePosition::list getSpawns();
@@ -103,6 +120,7 @@ private:
 	bool clearUnusedScouts();
 
 	void scoutPeekEnemySpawn();
+	//void scoutPeekEnemyExpansions();
 
 	bool foundEnemyBaseInit(BWAPI::TilePosition position);
 
@@ -134,4 +152,9 @@ private:
 	std::vector<LocationStruct*> spawns;
 
 
+	//std::vector<ExpansionStruct*> expansions;
+
+
+	// BWTA finished analyzing variable
+	bool mapAnalyzed = false;
 };

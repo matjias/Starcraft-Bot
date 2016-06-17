@@ -24,6 +24,7 @@ struct ScoutAndGoalStruct {
 	BWAPI::Position goal = BWAPI::Position(0, 0);
 	bool reachedGoal = false;
 	bool peekEnemyBase = false;
+	//bool peekEnemyExpansions = false;
 	bool underAttack = false;
 	bool kiting = false;
 	int lastPolyPos = -1;
