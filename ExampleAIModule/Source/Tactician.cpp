@@ -146,7 +146,12 @@ void Tactician::updateTacticianStart() {
 			}
 
 			if (attack) {
-				unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+				if (scoutManagerPtr->getEnemyBaseCount() > 0){
+					unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+				}
+				else{
+					unitHandler.getCombatUnits()->runAttack(scoutManagerPtr->getAnEnemyPosition());
+				}
 			}
 			else {
 				unitHandler.getCombatUnits()->runAttack(rendezvousPos);

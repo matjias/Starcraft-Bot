@@ -111,7 +111,7 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	decrementEnemyUnitsAmount(u);
 
 	if (u->getType().canAttack() && !u->getType().isWorker()) {
-		knownEnemyValue += u->getType().mineralPrice() +
+		knownEnemyValue -= u->getType().mineralPrice() +
 			u->getType().gasPrice() * GAS_TO_MINERALS;
 	}
 

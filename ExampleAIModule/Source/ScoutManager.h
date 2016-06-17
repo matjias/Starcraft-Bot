@@ -156,6 +156,6 @@ private:
 	//std::vector<ExpansionStruct*> expansions;
 
 
-	// BWTA finished analyzing variable
+	// BWTA finished analyzing variabla
 	bool mapAnalyzed = false;
 };
