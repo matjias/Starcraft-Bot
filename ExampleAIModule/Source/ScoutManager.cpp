@@ -150,6 +150,18 @@ void ScoutManager::recordUnitMorph(Unit u) {
 	// Decrement the old enemy type
 	decrementEnemyUnitsAmount(u);
 
+	// Change enemyValue
+	UnitType oldUnitType = enemyUnits.at(u->getID())->unitType;
+	if (oldUnitType.canAttack() && !oldUnitType.isWorker()) {
+		knownEnemyValue -= oldUnitType.mineralPrice() +
+			oldUnitType.gasPrice() * GAS_TO_MINERALS;
+	}
+
+	if (u->getType().canAttack() && !u->getType().isWorker()) {
+		knownEnemyValue += u->getType().mineralPrice() +
+			u->getType().gasPrice() * GAS_TO_MINERALS;
+	}
+
 	// Update the recorded unit type
 	enemyUnits.at(u->getID())->unitType = u->getType();
 
