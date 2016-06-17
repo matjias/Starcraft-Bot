@@ -38,7 +38,7 @@ namespace Microsoft {
 }
 
 namespace UnitTest {
-	TEST_CLASS(UnitTest1) {
+	TEST_CLASS(BroodwarMock) {
 	public:
 		// The first test here is used for testing the use of
 		// mocking the Broodwar game pointer, along with a player
@@ -90,6 +90,11 @@ namespace UnitTest {
 
 			Assert::AreEqual(p1, p2);
 		}
+	};
+
+	TEST_CLASS(UnitTest1) {
+	public:
+		
 
 		// The ScoutManager_Test_Init tests concerns the _init 
 		// function in ScoutManager
@@ -351,14 +356,14 @@ namespace UnitTest {
 		}
 
 		TEST_METHOD(Move_Probes_Test) {
-			Mock<Unitset> set1;
-			Mock<Unitset> set2;
+			/*Mock<Unitset> set1;
+			Mock<Unitset> set2;*/
 			
-			int setSize = 4
+			int setSize = 4;
 
-			for (int i = 0; i < setSize; i++){
+			/*for (int i = 0; i < setSize; i++){
 
-			}
+			}*/
 
 		}
 

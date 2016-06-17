@@ -119,7 +119,7 @@ private:
 	// Using an unordered map to keep track of enemy units
 	// in average constant time, using the unit ID as the
 	// key and the element containing various other information
-	std::map<int, UnitStruct*> enemyUnits;
+	std::unordered_map<int, UnitStruct*> enemyUnits;
 
 	// To get information about the amount of certain unit
 	// types the enemy have in average constant time,
