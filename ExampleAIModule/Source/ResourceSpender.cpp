@@ -105,7 +105,13 @@ void ResourceSpender::update() {
 	if (unitWithPendingTech != NULL &&
 		unitWithPendingTech != UnitTypes::Protoss_Zealot &&
 		canAffordUnit(UnitTypes::Protoss_Zealot)) {
-		addUnitInvestment(UnitTypes::Protoss_Zealot, true);
+
+		if (canBuildUnit(UnitTypes::Protoss_Zealot)) {
+			addUnitInvestment(UnitTypes::Protoss_Zealot, true);
+		}
+		else {
+			addUnitInvestment(UnitTypes::Protoss_Zealot, false);
+		}
 	}
 
 	if (supplyNeeded()) {
