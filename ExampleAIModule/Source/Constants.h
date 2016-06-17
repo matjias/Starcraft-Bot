@@ -49,7 +49,7 @@ const int MAX_WORKER_SURPLUS = 1; //(WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYS
 const int MINERAL_SURPLUS_LIMIT = 300;
 const int GAS_SURPLUS_LIMIT = 200;
 const float GAS_TO_MINERALS = 1.2;
-const int UNIT_COMMAND_UPDATE_TIME = 50;
+const int UNIT_COMMAND_UPDATE_TIME = 100;
 
 // Units and buildings
 const int OBSERVERS_TO_SCOUT = 1;
@@ -58,7 +58,7 @@ const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int DRAGOONS_BEFORE_RANGE = 4;
 
 // Build location
-const int BUILD_LOCATION_UPDATE_TIME = 25;
+const int BUILD_LOCATION_UPDATE_TIME = 100;
 
 // Scouting, distances, and map size
 const int BUILD_LOCATION_FACTOR = 15;

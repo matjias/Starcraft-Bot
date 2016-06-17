@@ -486,7 +486,7 @@ bool ResourceSpender::addProductionFacilities() {
 				UnitTypes::Protoss_Gateway.mineralPrice() +
 				(buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Gateway) +
 				unitHandlerPtr->getWarpingUnitCount(UnitTypes::Protoss_Gateway)) *
-				(UnitTypes::Protoss_Zealot.mineralPrice())) {
+				(UnitTypes::Protoss_Dragoon.mineralPrice())) {
 
 				addUnitInvestment(UnitTypes::Protoss_Gateway, i);
 

@@ -149,7 +149,7 @@ void Tactician::updateTacticianStart() {
 				if (scoutManagerPtr->getEnemyBaseCount() > 0){
 					unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
 				}
-				else{
+				else {
 					unitHandler.getCombatUnits()->runAttack(scoutManagerPtr->getAnEnemyPosition());
 				}
 			}
@@ -432,11 +432,11 @@ void Tactician::initArmyCompositions() {
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 1.0));
 
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));
-	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 5.0));
-	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
