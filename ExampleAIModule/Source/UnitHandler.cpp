@@ -41,7 +41,7 @@ void UnitHandler::removeWarpingUnit(Unit u){
 // Deciding where the discovered unit belongs
 void UnitHandler::addUnit(Unit u) {
 	//Broodwar->sendText("Das type ge tilfuyt %s", u->getType().c_str());
-	armyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
+	
 	if (units.count(u->getID()) != 0){
 		units.erase(u->getID());
 	}
@@ -53,6 +53,7 @@ void UnitHandler::addUnit(Unit u) {
 	if (isCombatUnit(u)){
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), combat));
 		combatUnits.addUnit(u);
+		armyValue += u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 	}
 	else if (isProbeUnit(u)){
 		units.insert(std::pair<int, UnitPlacement>(u->getID(), probe));
@@ -131,7 +132,7 @@ void UnitHandler::setAnalyzed(){
 }
 
 bool UnitHandler::deleteUnit(Unit u){
-	armyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
+	
 	UnitPlacement enMum = units[u->getID()];
 	bool isDeleted = false;
 	switch (enMum){
@@ -139,6 +140,7 @@ bool UnitHandler::deleteUnit(Unit u){
 		isDeleted = probeUnits.deleteUnit(u);
 		break;
 	case combat:
+		armyValue -= u->getType().mineralPrice() + u->getType().gasPrice()*GAS_TO_MINERALS;
 		isDeleted = combatUnits.deleteUnit(u);
 		break;
 	case scout:
@@ -165,7 +167,10 @@ bool UnitHandler::purchaseBuilding(BWAPI::UnitType building) {
 }
 
 bool UnitHandler::purchaseUpgrade(UpgradeType upgradeType) {
-	// @TODO
+	Unit builderUnit = buildingUnits.getIdleBuilding(upgradeType.whatUpgrades());
+	if (builderUnit != NULL) {
+		return builderUnit->upgrade(upgradeType);
+	}
 	return false;
 }
 
