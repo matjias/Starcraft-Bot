@@ -113,6 +113,11 @@ void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 //
 
 bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
+	Position pos = Position(getOptimalBuildPlacement(building, basePos));
+	Position bottomRight = Position(pos.x + UnitTypes::Protoss_Pylon.tileWidth() * TILE_SIZE,
+		pos.y + UnitTypes::Protoss_Pylon.tileHeight() * TILE_SIZE);
+
+	Broodwar->drawBoxMap(pos, bottomRight, Colors::Green);
 	buildLocationCounter++;
 	if (building == NULL) {
 		if (builder != NULL) {
@@ -211,6 +216,12 @@ bool ProbeUnits::checkMargin(UnitType type, TilePosition tilePos){
 
 	if (!unitsBlocking) {
 		return false;
+	}
+
+	if (type == UnitTypes::Protoss_Pylon){
+		if(Broodwar->getUnitsInRadius(Position(tilePos), UnitTypes::Protoss_Pylon.sightRange(), Filter::GetType == type).size() > 0){
+			return false;
+		}
 	}
 
 	bool canWalkAroundBuilding = true;
