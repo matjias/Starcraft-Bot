@@ -429,11 +429,9 @@ void Tactician::initArmyCompositions() {
 	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.01));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.01));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
-	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 5.0));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 1.0));
 
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));
@@ -444,23 +442,17 @@ void Tactician::initArmyCompositions() {
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.1));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
-	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 10.0));
 	terranMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 1.0));
 
 	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	zergEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
 	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	zergEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.1));
-	zergMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 0.01));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
-	zergMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_High_Templar, 1.0));
 
 	//dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	dummyArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 1.0));
@@ -504,8 +496,8 @@ bool Tactician::enemyCloakPossible() {
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Science_Vessel) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Terran_Battlecruiser) ||
 
-		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hydralisk_Den) ||
-		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hydralisk) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lair) ||
+		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hive) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker_Egg) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker);
 }
