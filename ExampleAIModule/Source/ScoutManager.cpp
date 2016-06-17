@@ -81,8 +81,10 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 	}
 	// Otherwise we need to record it
 	else {
-		knownEnemyValue += u->getType().mineralPrice() + 
-			u->getType().gasPrice() * GAS_TO_MINERALS;
+		if (u->getType().canAttack() && !u->getType().isWorker()) {
+			knownEnemyValue += u->getType().mineralPrice() +
+				u->getType().gasPrice() * GAS_TO_MINERALS;
+		}
 
 		UnitStruct *uStruct = new UnitStruct();
 		uStruct->unit = u;
@@ -108,8 +110,10 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	// Decrement enemyUnitsAmount
 	decrementEnemyUnitsAmount(u);
 
-	knownEnemyValue -= u->getType().mineralPrice() + 
-		u->getType().gasPrice() * GAS_TO_MINERALS;
+	if (u->getType().canAttack() && !u->getType().isWorker()) {
+		knownEnemyValue += u->getType().mineralPrice() +
+			u->getType().gasPrice() * GAS_TO_MINERALS;
+	}
 
 	int elementsRemoved = enemyUnits.erase(u->getID());
 

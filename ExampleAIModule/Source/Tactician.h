@@ -62,7 +62,8 @@ private:
 	BWAPI::Position rendezvousPos;
 	std::vector<BWAPI::Position> pathToEnemy;
 	std::vector<BWAPI::TilePosition> tilePathToEnemy = std::vector<BWAPI::TilePosition>();
-
+	
+	float armyBalance;
 	bool detectionNeeded = false;
 
 	// Classes it holds

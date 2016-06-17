@@ -203,6 +203,14 @@ void ResourceSpender::purchase() {
 	unitHandlerPtr->purchaseBuilding(buildingToBuild);
 	
 	// Draw/print
+	
+	if (unitWithPendingTech != NULL) {
+		Broodwar->drawTextScreen(280, 25, "Teching: %s", unitWithPendingTech.c_str());
+	}
+	else {
+		Broodwar->drawTextScreen(280, 25, "Teching: ");
+	}
+
 	if (buildingToBuild != NULL) {
 		Broodwar->drawTextScreen(280, 45, "Build: %s", buildingToBuild.c_str());
 	}
@@ -406,17 +414,17 @@ void ResourceSpender::addAllRequirements() {
 
 void ResourceSpender::addRequirements(int number) {
 	
-	UnitType unitTupe = investments[number].getUnitType();
+	UnitType unitType = investments[number].getUnitType();
 
 	// Add required buildings
 	auto requiredUnits = investments[number].getUnitType().requiredUnits();
 
-	for (auto& unitType : requiredUnits){
-		if (unitType.first.isBuilding() &&
-			buildingUnitsPtr->getBuildingCount(unitType.first) < 1 &&
-			unitHandlerPtr->getWarpingUnitCount(unitType.first) < 1) {
+	for (auto& uType : requiredUnits){
+		if (uType.first.isBuilding() &&
+			buildingUnitsPtr->getBuildingCount(uType.first) < 1 &&
+			unitHandlerPtr->getWarpingUnitCount(uType.first) < 1) {
 
-			addUnitInvestment(unitType.first, number);
+			addUnitInvestment(uType.first, number);
 		}
 	}
 
@@ -445,11 +453,11 @@ void ResourceSpender::addRequirements(int number) {
 	removeAllDublicates();
 
 	// Set unit type that requires tech
-	if (investments[number].getUnitType() != unitTupe) {
-		unitWithPendingTech = unitTupe;
+	if (investments[number].getUnitType() == unitType) {
+		unitWithPendingTech = NULL;
 	}
 	else {
-		unitWithPendingTech = NULL;
+		unitWithPendingTech = unitType;
 	}
 }
 

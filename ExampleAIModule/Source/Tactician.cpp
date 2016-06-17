@@ -14,7 +14,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 
 	// AI settings
 	useDummyArmyComposition = false;
-	buildDetectors = false;
+	buildDetectors = true;
 	buildDefenseStructures = true;
 	buildExpansions = false;
 	researchUpgrades = true;
@@ -30,6 +30,7 @@ bool Tactician::_init(ScoutManager* scoutMan) {
 	}
 
 	scoutManagerPtr = scoutMan;
+	armyBalance = DEFAULT_ARMY_BALANCE;
 
 	return true;
 }
@@ -133,11 +134,17 @@ void Tactician::updateTacticianStart() {
 
 	}
 	if (mapAnalyzed){
-		if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8){
+		//if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon) > 8) {
+		if (armyBalance > ARMY_ATTACK_POWER_BALANCE) {
+			// @TODO: Attack move to nearest building instead
 			unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
+		}
+		else if (armyBalance < ARMY_RETREAT_POWER_BALANCE) {
+			// @TODO: Move to home
 		}
 	}
 	
+	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);
 	Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
 	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
@@ -317,8 +324,6 @@ bool Tactician::gasSurplus() {
 }
 
 void Tactician::computeArmyBalance() {
-	float armyBalance = DEFAULT_ARMY_BALANCE;
-
 	if (unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue() > 0) {
 		armyBalance = unitHandler.getArmyValue() / 
 			(unitHandler.getArmyValue() + scoutManagerPtr->getEnemyArmyValue());
@@ -399,8 +404,8 @@ void Tactician::initArmyCompositions() {
 	initialArmyComposition.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 
 	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
-	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	//protossEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
+	//protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 100.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	protossMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
