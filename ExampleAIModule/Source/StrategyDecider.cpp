@@ -67,12 +67,11 @@ void StrategyDecider::updateStrategy() {
 void StrategyDecider::decideStrategy() {
 	int defendMainBaseResult = defendMainBase();
 	if (defendMainBaseResult > 0) { // @TODO: Enemy combat units in our regions
+		currentStrategy = Defend;
 		if (defendMainBaseResult > 1) {
-			currentStrategy = Defend;
 			Broodwar->sendText("Enemies in base");
 		}
 		else {
-			currentStrategy = DefendHarass;
 			Broodwar->sendText("Enemy in base");
 		}
 	}
