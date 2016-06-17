@@ -47,6 +47,7 @@ public:
 	int getEnemyWorkerCount();
 	int getEnemyDefenseValue();
 	float getEnemyArmyValue();
+	BWAPI::Position getAnEnemyPosition();
 
 	// ScoutManager gets information from somewhere
 	void updateScoutManager();

@@ -213,6 +213,13 @@ int ScoutManager::getEnemyBaseCount() {
 	return 0;
 }
 
+Position ScoutManager::getAnEnemyPosition() {
+	std::unordered_map<int, UnitStruct*>::iterator it = enemyUnits.begin();
+	UnitStruct ut = *it->second;
+
+	return ut.lastKnownPosition;
+}
+
 int ScoutManager::getEnemyWorkerCount() {
 	if (Broodwar->enemy()->getRace() == Races::Protoss) {
 		return getAmountOfEnemyUnit(UnitTypes::Protoss_Probe);
