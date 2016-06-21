@@ -31,7 +31,7 @@ struct ScoutAndGoalStruct {
 
 // Strategy
 const int EARLY_STAGE_SUPPLY = 6;
-const int MID_STAGE_SUPPLY = 100;
+const int MID_STAGE_SUPPLY = 80;
 const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
 const float ARMY_ATTACK_POWER_BALANCE = 0.8; // 0 = no army, 1 = enemy has no army
@@ -45,7 +45,7 @@ const int WORKERS_PER_MINERAL_LINE = 9 * 2; // 9 Mineral Fields, 2 workers per M
 const int WORKERS_PER_GEYSER = 3;
 const int MAX_WORKERS = 100;
 const int MAX_WORKER_SURPLUS = 1; //(WORKERS_PER_MINERAL_LINE + WORKERS_PER_GEYSER);
-const int MINERAL_SURPLUS_LIMIT = 300;
+const int MINERAL_SURPLUS_LIMIT = 250;
 const int GAS_SURPLUS_LIMIT = 200;
 const float GAS_TO_MINERALS = 1.2;
 const int UNIT_COMMAND_UPDATE_TIME = 100;

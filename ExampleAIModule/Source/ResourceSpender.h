@@ -49,6 +49,7 @@ public:
 	bool canBuildUnit(BWAPI::UnitType unitType);
 	bool canUpgrade(BWAPI::UpgradeType upgradeType);
 	void setAlternateUnit(BWAPI::UnitType alternateUnit);
+	void setDefaultUnit(BWAPI::UnitType alternateUnit);
 private:
 	void addUnitInvestment(BWAPI::UnitType investment, int position);
 	void addUpgradeInvestment(BWAPI::UpgradeType investment, int position);
@@ -82,6 +83,7 @@ private:
 	bool investmentAdded = false;
 	BWAPI::UnitType unitWithPendingTech = NULL;
 	BWAPI::UnitType alternateUnit = NULL;
+	BWAPI::UnitType defaultUnit = NULL;
 	StrategyName strategy = Default;
 
 	UnitHandler* unitHandlerPtr;
