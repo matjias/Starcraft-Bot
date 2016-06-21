@@ -50,7 +50,7 @@ private:
 		building,
 	};
 
-	int armyValue;
+	int armyValue = 0;
 	
 	std::map<int, UnitPlacement> units;
 	CombatUnits combatUnits;

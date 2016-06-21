@@ -109,7 +109,7 @@ private:
 	StrategyDecider* strategyDeciderPtr = nullptr;
 
 	// Private functions
-	int knownEnemyValue;
+	int knownEnemyValue = 0;
 	bool foundEnemySpawn = false;
 	bool peekEnemySpawn = false;
 	bool peekEnemyExpansions = false;

@@ -24,6 +24,9 @@ void CombatUnits::idleUpdate(){
 				dragoonMicro(&it->second);
 			}
 		}
+		if (it->first == UnitTypes::Protoss_Observer){
+			idleMovement(&it->second, it->second.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Dragoon)->getPosition());
+		}
 	}
 }
 
