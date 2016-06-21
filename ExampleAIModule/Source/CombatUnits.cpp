@@ -24,8 +24,29 @@ void CombatUnits::idleUpdate(){
 				dragoonMicro(&it->second);
 			}
 		}
+		
+	}
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(UnitTypes::Protoss_Observer); it != unitMap.upper_bound(UnitTypes::Protoss_Observer); it++){
+		
 		if (it->first == UnitTypes::Protoss_Observer){
-			idleMovement(&it->second, it->second.getClosestUnit(Filter::GetType == UnitTypes::Protoss_Dragoon)->getPosition());
+			Unitset enemyU = Broodwar->enemy()->getUnits();
+
+			Position targ;
+			for (auto &e : enemyU) {
+				if (e->isCloaked() || e->isBurrowed()) {
+					targ = e->getPosition();
+					break;
+				}
+			}
+
+			if (targ != Position(0, 0)) {
+				idleMovement(&it->second, targ);
+			}
+			else {
+				idleMovement(&it->second,
+					it->second.getClosestUnit(Filter::GetType ==
+					UnitTypes::Protoss_Dragoon)->getPosition());
+			}
 		}
 	}
 }
@@ -34,6 +55,10 @@ void CombatUnits::runAttack(Position attackPos){
 	// Could be something from tactician? not very flexible.
 
 	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++){
+		if (it->first == UnitTypes::Protoss_Observer) {
+			continue;
+		}
+		
 		if (it->second.isIdle() || attackPos != lastAttackPos){
 			attackMovement(&it->second, attackPos);
 		}

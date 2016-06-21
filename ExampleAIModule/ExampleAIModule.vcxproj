@@ -14,6 +14,7 @@
     <ProjectGuid>{2E63AE74-758A-4607-9DE4-D28E814A6E13}</ProjectGuid>
     <RootNamespace>ExampleAIModule</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>ButcherBoy</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -90,18 +91,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Army.cpp" />
     <ClCompile Include="Source\BuildingUnits.cpp" />
-    <ClCompile Include="Source\BuildOrders.cpp" />
     <ClCompile Include="Source\CombatUnits.cpp" />
-    <ClCompile Include="Source\CustomVector.cpp" />
     <ClCompile Include="Source\Dll.cpp" />
-    <ClCompile Include="Source\ExampleAIModule - OLD.cpp" />
-    <ClCompile Include="Source\ExampleAIModule.cpp" />
+    <ClCompile Include="Source\ButcherBoy.cpp" />
     <ClCompile Include="Source\HarassUnits.cpp" />
     <ClCompile Include="Source\ProbeUnits.cpp" />
     <ClCompile Include="Source\ResourceSpender.cpp" />
-    <ClCompile Include="Source\Scouting.cpp" />
     <ClCompile Include="Source\ScoutManager.cpp" />
     <ClCompile Include="Source\ScoutUnits.cpp" />
     <ClCompile Include="Source\Squad.cpp" />
@@ -110,18 +106,13 @@
     <ClCompile Include="Source\UnitHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Army.h" />
     <ClInclude Include="Source\BuildingUnits.h" />
-    <ClInclude Include="Source\BuildOrders.h" />
     <ClInclude Include="Source\CombatUnits.h" />
     <ClInclude Include="Source\Constants.h" />
-    <ClInclude Include="Source\CustomVector.h" />
-    <ClInclude Include="Source\ExampleAIModule - OLD.h" />
-    <ClInclude Include="Source\ExampleAIModule.h" />
+    <ClInclude Include="Source\ButcherBoy.h" />
     <ClInclude Include="Source\HarassUnits.h" />
     <ClInclude Include="Source\ProbeUnits.h" />
     <ClInclude Include="Source\ResourceSpender.h" />
-    <ClInclude Include="Source\Scouting.h" />
     <ClInclude Include="Source\ScoutManager.h" />
     <ClInclude Include="Source\ScoutUnits.h" />
     <ClInclude Include="Source\Squad.h" />

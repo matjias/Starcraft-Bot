@@ -1,5 +1,5 @@
 #pragma once
-#include "ExampleAIModule.h"
+#include "ButcherBoy.h"
 
 // BWTA2 variables
 bool analyzed;
@@ -18,7 +18,7 @@ DWORD WINAPI AnalyzeThread() {
 	return 0;
 }
 
-void ExampleAIModule::onStart() {
+void ButcherBoy::onStart() {
 	// Bot Setup
 	Broodwar->enableFlag(Flag::UserInput); // Remove when bot is ready
 	Broodwar->setCommandOptimizationLevel(2);
@@ -38,9 +38,9 @@ void ExampleAIModule::onStart() {
 	scoutManager.setStrategyDecider(&strategyDecider);
 }
 
-void ExampleAIModule::onEnd(bool isWinner) { }
+void ButcherBoy::onEnd(bool isWinner) { }
 
-void ExampleAIModule::onFrame() {
+void ButcherBoy::onFrame() {
 	// Debug drawing
 	drawData();
 
@@ -63,7 +63,7 @@ void ExampleAIModule::onFrame() {
 
 }
 
-void ExampleAIModule::onSendText(std::string text) {
+void ButcherBoy::onSendText(std::string text) {
 	// Send the text to the game if it is not being processed.
 	if (text == "/scoutall") {
 		tactician.addAllScouts();
@@ -74,16 +74,16 @@ void ExampleAIModule::onSendText(std::string text) {
 
 }
 
-void ExampleAIModule::onReceiveText(BWAPI::Player player, std::string text) {
+void ButcherBoy::onReceiveText(BWAPI::Player player, std::string text) {
 	// Parse the received text
 	Broodwar << player->getName() << " said \"" << text << "\"" << std::endl;
 }
 
-void ExampleAIModule::onPlayerLeft(BWAPI::Player player) { }
+void ButcherBoy::onPlayerLeft(BWAPI::Player player) { }
 
-void ExampleAIModule::onNukeDetect(BWAPI::Position target) { }
+void ButcherBoy::onNukeDetect(BWAPI::Position target) { }
 
-void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
+void ButcherBoy::onUnitDiscover(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.addWarpingUnit(unit);
@@ -94,19 +94,19 @@ void ExampleAIModule::onUnitDiscover(BWAPI::Unit unit) {
 	}
 }
 
-void ExampleAIModule::onUnitEvade(BWAPI::Unit unit) {
+void ButcherBoy::onUnitEvade(BWAPI::Unit unit) {
 	if (Broodwar->enemy() == unit->getPlayer()) {
 		scoutManager.recordUnitEvade(unit);
 	}
 }
 
-void ExampleAIModule::onUnitShow(BWAPI::Unit unit) { }
+void ButcherBoy::onUnitShow(BWAPI::Unit unit) { }
 
-void ExampleAIModule::onUnitHide(BWAPI::Unit unit) { }
+void ButcherBoy::onUnitHide(BWAPI::Unit unit) { }
 
-void ExampleAIModule::onUnitCreate(BWAPI::Unit unit) { }
+void ButcherBoy::onUnitCreate(BWAPI::Unit unit) { }
 
-void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
+void ButcherBoy::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
 		Broodwar->sendText("%s er %s slettet", unit->getType().c_str(), tactician.recordDeadUnit(unit) ? "" : "IKKE!");
@@ -118,7 +118,7 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit unit) {
 	}
 }
 
-void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
+void ButcherBoy::onUnitMorph(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
 		// If one of our own units morphed, it must
 		// have been the assimilator and we want to record that
@@ -129,11 +129,11 @@ void ExampleAIModule::onUnitMorph(BWAPI::Unit unit) {
 	}
 }
 
-void ExampleAIModule::onUnitRenegade(BWAPI::Unit unit) { }
+void ButcherBoy::onUnitRenegade(BWAPI::Unit unit) { }
 
-void ExampleAIModule::onSaveGame(std::string gameName) { }
+void ButcherBoy::onSaveGame(std::string gameName) { }
 
-void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
+void ButcherBoy::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.recordNewUnit(unit);
 
@@ -149,7 +149,7 @@ void ExampleAIModule::onUnitComplete(BWAPI::Unit unit) {
 // on the map / screen
 	
 
-void ExampleAIModule::drawTerrainData() {
+void ButcherBoy::drawTerrainData() {
 	//we will iterate through all the base locations, and draw their outlines.
 	for (const auto& baseLocation : BWTA::getBaseLocations()) {
 		TilePosition p = baseLocation->getTilePosition();
@@ -197,7 +197,7 @@ void ExampleAIModule::drawTerrainData() {
 }
 // End of BWTA2 functions
 
-void ExampleAIModule::drawData() {
+void ButcherBoy::drawData() {
 	//BWTA draw
 	if (analyzed) {
 		drawTerrainData();

@@ -1,21 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Source\Army.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BuildOrders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CustomVector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ExampleAIModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scouting.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CombatUnits.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
@@ -40,9 +25,6 @@
     <ClCompile Include="Source\UnitHandler.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ExampleAIModule - OLD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Squad.cpp">
       <Filter>Source Files\New stuffs</Filter>
     </ClCompile>
@@ -55,24 +37,12 @@
     <ClCompile Include="Source\Dll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ButcherBoy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Army.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BuildOrders.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CustomVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ExampleAIModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scouting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\UnitHandler.h">
@@ -99,9 +69,6 @@
     <ClInclude Include="Source\Tactician.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ExampleAIModule - OLD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Squad.h">
       <Filter>Header Files\New stuffs</Filter>
     </ClInclude>
@@ -110,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="Source\ScoutUnits.h">
       <Filter>Header Files\New stuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ButcherBoy.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

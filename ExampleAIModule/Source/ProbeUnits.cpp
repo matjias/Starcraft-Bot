@@ -194,7 +194,6 @@ TilePosition ProbeUnits::recPlacement(UnitType type, TilePosition basePos, int d
 	}
 
 	if (depth >= BUILD_LOCATION_FACTOR) {
-		Broodwar->sendText("JUpti dub");
 		return Broodwar->getBuildLocation(type, basePos);
 	}
 	return recPlacement(type, basePos, depth + 1);
