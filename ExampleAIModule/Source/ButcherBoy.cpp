@@ -109,7 +109,7 @@ void ButcherBoy::onUnitCreate(BWAPI::Unit unit) { }
 void ButcherBoy::onUnitDestroy(BWAPI::Unit unit) {
 	// Is it one of our own units?
 	if (Broodwar->self() == unit->getPlayer()) {
-		Broodwar->sendText("%s er %s slettet", unit->getType().c_str(), tactician.recordDeadUnit(unit) ? "" : "IKKE!");
+		tactician.recordDeadUnit(unit);
 	}
 	// Was it an enemy unit?
 	else if (Broodwar->enemy() == unit->getPlayer() ||
