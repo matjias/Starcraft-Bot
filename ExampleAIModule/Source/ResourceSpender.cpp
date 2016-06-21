@@ -102,7 +102,7 @@ void ResourceSpender::update() {
 	}
 
 	//if (unitWithPendingTech != NULL && unitWithPendingTech != UnitTypes::Protoss_Zealot && alternateUnit != NULL && canAffordUnit(alternateUnit)) {
-	if (unitWithPendingTech != NULL &&
+	/*if (unitWithPendingTech != NULL &&
 		unitWithPendingTech != UnitTypes::Protoss_Zealot &&
 		canAffordUnit(UnitTypes::Protoss_Zealot)) {
 
@@ -111,6 +111,21 @@ void ResourceSpender::update() {
 		}
 		else {
 			addUnitInvestment(UnitTypes::Protoss_Zealot, false);
+		}
+	}*/
+
+	// Spend resource surplus
+	if (Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT) {
+		if (alternateUnit != NULL && canBuildUnit(alternateUnit) && 
+			(alternateUnit.gasPrice() == 0 || Broodwar->self()->gas() - reservedGas > GAS_SURPLUS_LIMIT)) {
+
+			addUnitInvestment(alternateUnit, true);
+		}
+		else if (canBuildUnit(defaultUnit)) {
+			addUnitInvestment(defaultUnit, true);
+		}
+		else if (canAffordUnit(defaultUnit)) {
+			addUnitInvestment(defaultUnit, false);
 		}
 	}
 
@@ -200,10 +215,10 @@ void ResourceSpender::purchase() {
 					}
 				}
 				else if (unitHandlerPtr->purchaseUnit(investments[i].getUnitType())) {
-					if (investments[i].getUnitType() == unitWithPendingTech) {
+					/*if (investments[i].getUnitType() == unitWithPendingTech) {
 						unitWithPendingTech = NULL;
 						alternateUnit = NULL;
-					}
+					}*/
 					removeInvestment(i);
 				}
 			}
@@ -217,12 +232,12 @@ void ResourceSpender::purchase() {
 	
 	// Draw/print
 	
-	if (unitWithPendingTech != NULL) {
+	/*if (unitWithPendingTech != NULL) {
 		Broodwar->drawTextScreen(280, 25, "Teching to: %s", unitWithPendingTech.c_str());
 	}
 	else {
 		Broodwar->drawTextScreen(280, 25, "Teching to: ");
-	}
+	}*/
 	if (alternateUnit != NULL) {
 		Broodwar->drawTextScreen(280, 35, "Alternate unit: %s", alternateUnit.c_str());
 	}
@@ -263,11 +278,11 @@ void ResourceSpender::addUnitInvestment(UnitType investment, bool urgent) {
 	removeInvestments(investment);
 	if (urgent) {
 		investments.insert(investments.begin(), unitOrUpgrade);
+		investmentAdded = true;
 	}
-	else {
+	else if (!investmentExists(investment)) {
 		investments.push_back(unitOrUpgrade);
 	}
-	investmentAdded = true;
 }
 
 void ResourceSpender::addUpgradeInvestment(UpgradeType investment, bool urgent) {
@@ -275,11 +290,11 @@ void ResourceSpender::addUpgradeInvestment(UpgradeType investment, bool urgent) 
 	removeInvestments(investment);
 	if (urgent ) {
 		investments.insert(investments.begin(), unitOrUpgrade);
+		investmentAdded = true;
 	}
-	else {
+	else if (!investmentExists(investment)) {
 		investments.push_back(unitOrUpgrade);
 	}
-	investmentAdded = true;
 }
 
 void ResourceSpender::addUnitInvestment(UnitType investment, int position) {
@@ -446,6 +461,10 @@ void ResourceSpender::addRequirements(int number) {
 			unitHandlerPtr->getWarpingUnitCount(uType.first) < 1) {
 
 			addUnitInvestment(uType.first, number);
+
+			/*if (!investments[number].getUnitType().isBuilding()) {
+				unitWithPendingTech = investments[number].getUnitType();
+			}*/
 		}
 	}
 
@@ -459,16 +478,21 @@ void ResourceSpender::addRequirements(int number) {
 		buildingUnitsPtr->getBuildingCount(UnitTypes::Protoss_Nexus)))) {
 
 		addUnitInvestment(UnitTypes::Protoss_Assimilator, number);
+
+		
+		/*if (!investments[number].getUnitType().isBuilding()) {
+			unitWithPendingTech = investments[number].getUnitType();
+		}*/
 	}
 
 	// Set unit type that requires tech
-	if (investments[number].getUnitType() == unitType) {
+	/*if (investments[number].getUnitType() == unitType) {
 		unitWithPendingTech = NULL;
 		alternateUnit = NULL;
 	}
 	else {
 		unitWithPendingTech = unitType;
-	}
+	}*/
 
 	// Add Pylon
 	if (investments[number].isUnitType() &&

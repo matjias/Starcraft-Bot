@@ -82,6 +82,7 @@ private:
 	bool investmentAdded = false;
 	BWAPI::UnitType unitWithPendingTech = NULL;
 	BWAPI::UnitType alternateUnit = NULL;
+	BWAPI::UnitType defaultUnit = BWAPI::UnitTypes::Protoss_Zealot;
 	StrategyName strategy = Default;
 
 	UnitHandler* unitHandlerPtr;
