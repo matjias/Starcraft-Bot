@@ -49,6 +49,12 @@ void CombatUnits::idleUpdate(){
 			}
 		}
 	}
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(UnitTypes::Protoss_Probe); it != unitMap.upper_bound(UnitTypes::Protoss_Probe); it++){
+		if (it->first == UnitTypes::Protoss_Probe){
+			it->second.attack(it->second.getClosestUnit(Filter::IsEnemy));
+		}
+
+	}
 }
 
 void CombatUnits::runAttack(Position attackPos){
@@ -137,6 +143,17 @@ void CombatUnits::dragoonMicro(Squad * squad){
 			}
 		}
 	}
+}
+
+Unit CombatUnits::extractUnit(UnitType unitType){
+	Unit tempProbe = NULL;
+	std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unitType);
+	Squad squad = it->second;
+	for (auto& probe : squad){
+		tempProbe = probe;
+		break;
+	}
+	return tempProbe;
 }
 
 Unit CombatUnits::getOptimalTarget(Unit unit){

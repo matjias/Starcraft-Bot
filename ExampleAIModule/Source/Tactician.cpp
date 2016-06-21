@@ -131,7 +131,17 @@ void Tactician::updateTactician(StrategyName currentStrategy) {
 void Tactician::updateTacticianStart() {
 	if (lastKnownStrategy == Defend) {
 		// Update defend units
+		if (unitHandler.getArmyValue() == 0 &&
+			unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Probe) < 2){
 
+			unitHandler.getCombatUnits()->addUnit(unitHandler.getProbeUnits()->extractUnit());
+		}
+		//unitHandler.getCombatUnits()->runAttack(Position(Broodwar->self()->getStartLocation()));
+	}
+	else{
+		if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Probe) > 0){
+			unitHandler.getProbeUnits()->addUnit(unitHandler.getCombatUnits()->extractUnit(UnitTypes::Protoss_Probe));
+		}
 	}
 	if (mapAnalyzed) {
 		if (lastUnitCommandUpdate + UNIT_COMMAND_UPDATE_TIME < Broodwar->getFrameCount()) {
