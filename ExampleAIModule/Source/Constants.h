@@ -31,7 +31,7 @@ struct ScoutAndGoalStruct {
 
 // Strategy
 const int EARLY_STAGE_SUPPLY = 6;
-const int MID_STAGE_SUPPLY = 100;
+const int MID_STAGE_SUPPLY = 80;
 const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
 const float ARMY_ATTACK_POWER_BALANCE = 0.8; // 0 = no army, 1 = enemy has no army

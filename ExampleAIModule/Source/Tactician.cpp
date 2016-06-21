@@ -230,6 +230,7 @@ void Tactician::invest() {
 		if (neededCombatUnit() != NULL) {
 			resourceSpender.addUnitInvestment(neededCombatUnit(), false);
 			resourceSpender.setAlternateUnit(previousCombatUnit(neededCombatUnit()));
+			resourceSpender.setDefaultUnit(armyComposition[0].first);
 		}
 	}
 }
@@ -275,22 +276,22 @@ BWAPI::UnitType Tactician::neededCombatUnit() {
 		return armyComposition[0].first;
 	}
 	else if (armyComposition.size() > 1) {
+
+		// Find the unit type that there are fewest of compared to the how many there should be
 		float minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[0].first) +
 			unitHandler.getWarpingUnitCount(armyComposition[0].first)) /
 			armyComposition[0].second;
 		int minPosition = 0;
 
-		// Find the unit type that there are fewest of compared to the how many there should be
 		for (int i = 1; i < armyComposition.size(); i++) {
-			if (armyComposition[i].second > 0 &&
-				(unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
-				unitHandler.getWarpingUnitCount(armyComposition[i].first)) /
-				armyComposition[i].second < minRate) {
-
-				minRate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
+			if (armyComposition[i].second) {
+				float rate = (unitHandler.getCombatUnits()->getUnitCount(armyComposition[i].first) +
 					unitHandler.getWarpingUnitCount(armyComposition[i].first)) /
 					armyComposition[i].second;
-				minPosition = i;
+				if (rate < minRate) {
+					minRate = rate;
+					minPosition = i;
+				}
 			}
 		}
 		return armyComposition[minPosition].first;
@@ -434,12 +435,12 @@ void Tactician::initArmyCompositions() {
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
 	protossMidGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 1.0));
 
-	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));
-	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
 	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
-	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 5.0));
-	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.2));
+	terranEarlyGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));
 	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 10.0));
+	terranEarlyGasHeavy.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 5.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Zealot, 1.0));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dragoon, 0.5));
 	terranMidGasLight.push_back(std::make_pair(BWAPI::UnitTypes::Protoss_Dark_Templar, 0.1));

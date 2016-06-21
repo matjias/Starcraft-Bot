@@ -599,6 +599,10 @@ void ResourceSpender::setAlternateUnit(UnitType unitType) {
 	alternateUnit = unitType;
 }
 
+void ResourceSpender::setDefaultUnit(UnitType unitType) {
+	defaultUnit = unitType;
+}
+
 int ResourceSpender::getMaxSupplyOutput() {
 	// Returns the maximum amount of unit supply that can be produced by all
 	// buildings in the time that it takes to produce a supply provider
