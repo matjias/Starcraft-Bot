@@ -43,9 +43,19 @@ void CombatUnits::idleUpdate(){
 				idleMovement(&it->second, targ);
 			}
 			else {
-				idleMovement(&it->second,
-					it->second.getClosestUnit(Filter::GetType ==
-					UnitTypes::Protoss_Dragoon)->getPosition());
+				Unit closestDragoon = it->second.getClosestUnit(Filter::GetType ==
+					UnitTypes::Protoss_Dragoon);
+				Unit closestZealot = it->second.getClosestUnit(Filter::GetType ==
+					UnitTypes::Protoss_Zealot);
+
+				if (closestDragoon) {
+					idleMovement(&it->second, closestDragoon->getPosition());
+				}
+				else if (closestZealot) {
+					idleMovement(&it->second, closestZealot->getPosition());
+				}
+
+				
 			}
 		}
 	}
