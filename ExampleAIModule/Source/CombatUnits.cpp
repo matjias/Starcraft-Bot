@@ -163,6 +163,7 @@ Unit CombatUnits::extractUnit(UnitType unitType){
 	Squad squad = it->second;
 	for (auto& probe : squad){
 		tempProbe = probe;
+		squad.erase(probe);
 		break;
 	}
 	return tempProbe;
