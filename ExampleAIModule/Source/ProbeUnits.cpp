@@ -305,12 +305,21 @@ int ProbeUnits::getWorkerCount() {
 // Gas Units
 //
 void ProbeUnits::mineGas(Unit base, Unit geyser) {
-	Unitset *newSet = new Unitset();
+	Unitset newSet;
+	int counter = 1;
 	for (auto& uPair : miningProbes){
-		moveUnits(&uPair.second, newSet, WORKERS_PER_GEYSER);
+		if (counter >= WORKERS_PER_GEYSER){
+			break;
+		}
+		for (auto& probe : uPair.second){
+			newSet.insert(probe);
+			uPair.second.erase(u);
+		}
+		counter++;
+		//moveUnits(&uPair.second, newSet, WORKERS_PER_GEYSER);
 	}
-	newSet->gather(geyser);
-	gasProbes.insert(std::make_pair(base->getID(), *newSet));
+	newSet.gather(geyser);
+	gasProbes.insert(std::make_pair(base->getID(), newSet));
 }
 
 void ProbeUnits::setAnalyzed(){
