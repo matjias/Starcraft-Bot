@@ -64,6 +64,9 @@ void UnitHandler::addUnit(Unit u) {
 		buildingUnits.addBuilding(u);
 	}
 	if (u->getType() == UnitTypes::Protoss_Assimilator){
+		Broodwar->sendText("0b - Its assimilator");
+		Broodwar->pauseGame();
+
 		probeUnits.mineGas(u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus), u);
 	}
 	

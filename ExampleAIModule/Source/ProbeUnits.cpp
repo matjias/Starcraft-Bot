@@ -62,7 +62,6 @@ void ProbeUnits::addUnit(Unit u){
 	}
 
 	//Broodwar->sendText("Gather din lort");
-
 	miningProbes[nearestNexus->getID()].insert(u);
 	u->gather(nearestField);
 	workerCount++;
@@ -132,12 +131,24 @@ bool ProbeUnits::deleteUnit(Unit u){
 }
 
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
+	Broodwar->sendText("3 - moveUnits");
+	Broodwar->pauseGame();
+
 	int counter = 0;
 	for (Unitset::iterator it = setFrom->begin(); counter < amount; it++, counter++) {
-		//Unit probe = *it;
-		setTo->insert(*it);
-		setFrom->erase(it);
+		Broodwar->sendText("4 - Loop nr. %i", counter);
+		Broodwar->pauseGame();
+		
+		Unit probe = *it;
+		setTo->insert(probe);
+		setFrom->erase(probe); // @TODO: Fix crash
+
+		Broodwar->sendText("5 - Loop, efter erase");
+		Broodwar->pauseGame();
 	}
+
+	Broodwar->sendText("6 - Out of for loop");
+	Broodwar->pauseGame();
 }
 
 // Build logic
@@ -289,9 +300,11 @@ bool ProbeUnits::checkMargin(UnitType type, TilePosition tilePos){
 //
 void ProbeUnits::mineNewBase(Unit base) {
 	Unitset newSet = Unitset();
+
+
 	for (auto& uPair : miningProbes){
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_MINERAL_LINE / miningProbes.size());
-}
+	}
 	newSet.gather(base->getClosestUnit(Filter::IsMineralField));
 	miningProbes.insert(std::pair<int, Unitset>(base->getID(), newSet));
 }
@@ -306,12 +319,23 @@ int ProbeUnits::getWorkerCount() {
 // Gas Units
 //
 void ProbeUnits::mineGas(Unit base, Unit geyser) {
-	Unitset newSet;
+	Unitset newSet = Unitset();
+
+	Broodwar->sendText("1 - MineGas");
+	Broodwar->pauseGame();
+
 	for (auto& uPair : miningProbes){
+		Broodwar->sendText("2 - For Loop");
+		Broodwar->pauseGame();
 		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
+		Broodwar->sendText("7 - ja");
+		Broodwar->pauseGame();
 	}
 	newSet.gather(geyser);
 	gasProbes.insert(std::make_pair(base->getID(), newSet));
+
+	Broodwar->sendText("8 - Det var ikke her");
+	Broodwar->pauseGame();
 }
 
 void ProbeUnits::setAnalyzed(){
