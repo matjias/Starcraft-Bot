@@ -176,7 +176,12 @@ void ResourceSpender::update() {
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
-			if (investments[i].pending) {
+			Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+		}
+		else {
+			Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
+
+			/*if (investments[i].pending) {
 				Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
 			}
 			else {
@@ -189,7 +194,7 @@ void ResourceSpender::update() {
 			}
 			else {
 				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
-			}
+			}*/
 		}
 	}
 }
