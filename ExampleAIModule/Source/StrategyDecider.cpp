@@ -44,19 +44,19 @@ void StrategyDecider::update() {
 
 	// Draw/print
 	if (currentStrategy == Default) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Default");
+		Broodwar->drawTextScreen(480, 20, "Current strategy: Default");
 	}
 	else if (currentStrategy == Expand) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Expand");
+		Broodwar->drawTextScreen(480, 20, "Current strategy: Expand");
 	}
 	else if (currentStrategy == AllIn) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: AllIn");
+		Broodwar->drawTextScreen(480, 20, "Current strategy: AllIn");
 	}
 	else if (currentStrategy == Defend) {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: Defend");
+		Broodwar->drawTextScreen(480, 20, "Current strategy: Defend");
 	}
 	else {
-		Broodwar->drawTextScreen(480, 30, "Current strategy: ");
+		Broodwar->drawTextScreen(480, 20, "Current strategy: ");
 	}
 }
 

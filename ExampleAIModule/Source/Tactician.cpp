@@ -126,6 +126,18 @@ void Tactician::updateTactician(StrategyName currentStrategy) {
 
 	// Draw/print
 	//Broodwar->drawTextScreen(480, 30, "Current stage: %i", currentStage);
+	if (currentStage == Start) {
+		Broodwar->drawTextScreen(480, 30, "Game state: Start");
+	}
+	else if (currentStage == Early) {
+		Broodwar->drawTextScreen(480, 30, "Game state: Early");
+	}
+	else if (currentStage == Mid) {
+		Broodwar->drawTextScreen(480, 30, "Game state: Mid");
+	}
+	else if (currentStage == Late) {
+		Broodwar->drawTextScreen(480, 30, "Game state: Late");
+	}
 }
 
 void Tactician::updateTacticianStart() {
@@ -188,11 +200,12 @@ void Tactician::updateTacticianStart() {
 	else {
 		Broodwar->drawTextScreen(480, 50, "Stance: Defensive", attack);
 	}
-	/*Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
-	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
-	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
-	Broodwar->drawTextScreen(480, 80, "Scout Count: %i", unitHandler.getScoutUnits()->getAmountOfScouts());
-	Broodwar->drawTextScreen(480, 90, "pylon Count: %i", unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Pylon));*/
+	Broodwar->drawTextScreen(480, 75, "Zealots: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
+	Broodwar->drawTextScreen(480, 85, "Dragoons: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
+	Broodwar->drawTextScreen(480, 95, "Dark Templars: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dark_Templar));
+	Broodwar->drawTextScreen(480, 105, "Workers: %i", unitHandler.getProbeUnits()->getWorkerCount());
+	Broodwar->drawTextScreen(480, 115, "Scouts: %i", unitHandler.getScoutUnits()->getAmountOfScouts());
+	//Broodwar->drawTextScreen(480, 90, "pylon Count: %i", unitHandler.getBuildingUnits()->getBuildingCount(UnitTypes::Protoss_Pylon));
 	
 
 }
