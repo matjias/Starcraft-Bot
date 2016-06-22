@@ -61,7 +61,7 @@ void ProbeUnits::addUnit(Unit u){
 		}
 	}
 
-	Broodwar->sendText("Gather din lort");
+	//Broodwar->sendText("Gather din lort");
 
 	miningProbes[nearestNexus->getID()].insert(u);
 	u->gather(nearestField);

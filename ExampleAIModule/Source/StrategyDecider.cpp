@@ -69,10 +69,10 @@ void StrategyDecider::decideStrategy() {
 	if (defendMainBaseResult > 0) { // @TODO: Enemy combat units in our regions
 		currentStrategy = Defend;
 		if (defendMainBaseResult > 1) {
-			Broodwar->sendText("Enemies in base");
+			//Broodwar->sendText("Enemies in base");
 		}
 		else {
-			Broodwar->sendText("Enemy in base");
+			//Broodwar->sendText("Enemy in base");
 		}
 	}
 	else if (scoutManagerPtr->getEnemyDefenseValue() == 0 &&
