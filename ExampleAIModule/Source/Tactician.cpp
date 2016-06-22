@@ -182,6 +182,12 @@ void Tactician::updateTacticianStart() {
 	}
 	
 	Broodwar->drawTextScreen(480, 40, "Army Balance: %f", armyBalance);
+	if (attack) {
+		Broodwar->drawTextScreen(480, 50, "Stance: Offensive", attack);
+	}
+	else {
+		Broodwar->drawTextScreen(480, 50, "Stance: Defensive", attack);
+	}
 	/*Broodwar->drawTextScreen(480, 50, "Zealot Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Zealot));
 	Broodwar->drawTextScreen(480, 60, "Dragoo Count: %i", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Dragoon));
 	Broodwar->drawTextScreen(480, 70, "worke Count: %i", unitHandler.getProbeUnits()->getWorkerCount());
