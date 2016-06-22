@@ -136,10 +136,6 @@ void ButcherBoy::onSaveGame(std::string gameName) { }
 void ButcherBoy::onUnitComplete(BWAPI::Unit unit) {
 	if (Broodwar->self() == unit->getPlayer()) {
 		tactician.recordNewUnit(unit);
-
-		if (unit->getType() == UnitTypes::Protoss_Assimilator) {
-			Broodwar->sendText("Assimilator completed");
-		}
 	}
 }
 

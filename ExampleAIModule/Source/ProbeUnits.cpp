@@ -61,8 +61,7 @@ void ProbeUnits::addUnit(Unit u){
 		}
 	}
 
-	Broodwar->sendText("Gather din lort");
-
+	//Broodwar->sendText("Gather din lort");
 	miningProbes[nearestNexus->getID()].insert(u);
 	u->gather(nearestField);
 	workerCount++;
@@ -308,7 +307,16 @@ int ProbeUnits::getWorkerCount() {
 void ProbeUnits::mineGas(Unit base, Unit geyser) {
 	Unitset newSet;
 	for (auto& uPair : miningProbes){
-		moveUnits(&uPair.second, &newSet, WORKERS_PER_GEYSER);
+		int counter = 1;
+		for (auto& probe : uPair.second){
+			if (counter >= WORKERS_PER_GEYSER){
+				break;
+			}
+			newSet.insert(probe);
+			uPair.second.erase(probe);
+			counter++;
+		}
+		//moveUnits(&uPair.second, newSet, WORKERS_PER_GEYSER);
 	}
 	newSet.gather(geyser);
 	gasProbes.insert(std::make_pair(base->getID(), newSet));
