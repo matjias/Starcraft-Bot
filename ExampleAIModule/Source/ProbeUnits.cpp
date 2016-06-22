@@ -306,16 +306,16 @@ int ProbeUnits::getWorkerCount() {
 //
 void ProbeUnits::mineGas(Unit base, Unit geyser) {
 	Unitset newSet;
-	int counter = 1;
 	for (auto& uPair : miningProbes){
-		if (counter >= WORKERS_PER_GEYSER){
-			break;
-		}
+		int counter = 1;
 		for (auto& probe : uPair.second){
+			if (counter >= WORKERS_PER_GEYSER){
+				break;
+			}
 			newSet.insert(probe);
-			uPair.second.erase(u);
+			uPair.second.erase(probe);
+			counter++;
 		}
-		counter++;
 		//moveUnits(&uPair.second, newSet, WORKERS_PER_GEYSER);
 	}
 	newSet.gather(geyser);
