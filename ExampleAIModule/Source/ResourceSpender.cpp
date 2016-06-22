@@ -128,15 +128,17 @@ void ResourceSpender::update() {
 			addUnitInvestment(defaultUnit, false);
 		}
 	}*/
-	if (canAffordUnits(investments[0].getUnitType(), alternateUnit, UnitTypes::Protoss_Pylon) && canBuildUnit(alternateUnit)) {
-		addUnitInvestment(defaultUnit, true);
-	}
-	else if (canAffordUnits(investments[0].getUnitType(), defaultUnit, UnitTypes::Protoss_Pylon)) {
-		if (canBuildUnit(defaultUnit)) {
-			addUnitInvestment(defaultUnit, true);
+	if (!canBuildUnit(investments[0].getUnitType())) {
+		if (canAffordUnits(investments[0].getUnitType(), alternateUnit, UnitTypes::Protoss_Pylon) && canBuildUnit(alternateUnit)) {
+			addUnitInvestment(alternateUnit, true);
 		}
-		else {
-			addUnitInvestment(defaultUnit, false);
+		else if (canAffordUnits(investments[0].getUnitType(), defaultUnit, UnitTypes::Protoss_Pylon)) {
+			if (canBuildUnit(defaultUnit)) {
+				addUnitInvestment(defaultUnit, true);
+			}
+			else {
+				addUnitInvestment(defaultUnit, false);
+			}
 		}
 	}
 

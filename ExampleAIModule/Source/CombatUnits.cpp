@@ -76,9 +76,10 @@ void CombatUnits::runAttack(Position attackPos){
 			continue;
 		}
 		
-		if (it->second.isIdle() || attackPos != lastAttackPos){
+		/*if (it->second.isIdle() || attackPos != lastAttackPos){
 			attackMovement(&it->second, attackPos);
-		}
+		}*/
+		attackMovement(&it->second, attackPos);
 		
 		/*if (it->first == UnitTypes::Protoss_Zealot && it->second.){
 			attackMovement(&it->second, attackPos);
@@ -115,10 +116,12 @@ void CombatUnits::retreat(Position retreatPos){
 		}
 
 		if (it->second.getPosition().getDistance(retreatPos) > RETREAT_DISTANCE) {
-			if (it->second.isIdle() || retreatPos != lastAttackPos) {
+			/*if (it->second.isIdle() || retreatPos != lastAttackPos) {
 				moveCommand(&it->second, retreatPos);
 				lastAttackPos = retreatPos;
-			}
+			}*/
+			moveCommand(&it->second, retreatPos);
+			lastAttackPos = retreatPos;
 		}
 	}
 }
