@@ -115,7 +115,7 @@ void ResourceSpender::update() {
 	}*/
 
 	// Spend resource surplus
-	if (Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT) {
+	/*if (Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT) {
 		if (alternateUnit != NULL && canBuildUnit(alternateUnit) && 
 			(alternateUnit.gasPrice() == 0 || Broodwar->self()->gas() - reservedGas > GAS_SURPLUS_LIMIT)) {
 
@@ -125,6 +125,17 @@ void ResourceSpender::update() {
 			addUnitInvestment(defaultUnit, true);
 		}
 		else if (canAffordUnit(defaultUnit)) {
+			addUnitInvestment(defaultUnit, false);
+		}
+	}*/
+	if (canAffordUnits(investments[0].getUnitType(), alternateUnit, UnitTypes::Protoss_Pylon) && canBuildUnit(alternateUnit)) {
+		addUnitInvestment(defaultUnit, true);
+	}
+	else if (canAffordUnits(investments[0].getUnitType(), defaultUnit, UnitTypes::Protoss_Pylon)) {
+		if (canBuildUnit(defaultUnit)) {
+			addUnitInvestment(defaultUnit, true);
+		}
+		else {
 			addUnitInvestment(defaultUnit, false);
 		}
 	}
@@ -384,6 +395,18 @@ bool ResourceSpender::canAffordUnit(UnitType unitType) {
 	return (unitType.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
 		unitType.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
 		unitType.supplyRequired() / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
+}
+
+bool ResourceSpender::canAffordUnits(UnitType unitType1, UnitType unitType2) {
+	return (unitType1.mineralPrice() + unitType2.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
+		unitType1.gasPrice() + unitType2.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
+		(unitType1.supplyRequired() + unitType2.supplyRequired()) / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
+}
+
+bool ResourceSpender::canAffordUnits(UnitType unitType1, UnitType unitType2, UnitType unitType3) {
+	return (unitType1.mineralPrice() + unitType2.mineralPrice() + unitType3.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
+		unitType1.gasPrice() + unitType2.gasPrice() + unitType3.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
+		(unitType1.supplyRequired() + unitType2.supplyRequired() + unitType3.supplyRequired()) / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 }
 
 bool ResourceSpender::canBuildBuilding(UnitType buildingType) {

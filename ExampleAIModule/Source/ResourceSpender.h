@@ -73,6 +73,8 @@ private:
 	bool upgradeInProgress(BWAPI::UpgradeType upgradeType);
 	int getMaxSupplyOutput();
 	bool canAffordUnit(BWAPI::UnitType unitType);
+	bool canAffordUnits(BWAPI::UnitType unitType1, BWAPI::UnitType unitType2);
+	bool canAffordUnits(BWAPI::UnitType unitType1, BWAPI::UnitType unitType2, BWAPI::UnitType unitType3);
 
 	std::vector<UnitOrUpgrade> investments;
 	std::vector<BWAPI::UpgradeType> upgradesInProgress;
