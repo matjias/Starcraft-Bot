@@ -230,7 +230,19 @@ void Tactician::setAnalyzed(){
 			neighborRegion = regs.second :
 			neighborRegion = regs.first;
 
-		rendezvousPos = neighborRegion->getCenter();
+		//rendezvousPos = neighborRegion->getCenter();
+
+		std::set<BWTA::Chokepoint*> chokesFromNeighbor = neighborRegion->getChokepoints();
+
+		BWTA::Chokepoint* neighborChoke1 = *chokesFromNeighbor.begin();
+		BWTA::Chokepoint* neighborChoke2 = *chokesFromNeighbor.begin();
+		
+		if (neighborChoke1 == chokeInOwn) {
+			rendezvousPos = (neighborRegion->getCenter() + neighborChoke1->getCenter()) / 2;
+		}
+		else {
+			rendezvousPos = (neighborRegion->getCenter() + neighborChoke2->getCenter()) / 2;
+		}
 	}
 	unitHandler.getCombatUnits()->setAnalyzed(rendezvousPos);
 }

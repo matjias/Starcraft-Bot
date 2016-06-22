@@ -34,7 +34,7 @@ const int EARLY_STAGE_SUPPLY = 6;
 const int MID_STAGE_SUPPLY = 80;
 const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
-const float ARMY_ATTACK_POWER_BALANCE = 0.65; // 0 = no army, 1 = enemy has no army
+const float ARMY_ATTACK_POWER_BALANCE = 0.7; // 0 = no army, 1 = enemy has no army
 const float ARMY_RETREAT_POWER_BALANCE = 0.45;
 const float DEFAULT_WORKER_BALANCE = 0.5;
 const float ALLIN_WORKER_BALANCE = 0.2;
