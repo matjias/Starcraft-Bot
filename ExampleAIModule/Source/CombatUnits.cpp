@@ -147,9 +147,11 @@ void CombatUnits::dragoonMicro(Squad * squad){
 		}
 		else {/*
 			Broodwar->sendText("Already attacked (SHOULD NOT RIGHT NOW)");*/
-			UnitCommand lastCommand(unit->getLastCommand());
-			if (lastCommand.getType() != UnitCommandTypes::Move) {
-				unit->move(escapePos(unit));
+			if (unit->getUnitsInWeaponRange(UnitTypes::Protoss_Dragoon.groundWeapon(), Filter::IsEnemy).size() > 0) {
+				UnitCommand lastCommand(unit->getLastCommand());
+				if (lastCommand.getType() != UnitCommandTypes::Move) {
+					unit->move(escapePos(unit));
+				}
 			}
 		}
 	}
