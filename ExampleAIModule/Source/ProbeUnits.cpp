@@ -36,7 +36,38 @@ void ProbeUnits::update(){
 }
 
 void ProbeUnits::addUnit(Unit u){
-	Unit field;
+	if (!u->exists()) {
+		Broodwar->sendText("Not added to probes, unit %i was dead", u->getID());
+		return;
+	}
+
+	Unit nearestNexus = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus);
+	if (!nearestNexus->exists()) {
+		Broodwar->sendText("Not added to probes, no nexuses exist");
+		return;
+	}
+
+	Unit nearestField = nearestNexus->getClosestUnit(Filter::IsMineralField);
+	if (workerCount == 0) {
+		miningProbes.insert(std::make_pair(nearestNexus->getID(), Unitset()));
+	}
+	else {
+		Unit unMinedField = Broodwar->getClosestUnit(Position(nearestField->getPosition().x,
+			nearestField->getPosition().y - TILE_SIZE * (workerCount % 3)),
+			Filter::IsMineralField && !Filter::IsBeingGathered);
+			
+		if (unMinedField != NULL) {
+			nearestField = unMinedField;
+		}
+	}
+
+	Broodwar->sendText("Gather din lort");
+
+	miningProbes[nearestNexus->getID()].insert(u);
+	u->gather(nearestField);
+	workerCount++;
+
+	/*Unit field;
 	Unit nexus = u->getClosestUnit(Filter::GetType == UnitTypes::Protoss_Nexus);
 	int nexusId = 0;
 	if (u->exists()){
@@ -58,7 +89,7 @@ void ProbeUnits::addUnit(Unit u){
 	}
 	miningProbes[nexusId].insert(u);
 	u->gather(field);
-	workerCount++;
+	workerCount++;*/
 }
 
 Unit ProbeUnits::extractUnit(){

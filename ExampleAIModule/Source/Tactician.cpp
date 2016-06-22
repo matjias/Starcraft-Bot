@@ -140,7 +140,18 @@ void Tactician::updateTacticianStart() {
 	}
 	else{
 		if (unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Probe) > 0){
-			unitHandler.getProbeUnits()->addUnit(unitHandler.getCombatUnits()->extractUnit(UnitTypes::Protoss_Probe));
+			Broodwar->sendText("Der er %i probes i combat units", unitHandler.getCombatUnits()->getUnitCount(UnitTypes::Protoss_Probe));
+
+			Unit probe = unitHandler.getCombatUnits()->extractUnit(UnitTypes::Protoss_Probe);
+
+			if (probe) {
+				Broodwar->sendText("Probe %i extracted", probe->getID());
+			}
+			else {
+				Broodwar->sendText("No probe extracted");
+			}
+
+			unitHandler.getProbeUnits()->addUnit(probe);
 		}
 	}
 	if (mapAnalyzed) {
