@@ -158,14 +158,15 @@ void CombatUnits::dragoonMicro(Squad * squad){
 }
 
 Unit CombatUnits::extractUnit(UnitType unitType){
+	//Broodwar->sendText("Prøver at fjerne %s fra combatUnits", unitType.c_str());
+
 	Unit tempProbe = NULL;
-	std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unitType);
-	Squad squad = it->second;
-	for (auto& probe : squad){
+	Squad *squad = &unitMap.lower_bound(unitType)->second;
+	for (auto& probe : *squad){
 		tempProbe = probe;
-		squad.erase(probe);
 		break;
 	}
+	squad->erase(tempProbe);
 	return tempProbe;
 }
 
