@@ -12,6 +12,7 @@ public:
 	void _init();
 	void update();
 	void runAttack(BWAPI::Position attackPos);
+	void retreat(BWAPI::Position attackPos);
 	void addUnit(BWAPI::Unit u);
 	bool deleteUnit(BWAPI::Unit unit);
 	int getUnitCount(BWAPI::UnitType unitType);
@@ -41,6 +42,7 @@ private:
 	void idleMovement(Squad *squad, BWAPI::Position idleLoc);
 	void idleMovement(BWAPI::Unit u, BWAPI::Position idleLoc);
 	void attackMovement(Squad *squad, BWAPI::Position pos);
+	void moveCommand(Squad *squad, BWAPI::Position pos);
 	void saveUnitToSquad(BWAPI::Unit u);
 	bool unitAtPos(BWAPI::Unit u, BWAPI::TilePosition pos);
 	bool squadAtPos(Squad uSet, BWAPI::TilePosition pos);

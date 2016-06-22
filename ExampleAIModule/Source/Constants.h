@@ -34,8 +34,8 @@ const int EARLY_STAGE_SUPPLY = 6;
 const int MID_STAGE_SUPPLY = 80;
 const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
-const float ARMY_ATTACK_POWER_BALANCE = 0.75; // 0 = no army, 1 = enemy has no army
-const float ARMY_RETREAT_POWER_BALANCE = 0.5;
+const float ARMY_ATTACK_POWER_BALANCE = 0.65; // 0 = no army, 1 = enemy has no army
+const float ARMY_RETREAT_POWER_BALANCE = 0.45;
 const float DEFAULT_WORKER_BALANCE = 0.5;
 const float ALLIN_WORKER_BALANCE = 0.2;
 
@@ -49,6 +49,7 @@ const int MINERAL_SURPLUS_LIMIT = 300;
 const int GAS_SURPLUS_LIMIT = 200;
 const float GAS_TO_MINERALS = 1.2;
 const int UNIT_COMMAND_UPDATE_TIME = 100;
+const int RETREAT_DISTANCE = 48 * 32; // Tile distance * pixels per tile
 
 // Units and buildings
 const int OBSERVERS_TO_SCOUT = 1;

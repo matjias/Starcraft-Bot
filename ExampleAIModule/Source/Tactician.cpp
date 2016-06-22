@@ -156,7 +156,7 @@ void Tactician::updateTacticianStart() {
 			}
 
 			if (attack) {
-				if (scoutManagerPtr->getEnemyBaseCount() > 0){
+				if (scoutManagerPtr->getEnemyBaseCount() > 0) {
 					unitHandler.getCombatUnits()->runAttack(Position(scoutManagerPtr->getEnemySpawn()));
 				}
 				else {
@@ -164,7 +164,8 @@ void Tactician::updateTacticianStart() {
 				}
 			}
 			else {
-				unitHandler.getCombatUnits()->runAttack(rendezvousPos);
+				//unitHandler.getCombatUnits()->runAttack(rendezvousPos);
+				unitHandler.getCombatUnits()->retreat(rendezvousPos);
 			}
 		}
 	}
@@ -424,6 +425,22 @@ void Tactician::computeArmyComposition() {
 	}
 }
 
+Position Tactician::getRendezvousPos() {
+	return rendezvousPos;
+}
+
+void Tactician::foundEnemyBase(TilePosition pos) {
+	tilePathToEnemy = BWTA::getShortestPath(TilePosition(rendezvousPos), pos);
+}
+
+std::vector<BWAPI::TilePosition> Tactician::getPathToEnemy() {
+	return tilePathToEnemy;
+}
+
+bool Tactician::getBuildExpansions() {
+	return buildExpansions;
+}
+
 void Tactician::initArmyCompositions() {
 
 	// Army compositions vs Protoss, Terran, and Zerg
@@ -511,20 +528,4 @@ bool Tactician::enemyCloakPossible() {
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Hive) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker_Egg) ||
 		scoutManagerPtr->getAmountOfEnemyUnit(BWAPI::UnitTypes::Zerg_Lurker);
-}
-
-Position Tactician::getRendezvousPos() {
-	return rendezvousPos;
-}
-
-void Tactician::foundEnemyBase(TilePosition pos) {
-	tilePathToEnemy = BWTA::getShortestPath(TilePosition(rendezvousPos), pos);
-}
-
-std::vector<BWAPI::TilePosition> Tactician::getPathToEnemy() {
-	return tilePathToEnemy;
-}
-
-bool Tactician::getBuildExpansions() {
-	return buildExpansions;
 }

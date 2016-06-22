@@ -1,5 +1,6 @@
 #pragma once
 #include "CombatUnits.h"
+#include "Constants.h"
 
 using namespace BWAPI;
 
@@ -107,6 +108,21 @@ void CombatUnits::runAttack(Position attackPos){
 	//}
 }
 
+void CombatUnits::retreat(Position retreatPos){
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++) {
+		if (it->first == UnitTypes::Protoss_Observer) {
+			continue;
+		}
+
+		if (it->second.getPosition().getDistance(retreatPos) > RETREAT_DISTANCE) {
+			if (it->second.isIdle() || retreatPos != lastAttackPos) {
+				moveCommand(&it->second, retreatPos);
+				lastAttackPos = retreatPos;
+			}
+		}
+	}
+}
+
 void CombatUnits::dragoonMicro(Squad * squad){
 	Unit target = squad->getClosestUnit(Filter::IsEnemy);
 
@@ -188,6 +204,10 @@ void CombatUnits::idleMovement(Unit u, Position idleLoc){
 
 void CombatUnits::attackMovement(Squad *squad, Position pos){
 	squad->attack(pos);
+}
+
+void CombatUnits::moveCommand(Squad *squad, Position pos){
+	squad->move(pos);
 }
 
 void CombatUnits::addUnit(Unit u){
