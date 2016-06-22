@@ -103,9 +103,9 @@ bool ProbeUnits::deleteUnit(Unit u){
 void ProbeUnits::moveUnits(Unitset *setFrom, Unitset *setTo, int amount){
 	int counter = 0;
 	for (Unitset::iterator it = setFrom->begin(); counter < amount; it++, counter++) {
-		Unit probe = *it;
-		setTo->insert(probe);
-		setFrom->erase(probe); // @TODO: Fix crash
+		//Unit probe = *it;
+		setTo->insert(*it);
+		setFrom->erase(it);
 	}
 }
 
