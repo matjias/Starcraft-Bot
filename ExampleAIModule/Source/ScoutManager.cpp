@@ -78,6 +78,9 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		if (enemyUnits.at(u->getID())->unitType != u->getType()) {
 			recordUnitMorph(u);
 		}
+		else if (isGroundDefense(u->getType())) {
+			knownEnemyValue += groundDefenseValue(u->getType());
+		}
 	}
 	// Otherwise we need to record it
 	else {
@@ -182,9 +185,12 @@ void ScoutManager::recordUnitMorph(Unit u) {
 			oldUnitType.gasPrice() * GAS_TO_MINERALS;
 	}*/
 
-	if (u->getType().canAttack() && !u->getType().isWorker()) {
+	if (u->getType().canAttack() && !u->getType().isWorker() && !u->getType().isBuilding()) {
 		knownEnemyValue += u->getType().mineralPrice() +
 			u->getType().gasPrice() * GAS_TO_MINERALS;
+	}
+	else if (isGroundDefense(u->getType())) {
+		knownEnemyValue += groundDefenseValue(u->getType());
 	}
 
 	// Update the recorded unit type

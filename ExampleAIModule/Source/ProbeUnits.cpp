@@ -176,12 +176,12 @@ bool ProbeUnits::newBuilding(BWAPI::UnitType building, TilePosition basePos){
 	}
 
 	// Draw/print
-	/*if (builder != NULL) {
+	if (builder != NULL) {
 		Broodwar->drawTextScreen(480, 100, "Builder ID: %i", builder->getID());
 	}
 	else {
 		Broodwar->drawTextScreen(480, 100, "Builder ID: NULL");
-	}*/
+	}
 	
 	return true;
 }

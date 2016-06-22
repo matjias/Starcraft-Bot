@@ -31,7 +31,7 @@ struct ScoutAndGoalStruct {
 
 // Strategy
 const int EARLY_STAGE_SUPPLY = 6;
-const int MID_STAGE_SUPPLY = 80;
+const int MID_STAGE_SUPPLY = 70;
 const int STRATEGY_UPDATE_TIME = 50;
 const float DEFAULT_ARMY_BALANCE = 0.5;
 const float ARMY_ATTACK_POWER_BALANCE = 0.7; // 0 = no army, 1 = enemy has no army
@@ -58,7 +58,7 @@ const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int DRAGOONS_BEFORE_RANGE = 2;
 const int PHOTON_CANNON_VALUE = 200;
 const int BUNKER_VALUE = 350;
-const int SUNKEN_COLONY_VALUE = 350;
+const int SUNKEN_COLONY_VALUE = 200;
 
 // Build location
 const int BUILD_LOCATION_UPDATE_TIME = 100;
