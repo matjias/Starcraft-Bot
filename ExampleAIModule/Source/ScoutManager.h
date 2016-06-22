@@ -128,6 +128,9 @@ private:
 	void incrementEnemyUnitsAmount(BWAPI::Unit u);
 	void decrementEnemyUnitsAmount(BWAPI::Unit u);
 
+	bool isGroundDefense(BWAPI::UnitType u);
+	int groundDefenseValue(BWAPI::UnitType u);
+
 	/*bool scoutHasGoal(ScoutAndGoalStruct* scoutAndGoal);
 	LocationStruct* getScoutGoalInSpawns(BWAPI::TilePosition goal);
 	bool haveAnyScoutsReachedGoal(std::vector<ScoutAndGoalStruct*> scoutsAndGoals);

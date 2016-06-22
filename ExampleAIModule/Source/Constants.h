@@ -55,6 +55,9 @@ const int OBSERVERS_TO_SCOUT = 1;
 const int OBSERVERS_WITH_ARMY = 1;
 const int DEFENSE_STRUCTURES_PER_BASE = 3;
 const int DRAGOONS_BEFORE_RANGE = 2;
+const int PHOTON_CANNON_VALUE = 200;
+const int BUNKER_VALUE = 350;
+const int SUNKEN_COLONY_VALUE = 350;
 
 // Build location
 const int BUILD_LOCATION_UPDATE_TIME = 100;
