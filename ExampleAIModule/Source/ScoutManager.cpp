@@ -78,12 +78,18 @@ void ScoutManager::recordUnitDiscover(Unit u) {
 		if (enemyUnits.at(u->getID())->unitType != u->getType()) {
 			recordUnitMorph(u);
 		}
+		else if (isGroundDefense(u->getType())) {
+			knownEnemyValue += groundDefenseValue(u->getType());
+		}
 	}
 	// Otherwise we need to record it
 	else {
-		if (u->getType().canAttack() && !u->getType().isWorker()) {
+		if (u->getType().canAttack() && !u->getType().isWorker() && !u->getType().isBuilding()) {
 			knownEnemyValue += u->getType().mineralPrice() +
 				u->getType().gasPrice() * GAS_TO_MINERALS;
+		}
+		else if (isGroundDefense(u->getType())) {
+			knownEnemyValue += groundDefenseValue(u->getType());
 		}
 
 		UnitStruct *uStruct = new UnitStruct();
@@ -110,9 +116,12 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	// Decrement enemyUnitsAmount
 	decrementEnemyUnitsAmount(u);
 
-	if (u->getType().canAttack() && !u->getType().isWorker()) {
+	if (u->getType().canAttack() && !u->getType().isWorker() && !u->getType().isBuilding()) {
 		knownEnemyValue -= u->getType().mineralPrice() +
 			u->getType().gasPrice() * GAS_TO_MINERALS;
+	}
+	else if (isGroundDefense(u->getType())) {
+		knownEnemyValue -= groundDefenseValue(u->getType());
 	}
 
 	int elementsRemoved = enemyUnits.erase(u->getID());
@@ -126,6 +135,25 @@ int ScoutManager::recordUnitDestroy(Unit u) {
 	}
 
 	return elementsRemoved;
+}
+
+bool ScoutManager::isGroundDefense(UnitType unitType) {
+	return unitType == UnitTypes::Protoss_Photon_Cannon ||
+		unitType == UnitTypes::Terran_Bunker ||
+		unitType == UnitTypes::Zerg_Sunken_Colony;
+}
+
+int ScoutManager::groundDefenseValue(UnitType unitType) {
+	if (unitType == UnitTypes::Protoss_Photon_Cannon) {
+		return PHOTON_CANNON_VALUE;
+	}
+	else if (unitType == UnitTypes::Terran_Bunker) {
+		return BUNKER_VALUE;
+	}
+	else if (unitType == UnitTypes::Zerg_Sunken_Colony) {
+		return SUNKEN_COLONY_VALUE;
+	}
+	return 0;
 }
 
 void ScoutManager::recordUnitEvade(Unit u) {
@@ -157,9 +185,12 @@ void ScoutManager::recordUnitMorph(Unit u) {
 			oldUnitType.gasPrice() * GAS_TO_MINERALS;
 	}*/
 
-	if (u->getType().canAttack() && !u->getType().isWorker()) {
+	if (u->getType().canAttack() && !u->getType().isWorker() && !u->getType().isBuilding()) {
 		knownEnemyValue += u->getType().mineralPrice() +
 			u->getType().gasPrice() * GAS_TO_MINERALS;
+	}
+	else if (isGroundDefense(u->getType())) {
+		knownEnemyValue += groundDefenseValue(u->getType());
 	}
 
 	// Update the recorded unit type
@@ -282,7 +313,6 @@ int ScoutManager::getEnemyDefenseValue() {
 }
 
 float ScoutManager::getEnemyArmyValue() {
-	// @TODO: Get army value of enemy combat units, 1 gas = 1 GAS_TO_MINERALS
 	return knownEnemyValue;
 }
 

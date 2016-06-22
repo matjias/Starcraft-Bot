@@ -1,5 +1,6 @@
 #pragma once
 #include "CombatUnits.h"
+#include "Constants.h"
 
 using namespace BWAPI;
 
@@ -43,9 +44,19 @@ void CombatUnits::idleUpdate(){
 				idleMovement(&it->second, targ);
 			}
 			else {
-				idleMovement(&it->second,
-					it->second.getClosestUnit(Filter::GetType ==
-					UnitTypes::Protoss_Dragoon)->getPosition());
+				Unit closestDragoon = it->second.getClosestUnit(Filter::GetType ==
+					UnitTypes::Protoss_Dragoon);
+				Unit closestZealot = it->second.getClosestUnit(Filter::GetType ==
+					UnitTypes::Protoss_Zealot);
+
+				if (closestDragoon) {
+					idleMovement(&it->second, closestDragoon->getPosition());
+				}
+				else if (closestZealot) {
+					idleMovement(&it->second, closestZealot->getPosition());
+				}
+
+				
 			}
 		}
 	}
@@ -65,9 +76,10 @@ void CombatUnits::runAttack(Position attackPos){
 			continue;
 		}
 		
-		if (it->second.isIdle() || attackPos != lastAttackPos){
+		/*if (it->second.isIdle() || attackPos != lastAttackPos){
 			attackMovement(&it->second, attackPos);
-		}
+		}*/
+		attackMovement(&it->second, attackPos);
 		
 		/*if (it->first == UnitTypes::Protoss_Zealot && it->second.){
 			attackMovement(&it->second, attackPos);
@@ -95,6 +107,23 @@ void CombatUnits::runAttack(Position attackPos){
 	//	if (zealotSquads.size() > i){
 	//	}
 	//}
+}
+
+void CombatUnits::retreat(Position retreatPos){
+	for (std::multimap<UnitType, Squad>::iterator it = unitMap.begin(); it != unitMap.end(); it++) {
+		if (it->first == UnitTypes::Protoss_Observer) {
+			continue;
+		}
+
+		if (it->second.getPosition().getDistance(retreatPos) > RETREAT_DISTANCE) {
+			/*if (it->second.isIdle() || retreatPos != lastAttackPos) {
+				moveCommand(&it->second, retreatPos);
+				lastAttackPos = retreatPos;
+			}*/
+			moveCommand(&it->second, retreatPos);
+			lastAttackPos = retreatPos;
+		}
+	}
 }
 
 void CombatUnits::dragoonMicro(Squad * squad){
@@ -137,22 +166,26 @@ void CombatUnits::dragoonMicro(Squad * squad){
 		}
 		else {/*
 			Broodwar->sendText("Already attacked (SHOULD NOT RIGHT NOW)");*/
-			UnitCommand lastCommand(unit->getLastCommand());
-			if (lastCommand.getType() != UnitCommandTypes::Move) {
-				unit->move(escapePos(unit));
+			if (unit->getUnitsInWeaponRange(UnitTypes::Protoss_Dragoon.groundWeapon(), Filter::IsEnemy).size() > 0) {
+				UnitCommand lastCommand(unit->getLastCommand());
+				if (lastCommand.getType() != UnitCommandTypes::Move) {
+					unit->move(escapePos(unit));
+				}
 			}
 		}
 	}
 }
 
 Unit CombatUnits::extractUnit(UnitType unitType){
+	//Broodwar->sendText("Prøver at fjerne %s fra combatUnits", unitType.c_str());
+
 	Unit tempProbe = NULL;
-	std::multimap<UnitType, Squad>::iterator it = unitMap.lower_bound(unitType);
-	Squad squad = it->second;
-	for (auto& probe : squad){
+	Squad *squad = &unitMap.lower_bound(unitType)->second;
+	for (auto& probe : *squad){
 		tempProbe = probe;
 		break;
 	}
+	squad->erase(tempProbe);
 	return tempProbe;
 }
 
@@ -175,6 +208,10 @@ void CombatUnits::idleMovement(Unit u, Position idleLoc){
 
 void CombatUnits::attackMovement(Squad *squad, Position pos){
 	squad->attack(pos);
+}
+
+void CombatUnits::moveCommand(Squad *squad, Position pos){
+	squad->move(pos);
 }
 
 void CombatUnits::addUnit(Unit u){

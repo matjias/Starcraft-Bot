@@ -115,7 +115,7 @@ void ResourceSpender::update() {
 	}*/
 
 	// Spend resource surplus
-	if (Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT) {
+	/*if (Broodwar->self()->minerals() - reservedMinerals > MINERAL_SURPLUS_LIMIT) {
 		if (alternateUnit != NULL && canBuildUnit(alternateUnit) && 
 			(alternateUnit.gasPrice() == 0 || Broodwar->self()->gas() - reservedGas > GAS_SURPLUS_LIMIT)) {
 
@@ -126,6 +126,19 @@ void ResourceSpender::update() {
 		}
 		else if (canAffordUnit(defaultUnit)) {
 			addUnitInvestment(defaultUnit, false);
+		}
+	}*/
+	if (!canBuildUnit(investments[0].getUnitType())) {
+		if (canAffordUnits(investments[0].getUnitType(), alternateUnit, UnitTypes::Protoss_Pylon) && canBuildUnit(alternateUnit)) {
+			addUnitInvestment(alternateUnit, true);
+		}
+		else if (canAffordUnits(investments[0].getUnitType(), defaultUnit, UnitTypes::Protoss_Pylon)) {
+			if (canBuildUnit(defaultUnit)) {
+				addUnitInvestment(defaultUnit, true);
+			}
+			else {
+				addUnitInvestment(defaultUnit, false);
+			}
 		}
 	}
 
@@ -163,7 +176,12 @@ void ResourceSpender::update() {
 
 	for (int i = 0; i < investments.size(); i++) {
 		if (investments[i].isUnitType()) {
-			if (investments[i].pending) {
+			Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s", i, investments[i].getUnitType().c_str());
+		}
+		else {
+			Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
+
+			/*if (investments[i].pending) {
 				Broodwar->drawTextScreen(280, 60 + i * 10, "%i: %s (Pending)", i, investments[i].getUnitType().c_str());
 			}
 			else {
@@ -176,7 +194,7 @@ void ResourceSpender::update() {
 			}
 			else {
 				Broodwar->drawTextScreen(280, 50 + i * 10, "%i: %s", i, investments[i].getUpgradeType().c_str());
-			}
+			}*/
 		}
 	}
 }
@@ -384,6 +402,18 @@ bool ResourceSpender::canAffordUnit(UnitType unitType) {
 	return (unitType.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
 		unitType.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
 		unitType.supplyRequired() / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
+}
+
+bool ResourceSpender::canAffordUnits(UnitType unitType1, UnitType unitType2) {
+	return (unitType1.mineralPrice() + unitType2.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
+		unitType1.gasPrice() + unitType2.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
+		(unitType1.supplyRequired() + unitType2.supplyRequired()) / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
+}
+
+bool ResourceSpender::canAffordUnits(UnitType unitType1, UnitType unitType2, UnitType unitType3) {
+	return (unitType1.mineralPrice() + unitType2.mineralPrice() + unitType3.mineralPrice() <= Broodwar->self()->minerals() - reservedMinerals &&
+		unitType1.gasPrice() + unitType2.gasPrice() + unitType3.gasPrice() <= Broodwar->self()->gas() - reservedGas &&
+		(unitType1.supplyRequired() + unitType2.supplyRequired() + unitType3.supplyRequired()) / 2 <= (Broodwar->self()->supplyTotal() - Broodwar->self()->supplyUsed()) / 2);
 }
 
 bool ResourceSpender::canBuildBuilding(UnitType buildingType) {
