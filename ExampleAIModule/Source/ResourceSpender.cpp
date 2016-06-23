@@ -151,7 +151,6 @@ void ResourceSpender::update() {
 			addProductionFacilities();
 		}
 
-		//addAllRequirements();
 	}
 
 	// Purchase elements
